@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mockBuyer, mockProduct, formatNaira } from "@/lib/buyerMock";
+import { buyerOrders, orderStatusLabel } from "@/lib/orderMock";
+import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
+import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -17,9 +20,12 @@ const BuyerDashboard = () => {
   const [params] = useSearchParams();
   const [fundOpen, setFundOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [progressOpen, setProgressOpen] = useState(false);
+  const [trackingOpen, setTrackingOpen] = useState(false);
   const [amount, setAmount] = useState(mockProduct.price);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [method, setMethod] = useState<"transfer" | "deposit">("transfer");
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(buyerOrders[0]?.id ?? null);
   const productId = params.get("productId") ?? mockProduct.id;
   const entry = params.get("entry");
   const mode = params.get("mode") ?? "guest";
@@ -41,6 +47,32 @@ const BuyerDashboard = () => {
   const final = amount + fee;
   const withdrawFee = +(withdrawAmount * 0.01).toFixed(2);
   const withdrawFinal = Math.max(withdrawAmount - withdrawFee, 0);
+  const selectedOrder = buyerOrders.find((order) => order.id === selectedOrderId) ?? buyerOrders[0] ?? null;
+
+  const openOrderFlow = (orderId: string) => {
+    const order = buyerOrders.find((item) => item.id === orderId);
+
+    if (!order) return;
+    if (order.status === "awaiting-verification") {
+      navigate(`/buyer/payment?${checkoutQuery}`);
+      return;
+    }
+
+    setSelectedOrderId(order.id);
+    setProgressOpen(true);
+  };
+
+  const goToOrderDetails = (orderId: string) => {
+    const detailParams = new URLSearchParams({
+      productId,
+      orderId,
+      entry: "secure-checkout",
+      mode,
+      provider,
+    }).toString();
+
+    navigate(`/buyer/order?${detailParams}`);
+  };
 
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
@@ -93,8 +125,8 @@ const BuyerDashboard = () => {
           </Card>
 
           <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
-          <StatCard icon={Package} label="Completed Transactions" value="0" sublabel="New Account" />
-          <StatCard icon={ShoppingBag} label="Active Orders" value="1" sublabel="In Progress" sublabelTone="gold" />
+          <StatCard icon={Package} label="Completed Transactions" value={String(buyerOrders.filter((order) => order.status === "completed").length)} sublabel="New Account" />
+          <StatCard icon={ShoppingBag} label="Active Orders" value={String(buyerOrders.filter((order) => order.status !== "completed").length)} sublabel="In Progress" sublabelTone="gold" />
         </div>
 
         {/* Orders */}
@@ -117,25 +149,64 @@ const BuyerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-border">
-                    <td className="p-4 text-gold font-mono text-xs">{mockProduct.id}</td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <img src={mockProduct.image} alt="" className="h-9 w-9 rounded object-cover" loading="lazy" width={36} height={36} />
-                        <span className="text-foreground font-medium">{mockProduct.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <Badge className="bg-gold/15 text-gold border border-gold/30 hover:bg-gold/15">Awaiting Verification</Badge>
-                    </td>
-                    <td className="p-4 text-muted-foreground">{mockProduct.seller.location}</td>
-                    <td className="p-4 text-foreground font-semibold">{formatNaira(mockProduct.price)}</td>
-                    <td className="p-4 text-right">
-                      <Button size="sm" onClick={() => navigate(`/buyer/payment?${checkoutQuery}`)} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                        Pay Now
-                      </Button>
-                    </td>
-                  </tr>
+                  {buyerOrders.map((order) => {
+                    return (
+                      <tr
+                        key={order.id}
+                        className="border-t border-border transition-colors hover:bg-secondary/30 cursor-pointer"
+                        onClick={() => openOrderFlow(order.id)}
+                      >
+                        <td className="p-4 text-gold font-mono text-xs">{order.shortRef}</td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <img src={order.items[0].image} alt={order.items[0].name} className="h-9 w-9 rounded object-cover" loading="lazy" width={36} height={36} />
+                            <span className="text-foreground font-medium">{order.items[0].name}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge className={cn(
+                            "border hover:bg-transparent",
+                            order.status === "completed" && "bg-success/10 text-success border-success/20",
+                            order.status === "in-transit" && "bg-primary/10 text-primary border-primary/20",
+                            order.status === "processing" && "bg-gold/15 text-gold border-gold/30",
+                            order.status === "awaiting-verification" && "bg-gold/15 text-gold border-gold/30",
+                          )}>
+                            {orderStatusLabel[order.status]}
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-muted-foreground">{order.sellerLocation}</td>
+                        <td className="p-4 text-foreground font-semibold">
+                          {formatNaira(order.items.reduce((sum, item) => sum + item.price * item.quantity, 0) + order.shippingFee - order.discount)}
+                        </td>
+                        <td className="p-4 text-right">
+                          {order.status === "awaiting-verification" ? (
+                            <Button
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/buyer/payment?${checkoutQuery}`);
+                              }}
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                            >
+                              Pay Now
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                goToOrderDetails(order.id);
+                              }}
+                              className="border-border bg-card hover:bg-secondary"
+                            >
+                              View Order
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -330,6 +401,30 @@ const BuyerDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <OrderProgressDialog
+        open={progressOpen}
+        onOpenChange={setProgressOpen}
+        order={selectedOrder}
+        onTrack={() => {
+          setProgressOpen(false);
+          setTrackingOpen(true);
+        }}
+        onViewDetails={() => {
+          setProgressOpen(false);
+          if (selectedOrder) goToOrderDetails(selectedOrder.id);
+        }}
+      />
+
+      <LiveTrackingDialog
+        open={trackingOpen}
+        onOpenChange={setTrackingOpen}
+        order={selectedOrder}
+        onViewDetails={() => {
+          setTrackingOpen(false);
+          if (selectedOrder) goToOrderDetails(selectedOrder.id);
+        }}
+      />
     </div>
   );
 };

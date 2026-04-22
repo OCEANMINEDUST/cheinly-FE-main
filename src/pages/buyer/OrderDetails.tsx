@@ -1,29 +1,45 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Download, FileText, LifeBuoy, MapPinned, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import { ArrowLeft, Ban, Download, FileText, LifeBuoy, MapPinned, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { formatNaira } from "@/lib/buyerMock";
-import { getBuyerOrderById, orderStatusLabel } from "@/lib/orderMock";
+import { cancelBuyerOrder, getBuyerOrderById, getOrderGrandTotal, getOrderItemTotal, getOrderSubtotal, getOrderTotalDiscount, isOrderCancelable, orderStatusLabel } from "@/lib/orderMock";
 import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
 import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const BuyerOrderDetails = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [progressOpen, setProgressOpen] = useState(false);
   const [trackingOpen, setTrackingOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const order = useMemo(() => getBuyerOrderById(params.get("orderId")), [params]);
+  const order = useMemo(() => getBuyerOrderById(params.get("orderId")), [params, refreshKey]);
   const productId = params.get("productId") ?? order.productId;
   const mode = params.get("mode") ?? "guest";
   const provider = params.get("provider") ?? "cheinly";
   const baseQuery = new URLSearchParams({ productId, orderId: order.id, entry: "secure-checkout", mode, provider }).toString();
-  const total = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0) + order.shippingFee - order.discount;
+  const subtotal = getOrderSubtotal(order);
+  const totalDiscount = getOrderTotalDiscount(order);
+  const total = getOrderGrandTotal(order);
+  const canCancel = isOrderCancelable(order);
+
+  const handleCancelOrder = () => {
+    if (!cancelBuyerOrder(order.id)) {
+      toast.error("This order can no longer be cancelled.");
+      return;
+    }
+
+    setRefreshKey((value) => value + 1);
+    toast.success("Order cancelled before dispatch.");
+  };
 
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
@@ -37,9 +53,12 @@ const BuyerOrderDetails = () => {
             </button>
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="font-display text-4xl text-foreground">Order {order.shortRef}</h1>
-              <Badge className={cn(
+               <Badge className={cn(
                 "border",
-                order.status === "completed" ? "border-success/20 bg-success/10 text-success" : "border-primary/20 bg-primary/10 text-primary",
+                order.status === "completed" && "border-success/20 bg-success/10 text-success",
+                order.status === "cancelled" && "border-destructive/20 bg-destructive/10 text-destructive",
+                (order.status === "processing" || order.status === "awaiting-verification") && "border-gold/30 bg-gold/15 text-gold",
+                order.status === "in-transit" && "border-primary/20 bg-primary/10 text-primary",
               )}>{orderStatusLabel[order.status]}</Badge>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -54,6 +73,29 @@ const BuyerOrderDetails = () => {
             <Button variant="outline" onClick={() => navigate(`/buyer/receipt?${baseQuery}`)} className="gap-2 border-border bg-card hover:bg-secondary">
               <Download className="h-4 w-4" /> Download Receipt
             </Button>
+            {canCancel ? (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="gap-2 border-destructive/30 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive">
+                    <Ban className="h-4 w-4" /> Cancel Order
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Cancel this order?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This is only available before dispatch. Your protected payment will be reversed after cancellation.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Keep Order</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleCancelOrder} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Confirm Cancellation
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ) : null}
           </div>
         </div>
 
@@ -97,15 +139,24 @@ const BuyerOrderDetails = () => {
                     <div key={item.id} className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-4">
                         <img src={item.image} alt={item.name} className="h-14 w-14 rounded-md object-cover ring-1 ring-border" loading="lazy" width={56} height={56} />
-                        <div>
+                        <div className="space-y-1">
                           <p className="font-semibold uppercase text-foreground">{item.name}</p>
                           <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                          <div className="space-y-1 pt-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <span>Unit price: {formatNaira(item.price)}</span>
+                              <span>•</span>
+                              <span>Qty: {item.quantity}</span>
+                            </div>
+                            <p>Item discount: {(item.discount ?? 0) > 0 ? `-${formatNaira(item.discount ?? 0)}` : formatNaira(0)}</p>
+                            <p className="font-medium text-foreground">Item total: {formatNaira(getOrderItemTotal(item))}</p>
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-6 sm:text-right">
                         <div>
-                          <p className="font-semibold text-foreground">{formatNaira(item.price)}</p>
-                          <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
+                          <p className="font-semibold text-foreground">{formatNaira(getOrderItemTotal(item))}</p>
+                          <p className="text-xs text-muted-foreground">Net after discount</p>
                         </div>
                         <Button variant="outline" className="gap-2 border-success/30 bg-success/5 text-success hover:bg-success/10">
                           <ShoppingCart className="h-4 w-4" /> Buy Again
@@ -122,9 +173,25 @@ const BuyerOrderDetails = () => {
             <Card className="shadow-card">
               <CardContent className="space-y-4 p-5 text-sm">
                 <div className="flex items-center gap-2 font-semibold text-foreground"><FileText className="h-4 w-4 text-primary" /> Payment Summary</div>
-                <SummaryRow label="Subtotal" value={formatNaira(order.items.reduce((sum, item) => sum + item.price * item.quantity, 0))} />
+                <div className="space-y-3 rounded-lg border border-border bg-secondary/30 p-4">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="space-y-2 border-b border-border pb-3 last:border-b-0 last:pb-0">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-foreground">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatNaira(item.price)} × {item.quantity}</p>
+                        </div>
+                        <span className="font-medium text-foreground">{formatNaira(item.price * item.quantity)}</span>
+                      </div>
+                      <SummaryRow label="Item discount" value={(item.discount ?? 0) > 0 ? `-${formatNaira(item.discount ?? 0)}` : formatNaira(0)} valueClassName={(item.discount ?? 0) > 0 ? "text-success" : undefined} />
+                      <SummaryRow label="Net item total" value={formatNaira(getOrderItemTotal(item))} />
+                    </div>
+                  ))}
+                </div>
+                <SummaryRow label="Items subtotal" value={formatNaira(subtotal)} />
                 <SummaryRow label="Delivery Fee" value={formatNaira(order.shippingFee)} />
-                <SummaryRow label="Discount" value={order.discount ? `-${formatNaira(order.discount)}` : formatNaira(0)} valueClassName={order.discount ? "text-success" : undefined} />
+                <SummaryRow label="Order discount" value={order.discount ? `-${formatNaira(order.discount)}` : formatNaira(0)} valueClassName={order.discount ? "text-success" : undefined} />
+                <SummaryRow label="Total discounts" value={totalDiscount ? `-${formatNaira(totalDiscount)}` : formatNaira(0)} valueClassName={totalDiscount ? "text-success" : undefined} />
                 <div className="border-t border-border pt-4">
                   <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Total Paid</p>
                   <p className="mt-2 font-display text-4xl text-foreground">{formatNaira(total)}</p>

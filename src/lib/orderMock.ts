@@ -1,6 +1,6 @@
 import { formatNaira, mockBuyer, mockProduct } from "@/lib/buyerMock";
 
-export type BuyerOrderStatus = "awaiting-verification" | "processing" | "in-transit" | "completed";
+export type BuyerOrderStatus = "awaiting-verification" | "processing" | "in-transit" | "completed" | "cancelled";
 export type BuyerTimelineState = "complete" | "current" | "upcoming";
 
 export interface BuyerOrderItem {
@@ -9,6 +9,7 @@ export interface BuyerOrderItem {
   subtitle: string;
   price: number;
   quantity: number;
+  discount?: number;
   image: string;
 }
 
@@ -75,6 +76,7 @@ const sharedItems: BuyerOrderItem[] = [
     subtitle: "Size: 44 • Color: Phantom Black",
     price: mockProduct.price,
     quantity: 1,
+    discount: 3500,
     image: mockProduct.image,
   },
   {
@@ -83,6 +85,7 @@ const sharedItems: BuyerOrderItem[] = [
     subtitle: "Strap: Graphite Silicone",
     price: 21000,
     quantity: 1,
+    discount: 1500,
     image: mockProduct.image,
   },
 ];
@@ -169,9 +172,53 @@ export const buyerOrders: BuyerOrder[] = [
 export const getBuyerOrderById = (orderId: string | null) =>
   buyerOrders.find((order) => order.id === orderId) ?? buyerOrders[0];
 
+export const getOrderSubtotal = (order: BuyerOrder) =>
+  order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+export const getOrderTotalDiscount = (order: BuyerOrder) =>
+  order.items.reduce((sum, item) => sum + (item.discount ?? 0), 0) + order.discount;
+
+export const getOrderItemTotal = (item: BuyerOrderItem) =>
+  item.price * item.quantity - (item.discount ?? 0);
+
+export const getOrderGrandTotal = (order: BuyerOrder) =>
+  getOrderSubtotal(order) + order.shippingFee - getOrderTotalDiscount(order);
+
+export const isOrderCancelable = (order: BuyerOrder) =>
+  order.status === "awaiting-verification" || order.status === "processing";
+
+export const cancelBuyerOrder = (orderId: string | null) => {
+  const order = buyerOrders.find((entry) => entry.id === orderId);
+
+  if (!order || !isOrderCancelable(order)) {
+    return false;
+  }
+
+  order.status = "cancelled";
+  order.estimatedDelivery = "Cancelled";
+  order.estimatedArrival = "Cancelled";
+  order.nextStop = "Order cancelled";
+  order.timeline = [
+    ...order.timeline.map((step) => ({
+      ...step,
+      state: (step.state === "complete" ? "complete" : "upcoming") as BuyerTimelineState,
+      time: step.state === "complete" ? step.time : "Cancelled",
+    })),
+    {
+      label: "Order Cancelled",
+      description: "This order was cancelled before dispatch and the protected payment will be reversed.",
+      time: "Just now",
+      state: "current" as BuyerTimelineState,
+    },
+  ];
+
+  return true;
+};
+
 export const orderStatusLabel: Record<BuyerOrderStatus, string> = {
   "awaiting-verification": "Awaiting Verification",
   processing: "Processing",
   "in-transit": "On the Way",
   completed: "Completed",
+  cancelled: "Cancelled",
 };

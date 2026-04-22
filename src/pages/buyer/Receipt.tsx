@@ -1,22 +1,55 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Download, Printer } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNaira, mockBuyer } from "@/lib/buyerMock";
-import { getBuyerOrderById } from "@/lib/orderMock";
+import { getBuyerOrderById, getOrderGrandTotal } from "@/lib/orderMock";
+import { toast } from "sonner";
 
 const BuyerReceipt = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [downloading, setDownloading] = useState(false);
+  const receiptRef = useRef<HTMLDivElement>(null);
   const order = useMemo(() => getBuyerOrderById(params.get("orderId")), [params]);
   const productId = params.get("productId") ?? order.productId;
   const mode = params.get("mode") ?? "guest";
   const provider = params.get("provider") ?? "cheinly";
   const subtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal + order.shippingFee - order.discount;
+  const total = getOrderGrandTotal(order);
+
+  const handleDownloadPdf = async () => {
+    if (!receiptRef.current || downloading) return;
+
+    try {
+      setDownloading(true);
+      const canvas = await html2canvas(receiptRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+      });
+
+      const image = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: canvas.width > canvas.height ? "landscape" : "portrait",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+      });
+
+      pdf.addImage(image, "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`${order.shortRef.replace("#", "")}-receipt.pdf`);
+      toast.success("Receipt exported as PDF.");
+    } catch {
+      toast.error("Could not export receipt right now.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
@@ -31,13 +64,13 @@ const BuyerReceipt = () => {
             <Button variant="outline" onClick={() => window.print()} className="gap-2 border-border bg-card hover:bg-secondary">
               <Printer className="h-4 w-4" /> Print PDF
             </Button>
-            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={handleDownloadPdf} disabled={downloading} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-70">
               <Download className="h-4 w-4" /> Download
             </Button>
           </div>
         </div>
 
-        <Card className="mx-auto max-w-4xl shadow-card print:shadow-none">
+        <Card ref={receiptRef} className="mx-auto max-w-4xl shadow-card print:shadow-none">
           <CardContent className="space-y-8 p-8 md:p-10">
             <div className="flex flex-col gap-6 border-b border-border pb-6 md:flex-row md:items-start md:justify-between">
               <div>

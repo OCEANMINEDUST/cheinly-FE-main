@@ -201,14 +201,14 @@ export const cancelBuyerOrder = (orderId: string | null) => {
   order.timeline = [
     ...order.timeline.map((step) => ({
       ...step,
-      state: step.state === "complete" ? "complete" : "upcoming",
+      state: (step.state === "complete" ? "complete" : "upcoming") as BuyerTimelineState,
       time: step.state === "complete" ? step.time : "Cancelled",
     })),
     {
       label: "Order Cancelled",
       description: "This order was cancelled before dispatch and the protected payment will be reversed.",
       time: "Just now",
-      state: "current",
+      state: "current" as BuyerTimelineState,
     },
   ];
 

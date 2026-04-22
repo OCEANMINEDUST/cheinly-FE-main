@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mockBuyer, mockProduct, formatNaira } from "@/lib/buyerMock";
 import { buyerOrders, orderStatusLabel } from "@/lib/orderMock";
+import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
+import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -18,9 +20,12 @@ const BuyerDashboard = () => {
   const [params] = useSearchParams();
   const [fundOpen, setFundOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [progressOpen, setProgressOpen] = useState(false);
+  const [trackingOpen, setTrackingOpen] = useState(false);
   const [amount, setAmount] = useState(mockProduct.price);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [method, setMethod] = useState<"transfer" | "deposit">("transfer");
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(buyerOrders[0]?.id ?? null);
   const productId = params.get("productId") ?? mockProduct.id;
   const entry = params.get("entry");
   const mode = params.get("mode") ?? "guest";
@@ -42,6 +47,32 @@ const BuyerDashboard = () => {
   const final = amount + fee;
   const withdrawFee = +(withdrawAmount * 0.01).toFixed(2);
   const withdrawFinal = Math.max(withdrawAmount - withdrawFee, 0);
+  const selectedOrder = buyerOrders.find((order) => order.id === selectedOrderId) ?? buyerOrders[0] ?? null;
+
+  const openOrderFlow = (orderId: string) => {
+    const order = buyerOrders.find((item) => item.id === orderId);
+
+    if (!order) return;
+    if (order.status === "awaiting-verification") {
+      navigate(`/buyer/payment?${checkoutQuery}`);
+      return;
+    }
+
+    setSelectedOrderId(order.id);
+    setProgressOpen(true);
+  };
+
+  const goToOrderDetails = (orderId: string) => {
+    const detailParams = new URLSearchParams({
+      productId,
+      orderId,
+      entry: "secure-checkout",
+      mode,
+      provider,
+    }).toString();
+
+    navigate(`/buyer/order?${detailParams}`);
+  };
 
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
@@ -94,8 +125,8 @@ const BuyerDashboard = () => {
           </Card>
 
           <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
-          <StatCard icon={Package} label="Completed Transactions" value="0" sublabel="New Account" />
-          <StatCard icon={ShoppingBag} label="Active Orders" value="1" sublabel="In Progress" sublabelTone="gold" />
+          <StatCard icon={Package} label="Completed Transactions" value={String(buyerOrders.filter((order) => order.status === "completed").length)} sublabel="New Account" />
+          <StatCard icon={ShoppingBag} label="Active Orders" value={String(buyerOrders.filter((order) => order.status !== "completed").length)} sublabel="In Progress" sublabelTone="gold" />
         </div>
 
         {/* Orders */}
@@ -119,19 +150,11 @@ const BuyerDashboard = () => {
                 </thead>
                 <tbody>
                   {buyerOrders.map((order) => {
-                    const detailParams = new URLSearchParams({
-                      productId: order.productId,
-                      orderId: order.id,
-                      entry: "secure-checkout",
-                      mode,
-                      provider,
-                    }).toString();
-
                     return (
                       <tr
                         key={order.id}
                         className="border-t border-border transition-colors hover:bg-secondary/30 cursor-pointer"
-                        onClick={() => navigate(`/buyer/order?${detailParams}`)}
+                        onClick={() => openOrderFlow(order.id)}
                       >
                         <td className="p-4 text-gold font-mono text-xs">{order.shortRef}</td>
                         <td className="p-4">
@@ -173,7 +196,7 @@ const BuyerDashboard = () => {
                               variant="outline"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/buyer/order?${detailParams}`);
+                                goToOrderDetails(order.id);
                               }}
                               className="border-border bg-card hover:bg-secondary"
                             >
@@ -378,6 +401,30 @@ const BuyerDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <OrderProgressDialog
+        open={progressOpen}
+        onOpenChange={setProgressOpen}
+        order={selectedOrder}
+        onTrack={() => {
+          setProgressOpen(false);
+          setTrackingOpen(true);
+        }}
+        onViewDetails={() => {
+          setProgressOpen(false);
+          if (selectedOrder) goToOrderDetails(selectedOrder.id);
+        }}
+      />
+
+      <LiveTrackingDialog
+        open={trackingOpen}
+        onOpenChange={setTrackingOpen}
+        order={selectedOrder}
+        onViewDetails={() => {
+          setTrackingOpen(false);
+          if (selectedOrder) goToOrderDetails(selectedOrder.id);
+        }}
+      />
     </div>
   );
 };

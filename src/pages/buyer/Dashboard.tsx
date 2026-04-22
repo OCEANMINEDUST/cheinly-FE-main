@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Package, Send, ShoppingBag, Wallet } from "lucide-react";
+import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Landmark, Package, Send, ShoppingBag, Wallet } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +16,9 @@ const BuyerDashboard = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [fundOpen, setFundOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [amount, setAmount] = useState(mockProduct.price);
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [method, setMethod] = useState<"transfer" | "deposit">("transfer");
   const productId = params.get("productId") ?? mockProduct.id;
   const entry = params.get("entry");
@@ -37,6 +39,8 @@ const BuyerDashboard = () => {
 
   const fee = +(amount * 0.015).toFixed(2);
   const final = amount + fee;
+  const withdrawFee = +(withdrawAmount * 0.01).toFixed(2);
+  const withdrawFinal = Math.max(withdrawAmount - withdrawFee, 0);
 
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
@@ -88,7 +92,7 @@ const BuyerDashboard = () => {
             </CardContent>
           </Card>
 
-          <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => toast("Withdrawal coming soon") }} />
+          <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
           <StatCard icon={Package} label="Completed Transactions" value="0" sublabel="New Account" />
           <StatCard icon={ShoppingBag} label="Active Orders" value="1" sublabel="In Progress" sublabelTone="gold" />
         </div>
@@ -248,6 +252,79 @@ const BuyerDashboard = () => {
               <Send className="h-4 w-4" /> I have made the transfer
             </Button>
             <button onClick={() => setFundOpen(false)} className="w-full text-sm text-muted-foreground hover:text-gold py-1">
+              Cancel
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
+        <DialogContent className="max-w-md p-0 overflow-hidden">
+          <DialogHeader className="space-y-2">
+            <DialogTitle className="flex items-center gap-2 font-display text-xl px-6 pt-6">
+              <Landmark className="h-5 w-5 text-primary" /> Withdraw from Earnings
+            </DialogTitle>
+            <DialogDescription className="mx-6 rounded-lg bg-primary/10 border border-primary/20 p-3 text-xs text-foreground/80 mt-2">
+              Withdrawals are sent to your saved bank account after a quick compliance review.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 px-6 pb-6 pt-2">
+            <div>
+              <label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-2 block">Withdraw Amount</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">₦</span>
+                <Input
+                  type="number"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(Number(e.target.value) || 0)}
+                  className="h-12 pl-9 text-lg font-semibold"
+                />
+              </div>
+              <div className="flex gap-2 mt-2">
+                {[10000, 25000, 50000].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setWithdrawAmount(q)}
+                    className="flex-1 rounded-md border border-border bg-secondary/40 hover:border-gold/50 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {formatNaira(q)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-secondary border border-border p-4 space-y-3 text-sm">
+              <Row label="Bank Name" value="Moniepoint MFB" />
+              <Row label="Account Name" value={mockBuyer.name.toUpperCase()} />
+              <Row label="Account Number" value="2039485721" />
+            </div>
+
+            <div className="rounded-lg bg-secondary/50 border border-border p-4 space-y-2 text-sm">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Available Earnings</span>
+                <span>{formatNaira(0)}</span>
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Withdrawal Fee (1%)</span>
+                <span>{formatNaira(withdrawFee)}</span>
+              </div>
+              <div className="flex items-center justify-between font-semibold text-base">
+                <span className="text-foreground">You’ll Receive</span>
+                <span className="text-gold">{formatNaira(withdrawFinal)}</span>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => {
+                setWithdrawOpen(false);
+                toast.success("Withdrawal request submitted successfully.");
+              }}
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+            >
+              <Send className="h-4 w-4" /> Request Withdrawal
+            </Button>
+            <button onClick={() => setWithdrawOpen(false)} className="w-full text-sm text-muted-foreground hover:text-gold py-1">
               Cancel
             </button>
           </div>

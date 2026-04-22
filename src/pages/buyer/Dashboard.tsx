@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mockBuyer, mockProduct, formatNaira } from "@/lib/buyerMock";
+import { buyerOrders, orderStatusLabel } from "@/lib/orderMock";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -117,25 +118,72 @@ const BuyerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-border">
-                    <td className="p-4 text-gold font-mono text-xs">{mockProduct.id}</td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <img src={mockProduct.image} alt="" className="h-9 w-9 rounded object-cover" loading="lazy" width={36} height={36} />
-                        <span className="text-foreground font-medium">{mockProduct.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <Badge className="bg-gold/15 text-gold border border-gold/30 hover:bg-gold/15">Awaiting Verification</Badge>
-                    </td>
-                    <td className="p-4 text-muted-foreground">{mockProduct.seller.location}</td>
-                    <td className="p-4 text-foreground font-semibold">{formatNaira(mockProduct.price)}</td>
-                    <td className="p-4 text-right">
-                      <Button size="sm" onClick={() => navigate(`/buyer/payment?${checkoutQuery}`)} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                        Pay Now
-                      </Button>
-                    </td>
-                  </tr>
+                  {buyerOrders.map((order) => {
+                    const detailParams = new URLSearchParams({
+                      productId: order.productId,
+                      orderId: order.id,
+                      entry: "secure-checkout",
+                      mode,
+                      provider,
+                    }).toString();
+
+                    return (
+                      <tr
+                        key={order.id}
+                        className="border-t border-border transition-colors hover:bg-secondary/30 cursor-pointer"
+                        onClick={() => navigate(`/buyer/order?${detailParams}`)}
+                      >
+                        <td className="p-4 text-gold font-mono text-xs">{order.shortRef}</td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <img src={order.items[0].image} alt={order.items[0].name} className="h-9 w-9 rounded object-cover" loading="lazy" width={36} height={36} />
+                            <span className="text-foreground font-medium">{order.items[0].name}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge className={cn(
+                            "border hover:bg-transparent",
+                            order.status === "completed" && "bg-success/10 text-success border-success/20",
+                            order.status === "in-transit" && "bg-primary/10 text-primary border-primary/20",
+                            order.status === "processing" && "bg-gold/15 text-gold border-gold/30",
+                            order.status === "awaiting-verification" && "bg-gold/15 text-gold border-gold/30",
+                          )}>
+                            {orderStatusLabel[order.status]}
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-muted-foreground">{order.sellerLocation}</td>
+                        <td className="p-4 text-foreground font-semibold">
+                          {formatNaira(order.items.reduce((sum, item) => sum + item.price * item.quantity, 0) + order.shippingFee - order.discount)}
+                        </td>
+                        <td className="p-4 text-right">
+                          {order.status === "awaiting-verification" ? (
+                            <Button
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/buyer/payment?${checkoutQuery}`);
+                              }}
+                              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                            >
+                              Pay Now
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/buyer/order?${detailParams}`);
+                              }}
+                              className="border-border bg-card hover:bg-secondary"
+                            >
+                              View Order
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

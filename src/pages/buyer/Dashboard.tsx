@@ -57,6 +57,10 @@ const BuyerDashboard = () => {
       navigate(`/buyer/payment?${checkoutQuery}`);
       return;
     }
+    if (order.status === "cancelled") {
+      goToOrderDetails(order.id);
+      return;
+    }
 
     setSelectedOrderId(order.id);
     setProgressOpen(true);
@@ -126,7 +130,7 @@ const BuyerDashboard = () => {
 
           <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
           <StatCard icon={Package} label="Completed Transactions" value={String(buyerOrders.filter((order) => order.status === "completed").length)} sublabel="New Account" />
-          <StatCard icon={ShoppingBag} label="Active Orders" value={String(buyerOrders.filter((order) => order.status !== "completed").length)} sublabel="In Progress" sublabelTone="gold" />
+          <StatCard icon={ShoppingBag} label="Active Orders" value={String(buyerOrders.filter((order) => order.status !== "completed" && order.status !== "cancelled").length)} sublabel="In Progress" sublabelTone="gold" />
         </div>
 
         {/* Orders */}
@@ -170,6 +174,7 @@ const BuyerDashboard = () => {
                             order.status === "in-transit" && "bg-primary/10 text-primary border-primary/20",
                             order.status === "processing" && "bg-gold/15 text-gold border-gold/30",
                             order.status === "awaiting-verification" && "bg-gold/15 text-gold border-gold/30",
+                            order.status === "cancelled" && "bg-destructive/10 text-destructive border-destructive/20",
                           )}>
                             {orderStatusLabel[order.status]}
                           </Badge>

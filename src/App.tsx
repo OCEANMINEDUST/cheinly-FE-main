@@ -18,6 +18,9 @@ import BuyerPayment from "./pages/buyer/Payment";
 import BuyerDashboard from "./pages/buyer/Dashboard";
 import BuyerOrderDetails from "./pages/buyer/OrderDetails";
 import BuyerReceipt from "./pages/buyer/Receipt";
+import BuyerDeliveryConfirmation from "./pages/buyer/DeliveryConfirmation";
+import BuyerAuthentication from "./pages/buyer/Authentication";
+import BuyerDispute from "./pages/buyer/Dispute";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,9 @@ const App = () => (
           <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
           <Route path="/buyer/order" element={<BuyerOrderDetails />} />
           <Route path="/buyer/receipt" element={<BuyerReceipt />} />
+          <Route path="/buyer/confirm-delivery" element={<BuyerDeliveryConfirmation />} />
+          <Route path="/buyer/authentication" element={<BuyerAuthentication />} />
+          <Route path="/buyer/dispute" element={<BuyerDispute />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

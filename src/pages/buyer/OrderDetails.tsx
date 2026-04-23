@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Ban, Download, FileText, LifeBuoy, MapPinned, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import { ArrowLeft, Ban, Download, FileCheck2, FileText, LifeBuoy, MapPinned, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -67,6 +67,9 @@ const BuyerOrderDetails = () => {
           </div>
 
           <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={() => navigate(`/buyer/confirm-delivery?${baseQuery}`)} className="gap-2 border-border bg-card hover:bg-secondary">
+              <FileCheck2 className="h-4 w-4" /> Confirm Delivery
+            </Button>
             <Button variant="outline" onClick={() => setProgressOpen(true)} className="gap-2 border-border bg-card hover:bg-secondary">
               <Truck className="h-4 w-4" /> Order Progress
             </Button>
@@ -213,7 +216,7 @@ const BuyerOrderDetails = () => {
             <Button variant="outline" className="w-full gap-2 border-border bg-card hover:bg-secondary">
               <LifeBuoy className="h-4 w-4" /> Contact Support
             </Button>
-            <Button variant="outline" className="w-full gap-2 border-border bg-card hover:bg-secondary">
+            <Button variant="outline" onClick={() => navigate(`/buyer/dispute?${baseQuery}`)} className="w-full gap-2 border-border bg-card hover:bg-secondary">
               <FileText className="h-4 w-4" /> Report an Issue
             </Button>
           </aside>

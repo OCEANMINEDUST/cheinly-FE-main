@@ -57,6 +57,17 @@ const BuyerDashboard = () => {
       navigate(`/buyer/payment?${checkoutQuery}`);
       return;
     }
+    if (order.status === "completed") {
+      const verificationParams = new URLSearchParams({
+        productId,
+        orderId: order.id,
+        entry: "secure-checkout",
+        mode,
+        provider,
+      }).toString();
+      navigate(`/buyer/confirm-delivery?${verificationParams}`);
+      return;
+    }
     if (order.status === "cancelled") {
       goToOrderDetails(order.id);
       return;

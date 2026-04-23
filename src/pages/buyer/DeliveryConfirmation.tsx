@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { formatNaira } from "@/lib/buyerMock";
@@ -26,6 +27,7 @@ const BuyerDeliveryConfirmation = () => {
   const [uploadedProof, setUploadedProof] = useState<string | null>(null);
   const [mismatchDetected, setMismatchDetected] = useState(false);
   const [activeImage, setActiveImage] = useState<{ image: string; title: string; description: string } | null>(null);
+  const [showSideBySide, setShowSideBySide] = useState(true);
 
   const baseQuery = new URLSearchParams({ productId, orderId: order.id, entry: "secure-checkout", mode, provider }).toString();
   const amountHeld = getOrderGrandTotal(order);
@@ -113,42 +115,47 @@ const BuyerDeliveryConfirmation = () => {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Visual verification</p>
                     <h2 className="mt-2 font-display text-2xl text-foreground">Compare shipment vs delivery</h2>
                   </div>
-                  <div className="rounded-md bg-secondary px-3 py-2 text-xs text-muted-foreground">Side-by-side review</div>
+                  <div className="flex items-center gap-3 rounded-md border border-border bg-secondary/20 px-3 py-2 text-xs text-muted-foreground">
+                    <Label htmlFor="side-by-side-toggle" className="text-xs font-medium text-foreground">Side-by-side</Label>
+                    <Switch id="side-by-side-toggle" checked={showSideBySide} onCheckedChange={setShowSideBySide} />
+                  </div>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <PhotoPanel
-                    title="Seller shipment photo"
-                    description="Captured before dispatch"
-                    image={order.deliveryStages[0]?.image ?? order.items[0]?.image}
-                    alt={`${order.items[0]?.name} before shipment`}
-                    footer="Reference image locked by seller"
-                    onZoom={(image) => setActiveImage({ image, title: "Seller shipment photo", description: "Original reference photo captured before the parcel left the seller." })}
-                  />
+                <div className={showSideBySide ? "overflow-x-auto" : undefined}>
+                  <div className={showSideBySide ? "grid min-w-[42rem] gap-4 md:grid-cols-2" : "space-y-4"}>
+                    <PhotoPanel
+                      title="Seller shipment photo"
+                      description="Captured before dispatch"
+                      image={order.deliveryStages[0]?.image ?? order.items[0]?.image}
+                      alt={`${order.items[0]?.name} before shipment`}
+                      footer="Reference image locked by seller"
+                      onZoom={(image) => setActiveImage({ image, title: "Seller shipment photo", description: "Original reference photo captured before the parcel left the seller." })}
+                    />
 
-                  <PhotoPanel
-                    title="Buyer delivery proof"
-                    description="Upload what you received"
-                    image={uploadedProof}
-                    alt="Buyer uploaded delivery proof"
-                    footer={uploadedProof ? "Delivery proof ready for review" : "Upload a clear photo of the received item"}
-                    onZoom={(image) => setActiveImage({ image, title: "Buyer delivery proof", description: "Inspect the uploaded delivery evidence before you confirm fund release." })}
-                    emptyState={
-                      <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-secondary/20 p-6 text-center transition-colors hover:border-primary/40 hover:bg-secondary/35">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                          <ImagePlus className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">Upload delivery proof</p>
-                          <p className="mt-1 text-sm text-muted-foreground">PNG, JPG, or WEBP accepted</p>
-                        </div>
-                        <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
-                          <Upload className="h-4 w-4" /> Choose image
-                        </span>
-                        <input type="file" accept="image/*" className="sr-only" onChange={handleProofUpload} />
-                      </label>
-                    }
-                  />
+                    <PhotoPanel
+                      title="Buyer delivery proof"
+                      description="Upload what you received"
+                      image={uploadedProof}
+                      alt="Buyer uploaded delivery proof"
+                      footer={uploadedProof ? "Delivery proof ready for review" : "Upload a clear photo of the received item"}
+                      onZoom={(image) => setActiveImage({ image, title: "Buyer delivery proof", description: "Inspect the uploaded delivery evidence before you confirm fund release." })}
+                      emptyState={
+                        <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-secondary/20 p-6 text-center transition-colors hover:border-primary/40 hover:bg-secondary/35">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <ImagePlus className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">Upload delivery proof</p>
+                            <p className="mt-1 text-sm text-muted-foreground">PNG, JPG, or WEBP accepted</p>
+                          </div>
+                          <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
+                            <Upload className="h-4 w-4" /> Choose image
+                          </span>
+                          <input type="file" accept="image/*" className="sr-only" onChange={handleProofUpload} />
+                        </label>
+                      }
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>

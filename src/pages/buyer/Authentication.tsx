@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AlertTriangle, ArrowLeft, CheckCircle2, Search, ShieldAlert, ZoomIn } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
@@ -14,6 +14,8 @@ import { toast } from "sonner";
 
 type StageDecision = "match" | "mismatch";
 
+const getStageDecisionStorageKey = (orderId: string) => `buyer-authentication-stage-decisions:${orderId}`;
+
 const BuyerAuthentication = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -24,7 +26,28 @@ const BuyerAuthentication = () => {
   const baseQuery = new URLSearchParams({ productId, orderId: order.id, entry: "secure-checkout", mode, provider }).toString();
   const [confirmationCode, setConfirmationCode] = useState("");
   const [activeImage, setActiveImage] = useState<{ image: string; title: string } | null>(null);
-  const [stageDecisions, setStageDecisions] = useState<Partial<Record<string, StageDecision>>>({});
+  const [stageDecisions, setStageDecisions] = useState<Partial<Record<string, StageDecision>>>(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+
+    const saved = window.localStorage.getItem(getStageDecisionStorageKey(order.id));
+
+    if (!saved) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(saved) as Partial<Record<string, StageDecision>>;
+    } catch {
+      window.localStorage.removeItem(getStageDecisionStorageKey(order.id));
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem(getStageDecisionStorageKey(order.id), JSON.stringify(stageDecisions));
+  }, [order.id, stageDecisions]);
 
   const reviewedCount = order.deliveryStages.filter((stage) => stageDecisions[stage.id]).length;
   const mismatchCount = Object.values(stageDecisions).filter((value) => value === "mismatch").length;

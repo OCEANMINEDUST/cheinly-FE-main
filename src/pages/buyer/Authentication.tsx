@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, Search, ShieldAlert, ZoomIn } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, Search, ShieldAlert, ZoomIn } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Button } from "@/components/ui/button";
@@ -24,17 +24,22 @@ const BuyerAuthentication = () => {
   const baseQuery = new URLSearchParams({ productId, orderId: order.id, entry: "secure-checkout", mode, provider }).toString();
   const [confirmationCode, setConfirmationCode] = useState("");
   const [activeImage, setActiveImage] = useState<{ image: string; title: string } | null>(null);
-  const [stageDecisions, setStageDecisions] = useState<Record<string, StageDecision>>(() =>
-    Object.fromEntries(order.deliveryStages.map((stage, index) => [stage.id, index < 2 ? "match" : "mismatch"])) as Record<string, StageDecision>,
-  );
+  const [stageDecisions, setStageDecisions] = useState<Partial<Record<string, StageDecision>>>({});
 
+  const reviewedCount = order.deliveryStages.filter((stage) => stageDecisions[stage.id]).length;
   const mismatchCount = Object.values(stageDecisions).filter((value) => value === "mismatch").length;
   const hasMismatch = mismatchCount > 0;
-  const canHold = isDeliveryCodeValid(order, confirmationCode) && hasMismatch;
+  const allStagesReviewed = reviewedCount === order.deliveryStages.length;
+  const canHold = isDeliveryCodeValid(order, confirmationCode) && allStagesReviewed && hasMismatch;
 
   const handleEscalate = () => {
     if (!isDeliveryCodeValid(order, confirmationCode)) {
       toast.error("Enter the correct delivery code to lock rider payment.");
+      return;
+    }
+
+    if (!allStagesReviewed) {
+      toast.error("Review all four stages before escalating this order.");
       return;
     }
 
@@ -60,15 +65,23 @@ const BuyerAuthentication = () => {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Mismatch identified</AlertTitle>
             <AlertDescription>
-              At least one stage appears inconsistent. Escalate the dispute and keep escrow locked until the issue is resolved.
+              {mismatchCount} of {order.deliveryStages.length} stages were flagged as inconsistent. Escalate the dispute and keep escrow locked until the issue is resolved.
+            </AlertDescription>
+          </Alert>
+        ) : allStagesReviewed ? (
+          <Alert className="border-success/20 bg-success/5 [&>svg]:text-success">
+            <CheckCircle2 className="h-4 w-4" />
+            <AlertTitle>All four stages match</AlertTitle>
+            <AlertDescription>
+              The packaging and delivery lifecycle looks consistent. You can return to delivery confirmation to release funds safely.
             </AlertDescription>
           </Alert>
         ) : (
           <Alert className="border-success/20 bg-success/5 [&>svg]:text-success">
             <ShieldAlert className="h-4 w-4" />
-            <AlertTitle>All stages currently align</AlertTitle>
+            <AlertTitle>Authentication review in progress</AlertTitle>
             <AlertDescription>
-              Mark each stage as a match or mismatch. Funds remain locked until all four stages are reviewed.
+              Mark each stage as a match or mismatch. Escrow remains locked until all four stages are reviewed.
             </AlertDescription>
           </Alert>
         )}
@@ -96,7 +109,16 @@ const BuyerAuthentication = () => {
                         <img src={stage.image} alt={`${stage.title} product evidence`} className="h-full w-full object-cover" loading="lazy" />
                       </div>
 
-                      <p className="text-sm text-muted-foreground">{stage.note}</p>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">{stage.note}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {decision
+                            ? decision === "match"
+                              ? "Marked as visually consistent with the expected product state."
+                              : "Flagged as inconsistent and included in mismatch detection."
+                            : "Select Match or Mismatch to complete this verification stage."}
+                        </p>
+                      </div>
 
                       <div className="grid grid-cols-2 gap-3">
                         {(["match", "mismatch"] as StageDecision[]).map((option) => (
@@ -109,7 +131,7 @@ const BuyerAuthentication = () => {
                                 ? option === "match"
                                   ? "border-success/40 bg-success/10 text-success"
                                   : "border-destructive/40 bg-destructive/10 text-destructive"
-                                : "border-border bg-card text-muted-foreground hover:text-foreground",
+                                : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground",
                             )}
                           >
                             {option === "match" ? "Match" : "Mismatch"}
@@ -132,10 +154,21 @@ const BuyerAuthentication = () => {
                 </div>
 
                 <div className="rounded-lg border border-border bg-secondary/40 p-4 text-sm space-y-3">
-                  <SummaryRow label="Stages reviewed" value={`${order.deliveryStages.length}/4`} />
-                  <SummaryRow label="Matches" value={String(order.deliveryStages.length - mismatchCount)} />
+                  <SummaryRow label="Stages reviewed" value={`${reviewedCount}/${order.deliveryStages.length}`} tone={!allStagesReviewed ? "warning" : undefined} />
+                  <SummaryRow label="Matches" value={String(reviewedCount - mismatchCount)} />
                   <SummaryRow label="Mismatches" value={String(mismatchCount)} tone={hasMismatch ? "danger" : undefined} />
                   <SummaryRow label="Escrow" value="Locked until verification completes" stacked />
+                </div>
+
+                <div className="rounded-lg border border-border bg-card p-4 text-sm space-y-3">
+                  <SummaryRow label="Seller stages" value={String(order.deliveryStages.slice(0, 2).filter((stage) => stageDecisions[stage.id] === "match").length)} />
+                  <SummaryRow label="Buyer stages" value={String(order.deliveryStages.slice(2).filter((stage) => stageDecisions[stage.id] === "match").length)} />
+                  <SummaryRow
+                    label="System status"
+                    value={hasMismatch ? "Inconsistency detected" : allStagesReviewed ? "Lifecycle aligned" : "Awaiting review"}
+                    stacked
+                    tone={hasMismatch ? "danger" : allStagesReviewed ? undefined : "warning"}
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -154,6 +187,9 @@ const BuyerAuthentication = () => {
                 <div className="space-y-3">
                   <Button onClick={handleEscalate} disabled={!canHold} className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60">
                     <ShieldAlert className="h-4 w-4" /> Hold Rider Payment & Report Issue
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate(`/buyer/confirm-delivery?${baseQuery}`)} className="w-full border-border bg-card hover:bg-secondary">
+                    Return to delivery confirmation
                   </Button>
                   <Button variant="outline" onClick={() => navigate(`/buyer/dispute?${baseQuery}`)} className="w-full border-border bg-card hover:bg-secondary">
                     Escalate Dispute
@@ -182,10 +218,10 @@ const BuyerAuthentication = () => {
   );
 };
 
-const SummaryRow = ({ label, value, stacked = false, tone }: { label: string; value: string; stacked?: boolean; tone?: "danger" }) => (
+const SummaryRow = ({ label, value, stacked = false, tone }: { label: string; value: string; stacked?: boolean; tone?: "danger" | "warning" }) => (
   <div className={stacked ? "space-y-1" : "flex items-start justify-between gap-3"}>
     <span className="text-muted-foreground">{label}</span>
-    <span className={cn("font-medium text-right text-foreground", tone === "danger" && "text-destructive")}>{value}</span>
+    <span className={cn("font-medium text-right text-foreground", tone === "danger" && "text-destructive", tone === "warning" && "text-primary")}>{value}</span>
   </div>
 );
 

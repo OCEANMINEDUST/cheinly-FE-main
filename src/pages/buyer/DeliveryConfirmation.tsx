@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, CheckCircle2, CircleAlert, ImagePlus, ShieldCheck, Upload } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, CircleAlert, ImagePlus, Search, ShieldCheck, Upload, ZoomIn } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { formatNaira } from "@/lib/buyerMock";
 import { confirmBuyerOrderDelivery, getBuyerOrderById, getOrderGrandTotal, isDeliveryCodeValid } from "@/lib/orderMock";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const BuyerDeliveryConfirmation = () => {
   const [deliveryMatchConfirmed, setDeliveryMatchConfirmed] = useState(false);
   const [uploadedProof, setUploadedProof] = useState<string | null>(null);
   const [mismatchDetected, setMismatchDetected] = useState(false);
+  const [activeImage, setActiveImage] = useState<{ image: string; title: string; description: string } | null>(null);
 
   const baseQuery = new URLSearchParams({ productId, orderId: order.id, entry: "secure-checkout", mode, provider }).toString();
   const amountHeld = getOrderGrandTotal(order);
@@ -121,6 +123,7 @@ const BuyerDeliveryConfirmation = () => {
                     image={order.deliveryStages[0]?.image ?? order.items[0]?.image}
                     alt={`${order.items[0]?.name} before shipment`}
                     footer="Reference image locked by seller"
+                    onZoom={(image) => setActiveImage({ image, title: "Seller shipment photo", description: "Original reference photo captured before the parcel left the seller." })}
                   />
 
                   <PhotoPanel
@@ -129,6 +132,7 @@ const BuyerDeliveryConfirmation = () => {
                     image={uploadedProof}
                     alt="Buyer uploaded delivery proof"
                     footer={uploadedProof ? "Delivery proof ready for review" : "Upload a clear photo of the received item"}
+                    onZoom={(image) => setActiveImage({ image, title: "Buyer delivery proof", description: "Inspect the uploaded delivery evidence before you confirm fund release." })}
                     emptyState={
                       <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-secondary/20 p-6 text-center transition-colors hover:border-primary/40 hover:bg-secondary/35">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -224,6 +228,22 @@ const BuyerDeliveryConfirmation = () => {
       </main>
 
       <BuyerFooter variant="dashboard" />
+
+      <Dialog open={Boolean(activeImage)} onOpenChange={(open) => !open && setActiveImage(null)}>
+        <DialogContent className="max-w-5xl overflow-hidden p-0">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle className="flex items-center gap-2"><Search className="h-4 w-4 text-primary" /> {activeImage?.title}</DialogTitle>
+            <DialogDescription>{activeImage?.description}</DialogDescription>
+          </DialogHeader>
+          <div className="px-6 pb-6">
+            {activeImage ? (
+              <div className="overflow-hidden rounded-lg border border-border bg-secondary/20">
+                <img src={activeImage.image} alt={activeImage.title} className="max-h-[75vh] w-full object-contain" />
+              </div>
+            ) : null}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -235,6 +255,7 @@ const PhotoPanel = ({
   alt,
   footer,
   emptyState,
+  onZoom,
 }: {
   title: string;
   description: string;
@@ -242,11 +263,24 @@ const PhotoPanel = ({
   alt: string;
   footer: string;
   emptyState?: React.ReactNode;
+  onZoom?: (image: string) => void;
 }) => (
   <div className="space-y-3 rounded-lg border border-border bg-card p-4">
-    <div>
-      <p className="font-medium text-foreground">{title}</p>
-      <p className="text-xs text-muted-foreground">{description}</p>
+    <div className="flex items-start justify-between gap-3">
+      <div>
+        <p className="font-medium text-foreground">{title}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      {image && onZoom ? (
+        <button
+          type="button"
+          onClick={() => onZoom(image)}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+          aria-label={`Zoom ${title}`}
+        >
+          <ZoomIn className="h-4 w-4" />
+        </button>
+      ) : null}
     </div>
     <div className="aspect-[4/3] overflow-hidden rounded-lg border border-border bg-secondary/30">
       {image ? <img src={image} alt={alt} className="h-full w-full object-cover" loading="lazy" /> : emptyState}

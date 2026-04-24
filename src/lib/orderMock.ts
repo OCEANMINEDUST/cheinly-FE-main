@@ -319,3 +319,268 @@ export const orderStatusLabel: Record<BuyerOrderStatus, string> = {
   completed: "Completed",
   cancelled: "Cancelled",
 };
+
+// ---------------------------------------------------------------------------
+// Multi-item dispute / negotiation / refund / return mocks
+// ---------------------------------------------------------------------------
+
+export type ItemVerificationStatus = "verified" | "disputed" | "pending";
+
+export interface MultiItemVerificationEntry {
+  id: string;
+  name: string;
+  variant: string;
+  unitPrice: number;
+  quantity: number;
+  listingImage: string;
+  proofImage: string;
+  mismatchReason: string;
+  status: ItemVerificationStatus;
+}
+
+export const multiItemVerification: MultiItemVerificationEntry[] = [
+  {
+    id: "aj1",
+    name: "Air Jordan 1 Retro High OG",
+    variant: "Size 44 • Chicago colorway",
+    unitPrice: 185000,
+    quantity: 1,
+    listingImage: mockProduct.image,
+    proofImage: mockProduct.image,
+    mismatchReason: "Casual canvas shoe delivered instead of the high-top sneaker.",
+    status: "disputed",
+  },
+  {
+    id: "hoodie",
+    name: "Essential Oversized Hoodie",
+    variant: "Size L • Listed: Phantom Black",
+    unitPrice: 38000,
+    quantity: 1,
+    listingImage: mockProduct.image,
+    proofImage: mockProduct.image,
+    mismatchReason: "Color mismatch — teal hoodie delivered instead of black.",
+    status: "disputed",
+  },
+  {
+    id: "stickers",
+    name: "Supreme Sticker Pack",
+    variant: "Limited drop • 12 designs",
+    unitPrice: 12500,
+    quantity: 1,
+    listingImage: mockProduct.image,
+    proofImage: mockProduct.image,
+    mismatchReason: "Sticker designs differ from the listing artwork.",
+    status: "disputed",
+  },
+];
+
+export const reportIssueTypes = [
+  { id: "damaged", label: "Damaged Product", hint: "Item arrived broken, scratched, or non-functional." },
+  { id: "wrong-item", label: "Wrong Item", hint: "The product doesn't match what was ordered." },
+  { id: "incomplete", label: "Incomplete Order", hint: "One or more items from the order are missing." },
+  { id: "counterfeit", label: "Counterfeit / Not as Described", hint: "Quality or authenticity does not match the listing." },
+  { id: "late", label: "Late or Failed Delivery", hint: "Package never arrived or arrived past the agreed window." },
+  { id: "other", label: "Other Issue", hint: "Describe the issue in your own words below." },
+] as const;
+
+export interface NegotiationCase {
+  id: string;
+  itemName: string;
+  itemVariant: string;
+  itemImage: string;
+  buyerReason: string;
+  buyerEvidence: string[];
+  originalPrice: number;
+  sellerOffer: number;
+  sellerName: string;
+  sellerInitials: string;
+  messages: Array<{ id: string; sender: "buyer" | "seller"; name: string; body: string; time: string }>;
+}
+
+export const negotiationCase: NegotiationCase = {
+  id: "8291",
+  itemName: "Essential Oversized Hoodie",
+  itemVariant: "Teal • Size L",
+  itemImage: mockProduct.image,
+  buyerReason: "Loose thread along the cuff and visible discoloration on the sleeve seam.",
+  buyerEvidence: ["Photo of cuff thread", "Photo of sleeve discoloration"],
+  originalPrice: 38000,
+  sellerOffer: 12500,
+  sellerName: "Alex Smith",
+  sellerInitials: "AS",
+  messages: [
+    { id: "m1", sender: "buyer", name: "You", body: "The hoodie has a loose thread on the cuff and the sleeve seam looks discolored. I'd like a partial refund.", time: "10:42 AM" },
+    { id: "m2", sender: "seller", name: "Alex Smith", body: "Hi Goodness — sorry about that. I can offer ₦12,500 to cover a tailor's repair. The thread is fixable in minutes.", time: "10:46 AM" },
+    { id: "m3", sender: "buyer", name: "You", body: "Repair cost is fair, but the discoloration won't come out. Can we meet closer to ₦18,000?", time: "10:51 AM" },
+    { id: "m4", sender: "seller", name: "Alex Smith", body: "₦12,500 already covers a quality tailor in Lekki. Anything higher and I'd need it returned for inspection.", time: "10:54 AM" },
+  ],
+};
+
+export interface PartialRefundItem {
+  id: string;
+  name: string;
+  status: ItemVerificationStatus;
+  value: number;
+  variant: string;
+  image: string;
+}
+
+export interface PartialRefundCase {
+  orderId: string;
+  items: PartialRefundItem[];
+  disputedItemId: string;
+  advertisedImage: string;
+  receivedImage: string;
+  advertisedNotes: string[];
+  receivedNotes: string[];
+  suggestedRefund: number;
+  maxRefund: number;
+}
+
+export const partialRefundCase: PartialRefundCase = {
+  orderId: "ORD-12345",
+  items: [
+    { id: "bag", name: "Leather Messenger Bag", status: "verified", value: 60000, variant: "Tan • Single strap", image: mockProduct.image },
+    { id: "headphones", name: "Wireless Headphones", status: "disputed", value: 85000, variant: "Listed: Brushed Silver", image: mockProduct.image },
+    { id: "cable", name: "USB-C Braided Cable", status: "verified", value: 8500, variant: "1.5m • Space Grey", image: mockProduct.image },
+  ],
+  disputedItemId: "headphones",
+  advertisedImage: mockProduct.image,
+  receivedImage: mockProduct.image,
+  advertisedNotes: [
+    "Brushed silver finish with leather ear cushions",
+    "Listed as factory-sealed with original packaging",
+    "Advertised condition: brand new",
+  ],
+  receivedNotes: [
+    "Glossy black plastic shell — wrong colorway",
+    "Visible scuff on the right ear cup",
+    "Box shows tape residue and missing seal",
+  ],
+  suggestedRefund: 45000,
+  maxRefund: 85000,
+};
+
+export const partialRefundSuccess = {
+  caseId: "PR-9461-02",
+  itemName: "Ergonomic Office Chair",
+  disputedAmount: 145000,
+  releasedAmount: 205000,
+  requestedOn: "Oct 24, 2023",
+  expectedResolutionWindow: "48 – 72 hours",
+  timeline: [
+    { id: "sent", label: "Request Sent", description: "Partial refund details delivered to seller for review.", date: "Oct 24, 2023", state: "complete" as BuyerTimelineState },
+    { id: "review", label: "Seller Review", description: "Seller has 48 hours to accept, counter, or escalate.", date: "Pending", state: "current" as BuyerTimelineState },
+    { id: "resolution", label: "Resolution", description: "Disputed funds will be released or returned based on outcome.", date: "Pending", state: "upcoming" as BuyerTimelineState },
+  ],
+};
+
+export interface ReturnDispatchCase {
+  caseId: string;
+  pickupCode: string;
+  buyerName: string;
+  buyerAddress: string;
+  itemName: string;
+  itemVariant: string;
+  listingImage: string;
+  expectedItems: string[];
+  pickupWindow: string;
+}
+
+export const returnDispatchCase: ReturnDispatchCase = {
+  caseId: "RTN-7740-02",
+  pickupCode: "402915",
+  buyerName: mockBuyer.name,
+  buyerAddress: mockBuyer.address,
+  itemName: "Wireless Headphones",
+  itemVariant: "Brushed Silver • Sealed retail box",
+  listingImage: mockProduct.image,
+  expectedItems: [
+    "Headphones unit (silver)",
+    "Original retail box with seal",
+    "USB-C charging cable",
+    "Soft carry pouch",
+  ],
+  pickupWindow: "Today • 14:00 – 16:00",
+};
+
+export interface RiderPayoutCase {
+  riderName: string;
+  riderInitials: string;
+  deliveryId: string;
+  pickupImage: string;
+  deliveryImage: string;
+  payoutAmount: number;
+  tips: number;
+  bonus: number;
+  releasedAt: string;
+  customerName: string;
+  customerAddress: string;
+}
+
+export const riderPayoutCase: RiderPayoutCase = {
+  riderName: "David Lawson",
+  riderInitials: "DL",
+  deliveryId: "DLV-44128",
+  pickupImage: mockProduct.image,
+  deliveryImage: mockProduct.image,
+  payoutAmount: 22500,
+  tips: 1500,
+  bonus: 2000,
+  releasedAt: "Just now",
+  customerName: mockBuyer.name,
+  customerAddress: mockBuyer.address,
+};
+
+export interface WrongItemCase {
+  caseId: string;
+  expectedItem: string;
+  expectedImage: string;
+  receivedImage: string;
+  discrepancyScore: number;
+  riderName: string;
+  riderInitials: string;
+  riderMessage: string;
+  detectedAt: string;
+}
+
+export const wrongItemCase: WrongItemCase = {
+  caseId: "MW-8829-02",
+  expectedItem: "Premium Men's Sneakers — Phantom Black, Size 44",
+  expectedImage: mockProduct.image,
+  receivedImage: mockProduct.image,
+  discrepancyScore: 92,
+  riderName: "James Wilson",
+  riderInitials: "JW",
+  riderMessage: "Apologies — I picked up two parcels from the same hub and may have handed you the wrong one. The correct package is still on my bike.",
+  detectedAt: "Just now",
+};
+
+export interface RedeliveryCase {
+  caseId: string;
+  status: string;
+  riderName: string;
+  riderInitials: string;
+  distanceMiles: number;
+  etaMinutes: [number, number];
+  nextStop: string;
+  routeWaypoints: Array<{ label: string; detail: string; state: BuyerTimelineState }>;
+  escrowState: string;
+}
+
+export const redeliveryCase: RedeliveryCase = {
+  caseId: "MW-8829-02",
+  status: "Awaiting Redelivery",
+  riderName: "James Wilson",
+  riderInitials: "JW",
+  distanceMiles: 1.2,
+  etaMinutes: [8, 12],
+  nextStop: "Admiralty Way roundabout",
+  routeWaypoints: [
+    { label: "Wrong parcel reported", detail: "Buyer flagged the mismatch on handoff.", state: "complete" },
+    { label: "Correct parcel confirmed", detail: "Rider verified the right parcel from the hub.", state: "complete" },
+    { label: "Rider in transit", detail: "1.2 miles away • ETA 8 – 12 mins.", state: "current" },
+    { label: "Redelivery handoff", detail: "Buyer will re-verify before escrow unlocks.", state: "upcoming" },
+  ],
+  escrowState: "Frozen until correct items are confirmed at handoff.",
+};

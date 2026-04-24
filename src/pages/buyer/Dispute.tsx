@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, MessageSquareMore, ShieldAlert, Undo2 } from "lucide-react";
+import { ArrowLeft, MessageSquareMore, PackageX, RotateCcw, ShieldAlert, Undo2 } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,15 @@ const BuyerDispute = () => {
 
   const handleSubmit = () => {
     toast.success("Dispute report submitted. Funds remain locked until resolution.");
-    navigate(`/buyer/order?${baseQuery}`);
+    if (selectedOption === "talk") {
+      navigate(`/buyer/negotiation?${baseQuery}`);
+    } else if (selectedOption === "refund-partial") {
+      navigate(`/buyer/refund-partial?${baseQuery}`);
+    } else if (selectedOption === "refund-full") {
+      navigate(`/buyer/wrong-item?${baseQuery}`);
+    } else {
+      navigate(`/buyer/order?${baseQuery}`);
+    }
   };
 
   return (
@@ -121,6 +129,17 @@ const BuyerDispute = () => {
                   </div>
                 </div>
                 <Button onClick={handleSubmit} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Submit Report</Button>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardContent className="space-y-3 p-5 text-sm">
+                <div className="flex items-center gap-2 font-semibold text-foreground"><RotateCcw className="h-4 w-4 text-primary" /> Quick actions</div>
+                <div className="grid gap-2">
+                  <Button variant="outline" onClick={() => navigate(`/buyer/verify-items?${baseQuery}`)} className="justify-start border-border bg-card hover:bg-secondary">Re-check items</Button>
+                  <Button variant="outline" onClick={() => navigate(`/buyer/wrong-item?${baseQuery}`)} className="justify-start border-border bg-card hover:bg-secondary"><PackageX className="mr-2 h-4 w-4" /> Wrong package?</Button>
+                  <Button variant="outline" onClick={() => navigate(`/buyer/negotiation?${baseQuery}`)} className="justify-start border-border bg-card hover:bg-secondary"><MessageSquareMore className="mr-2 h-4 w-4" /> Open negotiation</Button>
+                </div>
               </CardContent>
             </Card>
           </aside>

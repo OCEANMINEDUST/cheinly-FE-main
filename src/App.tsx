@@ -30,6 +30,17 @@ import BuyerReturnDispatch from "./pages/buyer/ReturnDispatch";
 import BuyerRiderPayout from "./pages/buyer/RiderPayout";
 import BuyerWrongItem from "./pages/buyer/WrongItem";
 import BuyerRedelivery from "./pages/buyer/Redelivery";
+import RiderEntry from "./pages/rider/Entry";
+import RiderOnboarding from "./pages/rider/Onboarding";
+import RiderApproval from "./pages/rider/Approval";
+import RiderDashboard from "./pages/rider/Dashboard";
+import RiderHistory from "./pages/rider/History";
+import RiderProfile from "./pages/rider/Profile";
+import RiderOrderDetails from "./pages/rider/OrderDetails";
+import RiderEnRoute from "./pages/rider/EnRoute";
+import RiderDropoff from "./pages/rider/Dropoff";
+import RiderDeliveryComplete from "./pages/rider/DeliveryComplete";
+import { RiderRoute } from "./components/rider/RiderRoute";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +78,17 @@ const App = () => (
           <Route path="/buyer/rider-payout" element={<BuyerRiderPayout />} />
           <Route path="/buyer/wrong-item" element={<BuyerWrongItem />} />
           <Route path="/buyer/redelivery" element={<BuyerRedelivery />} />
+          {/* Rider flow */}
+          <Route path="/rider" element={<RiderEntry />} />
+          <Route path="/rider/onboarding" element={<RiderOnboarding />} />
+          <Route path="/rider/approval" element={<RiderApproval />} />
+          <Route path="/rider/dashboard" element={<RiderRoute><RiderDashboard /></RiderRoute>} />
+          <Route path="/rider/history" element={<RiderRoute><RiderHistory /></RiderRoute>} />
+          <Route path="/rider/profile" element={<RiderRoute><RiderProfile /></RiderRoute>} />
+          <Route path="/rider/order/:orderId" element={<RiderRoute><RiderOrderDetails /></RiderRoute>} />
+          <Route path="/rider/order/:orderId/enroute" element={<RiderRoute><RiderEnRoute /></RiderRoute>} />
+          <Route path="/rider/order/:orderId/dropoff" element={<RiderRoute><RiderDropoff /></RiderRoute>} />
+          <Route path="/rider/order/:orderId/complete" element={<RiderRoute><RiderDeliveryComplete /></RiderRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

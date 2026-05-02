@@ -51,6 +51,8 @@ const STORAGE_KEYS = {
   docs: "rider:documents",
   orders: "rider:orders",
   history: "rider:history",
+  offline: "rider:offline",
+  proofs: "rider:proofs",
 } as const;
 
 const defaultRider: RiderProfile = {
@@ -213,6 +215,21 @@ export const deliveredCount = () => getHistory().length;
 export const resetRiderDemo = () => {
   if (!isBrowser()) return;
   Object.values(STORAGE_KEYS).forEach((key) => window.localStorage.removeItem(key));
+};
+
+// Offline mode
+export const getOfflineMode = (): boolean => read<boolean>(STORAGE_KEYS.offline, false);
+export const setOfflineMode = (value: boolean) => write(STORAGE_KEYS.offline, value);
+
+// Per-order delivery proof photos
+export const getDeliveryProof = (orderId: string): string | undefined => {
+  const all = read<Record<string, string>>(STORAGE_KEYS.proofs, {});
+  return all[orderId];
+};
+export const saveDeliveryProof = (orderId: string, dataUrl: string) => {
+  const all = read<Record<string, string>>(STORAGE_KEYS.proofs, {});
+  all[orderId] = dataUrl;
+  write(STORAGE_KEYS.proofs, all);
 };
 
 export { STORAGE_KEYS as RIDER_STORAGE_KEYS };

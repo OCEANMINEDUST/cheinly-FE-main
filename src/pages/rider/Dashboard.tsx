@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, MapPin, Navigation, Star, TrendingUp } from "lucide-react";
+import { ChevronRight, MapPin, Navigation, Star, TrendingUp, WifiOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { RiderShell } from "@/components/rider/RiderShell";
 import { RiderTopBar } from "@/components/rider/RiderTopBar";
@@ -8,15 +8,17 @@ import { RiderBottomNav } from "@/components/rider/RiderBottomNav";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { availableOrders, acceptedOrders, deliveredCount, formatNaira, getRider, updateRider } from "@/lib/riderMock";
+import { availableOrders, acceptedOrders, deliveredCount, formatNaira, getOfflineMode, getRider, setOfflineMode, updateRider } from "@/lib/riderMock";
 import { cn } from "@/lib/utils";
 
 const RiderDashboard = () => {
   const navigate = useNavigate();
   const [rider, setRider] = useState(getRider());
+  const [offline, setOffline] = useState(getOfflineMode());
   const isOnline = rider.status === "online";
 
   const orders = useMemo(() => availableOrders(), []);
+  const queued = useMemo(() => acceptedOrders(), [offline]);
   const summary = useMemo(() => ({
     delivered: deliveredCount(),
     pending: acceptedOrders().filter((o) => o.status === "accepted").length,
@@ -26,6 +28,11 @@ const RiderDashboard = () => {
   const toggleOnline = (next: boolean) => {
     const updated = updateRider({ status: next ? "online" : "offline" });
     setRider(updated);
+  };
+
+  const toggleOffline = (next: boolean) => {
+    setOfflineMode(next);
+    setOffline(next);
   };
 
   return (
@@ -58,7 +65,51 @@ const RiderDashboard = () => {
           <MiniStat icon={TrendingUp} label="This week" value={formatNaira(rider.earningsWeek)} />
           <MiniStat icon={Star} label="Rating" value={`${rider.rating} • ${rider.trips} trips`} />
         </div>
+
+        <Card className="mt-3 border-0 shadow-card">
+          <CardContent className="flex items-center justify-between gap-3 p-3.5">
+            <div className="flex items-center gap-3">
+              <div className={cn("flex h-9 w-9 items-center justify-center rounded-full", offline ? "bg-gold/15 text-gold" : "bg-muted text-muted-foreground")}>
+                <WifiOff className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">Offline mode</p>
+                <p className="text-[11px] text-muted-foreground">{offline ? "Drop-offs queue locally" : "Live sync with Cheinly"}</p>
+              </div>
+            </div>
+            <Switch checked={offline} onCheckedChange={toggleOffline} />
+          </CardContent>
+        </Card>
       </section>
+
+      {offline && queued.length > 0 ? (
+        <section className="px-5 pt-2">
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-xl text-foreground">Queued drop-offs</h2>
+              <p className="text-xs text-muted-foreground">Complete them now — sync resumes when you're back online.</p>
+            </div>
+            <Badge variant="outline" className="border-gold/40 bg-gold/10 text-gold">{queued.length} queued</Badge>
+          </div>
+          <div className="space-y-3">
+            {queued.map((order) => (
+              <button
+                key={order.id}
+                onClick={() => navigate(`/rider/order/${order.id}/dropoff`)}
+                className="w-full rounded-xl border border-border bg-card p-4 text-left shadow-sm transition-colors hover:border-primary/40"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">{order.shortRef} • {order.recipientName}</p>
+                    <p className="truncate text-sm text-foreground">{order.destinationAddr}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* Available orders */}
       <section className="px-5 py-5">

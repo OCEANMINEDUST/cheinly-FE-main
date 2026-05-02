@@ -42,10 +42,8 @@ const RiderOnboarding = () => {
       toast.error("Upload your vehicle registration.");
       return;
     }
-    saveDocuments({ licenseFrontUrl: licenseFront, licenseBackUrl: licenseBack, registrationUrl: registration, submittedAt: new Date().toISOString() });
-    updateRider({ status: "pending" });
-    toast.success("Documents submitted for review.");
-    navigate("/rider/approval", { replace: true });
+    saveDocuments({ licenseFrontUrl: licenseFront, licenseBackUrl: licenseBack, registrationUrl: registration });
+    navigate("/rider/document-review");
   };
 
   return (
@@ -80,7 +78,7 @@ const RiderOnboarding = () => {
             <p className="text-sm text-muted-foreground">Upload your vehicle registration document. Make sure the plate number matches your profile.</p>
             <UploadTile label="Vehicle registration" caption="Full document, all four corners visible" value={registration} onChange={handlePick(setRegistration)} onClear={() => setRegistration(undefined)} />
             <Button onClick={submit} className="h-12 w-full rounded-xl text-base">
-              Submit for review <Check className="ml-2 h-4 w-4" />
+              Review & submit <Check className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
         )}

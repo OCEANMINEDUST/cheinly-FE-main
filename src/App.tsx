@@ -32,7 +32,9 @@ import BuyerWrongItem from "./pages/buyer/WrongItem";
 import BuyerRedelivery from "./pages/buyer/Redelivery";
 import RiderEntry from "./pages/rider/Entry";
 import RiderOnboarding from "./pages/rider/Onboarding";
+import RiderDocumentReview from "./pages/rider/DocumentReview";
 import RiderApproval from "./pages/rider/Approval";
+import RiderLogin from "./pages/rider/Login";
 import RiderDashboard from "./pages/rider/Dashboard";
 import RiderHistory from "./pages/rider/History";
 import RiderProfile from "./pages/rider/Profile";
@@ -80,7 +82,9 @@ const App = () => (
           <Route path="/buyer/redelivery" element={<BuyerRedelivery />} />
           {/* Rider flow */}
           <Route path="/rider" element={<RiderEntry />} />
+          <Route path="/rider/login" element={<RiderLogin />} />
           <Route path="/rider/onboarding" element={<RiderOnboarding />} />
+          <Route path="/rider/document-review" element={<RiderDocumentReview />} />
           <Route path="/rider/approval" element={<RiderApproval />} />
           <Route path="/rider/dashboard" element={<RiderRoute><RiderDashboard /></RiderRoute>} />
           <Route path="/rider/history" element={<RiderRoute><RiderHistory /></RiderRoute>} />

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircle2, Wallet } from "lucide-react";
+import { getReturnByOrder } from "@/lib/riderMock";
 import { motion } from "framer-motion";
 import { RiderShell } from "@/components/rider/RiderShell";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ const RiderDeliveryComplete = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const order = useMemo(() => getOrderById(orderId ?? null), [orderId]);
+  const ret = useMemo(() => (orderId ? getReturnByOrder(orderId) : undefined), [orderId]);
 
   return (
     <RiderShell>
@@ -40,6 +42,11 @@ const RiderDeliveryComplete = () => {
           <Button variant="outline" className="h-12 flex-1 rounded-xl" onClick={() => navigate("/rider/history")}>View history</Button>
           <Button className="h-12 flex-1 rounded-xl" onClick={() => navigate("/rider/dashboard")}>Find next order</Button>
         </div>
+        {ret && ret.status !== "completed" && order ? (
+          <Button variant="outline" className="h-11 w-full rounded-xl" onClick={() => navigate(`/rider/order/${order.id}/release-payment`)}>
+            Review escrow & release payment
+          </Button>
+        ) : null}
       </div>
     </RiderShell>
   );

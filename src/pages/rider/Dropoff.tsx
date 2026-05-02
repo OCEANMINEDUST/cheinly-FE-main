@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Camera, Lock, MessageCircle, Phone, ShieldCheck, WifiOff, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Camera, Lock, MessageCircle, Phone, ShieldCheck, WifiOff, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { RiderShell } from "@/components/rider/RiderShell";
 import { Button } from "@/components/ui/button";
@@ -175,6 +175,14 @@ const RiderDropoff = () => {
             <ShieldCheck className="mr-2 h-4 w-4" /> Complete delivery • {formatNaira(order.price)}
           </Button>
         </motion.div>
+
+        <Button
+          variant="outline"
+          className="h-11 w-full rounded-xl border-destructive/40 text-destructive hover:bg-destructive/5"
+          onClick={() => navigate(`/rider/order/${order.id}/report-issue`)}
+        >
+          <AlertTriangle className="mr-2 h-4 w-4" /> Report an issue
+        </Button>
       </div>
     </RiderShell>
   );

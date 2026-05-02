@@ -1,13 +1,45 @@
-import { Bike, FileText, Mail, Phone, ShieldCheck, Star, Wallet } from "lucide-react";
+import { Building2, ChevronRight, KeyRound, Lock, LogOut, ShieldCheck, Star, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { RiderShell } from "@/components/rider/RiderShell";
 import { RiderTopBar } from "@/components/rider/RiderTopBar";
 import { RiderBottomNav } from "@/components/rider/RiderBottomNav";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { formatNaira, getRider } from "@/lib/riderMock";
+import { Button } from "@/components/ui/button";
+import { getRider, resetRiderDemo } from "@/lib/riderMock";
+import { toast } from "sonner";
 
 const RiderProfile = () => {
   const rider = getRider();
+  const navigate = useNavigate();
+
+  const sections: { title: string; items: { icon: React.ComponentType<{ className?: string }>; label: string; sub?: string; to: string }[] }[] = [
+    {
+      title: "Personal Information",
+      items: [
+        { icon: User, label: "Profile details", sub: `${rider.name} • ${rider.email}`, to: "/rider/profile/personal" },
+      ],
+    },
+    {
+      title: "Bank Details",
+      items: [
+        { icon: Building2, label: "Payout account", sub: "Manage where earnings are sent", to: "/rider/profile/bank" },
+      ],
+    },
+    {
+      title: "Security",
+      items: [
+        { icon: Lock, label: "Change password", to: "/rider/profile/security?type=password" },
+        { icon: KeyRound, label: "Change PIN", to: "/rider/profile/security?type=pin" },
+      ],
+    },
+  ];
+
+  const signOut = () => {
+    resetRiderDemo();
+    toast.success("Signed out — demo reset.");
+    navigate("/rider", { replace: true });
+  };
+
   return (
     <RiderShell topBar={<RiderTopBar title="Profile" subtitle={`Rider ID • ${rider.id}`} />} bottomNav={<RiderBottomNav />}>
       <section className="space-y-5 px-5 py-5">
@@ -17,7 +49,7 @@ const RiderProfile = () => {
           </div>
           <div>
             <p className="font-display text-2xl text-foreground">{rider.name}</p>
-            <p className="text-xs text-muted-foreground">Joined {rider.joinedAt}</p>
+            <p className="text-xs text-muted-foreground">{rider.email}</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary"><ShieldCheck className="mr-1 h-3 w-3" /> Verified</Badge>
@@ -25,34 +57,36 @@ const RiderProfile = () => {
           </div>
         </div>
 
-        <div className="space-y-1 rounded-xl border border-border bg-card p-2">
-          <Row icon={Mail} label="Email" value={rider.email} />
-          <Separator />
-          <Row icon={Phone} label="Phone" value={rider.phone} />
-          <Separator />
-          <Row icon={Bike} label="Vehicle" value={`${rider.vehicle} • ${rider.plate}`} />
-        </div>
+        {sections.map((section) => (
+          <div key={section.title}>
+            <p className="mb-2 px-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{section.title}</p>
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
+              {section.items.map((item, idx) => (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.to)}
+                  className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors hover:bg-muted ${idx > 0 ? "border-t border-border" : ""}`}
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <item.icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                    {item.sub ? <p className="truncate text-xs text-muted-foreground">{item.sub}</p> : null}
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
 
-        <div className="space-y-1 rounded-xl border border-border bg-card p-2">
-          <Row icon={Wallet} label="This week's earnings" value={formatNaira(rider.earningsWeek)} />
-          <Separator />
-          <Row icon={FileText} label="Trips completed" value={`${rider.trips}`} />
-        </div>
+        <Button variant="outline" className="w-full" onClick={signOut}>
+          <LogOut className="mr-2 h-4 w-4" /> Sign out
+        </Button>
       </section>
     </RiderShell>
   );
 };
-
-const Row = ({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) => (
-  <div className="flex items-center justify-between gap-3 px-3 py-3">
-    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <Icon className="h-4 w-4" />
-      </div>
-      {label}
-    </div>
-    <span className="text-right text-sm font-medium text-foreground">{value}</span>
-  </div>
-);
 
 export default RiderProfile;

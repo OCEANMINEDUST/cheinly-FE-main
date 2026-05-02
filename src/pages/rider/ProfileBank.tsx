@@ -23,7 +23,7 @@ const RiderProfileBank = () => {
   const save = () => {
     const r = schema.safeParse(form);
     if (!r.success) return toast.error(r.error.errors[0].message);
-    saveBank(r.data);
+    saveBank(r.data as ReturnType<typeof getBank>);
     toast.success("Bank details updated.");
     navigate("/rider/profile");
   };

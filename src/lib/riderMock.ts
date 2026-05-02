@@ -53,6 +53,8 @@ const STORAGE_KEYS = {
   history: "rider:history",
   offline: "rider:offline",
   proofs: "rider:proofs",
+  returns: "rider:returns",
+  bank: "rider:bank",
 } as const;
 
 const defaultRider: RiderProfile = {
@@ -231,5 +233,53 @@ export const saveDeliveryProof = (orderId: string, dataUrl: string) => {
   all[orderId] = dataUrl;
   write(STORAGE_KEYS.proofs, all);
 };
+
+// Return requests
+export type ReturnReason =
+  | "wrong_item"
+  | "damaged_item"
+  | "missing_items"
+  | "recipient_unavailable"
+  | "address_issue";
+
+export interface ReturnRequest {
+  id: string;
+  orderId: string;
+  reason: ReturnReason;
+  notes: string;
+  imageUrl?: string;
+  status: "submitted" | "in_return" | "completed";
+  createdAt: string;
+}
+
+export const getReturns = (): ReturnRequest[] => read<ReturnRequest[]>(STORAGE_KEYS.returns, []);
+export const getReturnByOrder = (orderId: string): ReturnRequest | undefined =>
+  getReturns().find((r) => r.orderId === orderId);
+export const saveReturnRequest = (req: ReturnRequest) => {
+  const all = getReturns();
+  const idx = all.findIndex((r) => r.orderId === req.orderId);
+  if (idx >= 0) all[idx] = req;
+  else all.unshift(req);
+  write(STORAGE_KEYS.returns, all);
+};
+export const updateReturnStatus = (orderId: string, status: ReturnRequest["status"]) => {
+  const existing = getReturnByOrder(orderId);
+  if (!existing) return;
+  saveReturnRequest({ ...existing, status });
+};
+
+// Bank details
+export interface BankDetails {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+}
+const defaultBank: BankDetails = {
+  bankName: "Guaranty Trust Bank",
+  accountNumber: "0123456789",
+  accountName: "James Wilson",
+};
+export const getBank = (): BankDetails => read<BankDetails>(STORAGE_KEYS.bank, defaultBank);
+export const saveBank = (bank: BankDetails) => write(STORAGE_KEYS.bank, bank);
 
 export { STORAGE_KEYS as RIDER_STORAGE_KEYS };

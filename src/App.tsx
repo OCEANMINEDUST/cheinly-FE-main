@@ -51,6 +51,9 @@ import RiderProfilePersonal from "./pages/rider/ProfilePersonal";
 import RiderProfileBank from "./pages/rider/ProfileBank";
 import RiderProfileSecurity from "./pages/rider/ProfileSecurity";
 import { RiderRoute } from "./components/rider/RiderRoute";
+import SellerDashboard from "./pages/seller/Dashboard";
+import SellerDispatch from "./pages/seller/Dispatch";
+import SellerTracking from "./pages/seller/Tracking";
 
 const queryClient = new QueryClient();
 
@@ -109,6 +112,11 @@ const App = () => (
           <Route path="/rider/profile/personal" element={<RiderRoute><RiderProfilePersonal /></RiderRoute>} />
           <Route path="/rider/profile/bank" element={<RiderRoute><RiderProfileBank /></RiderRoute>} />
           <Route path="/rider/profile/security" element={<RiderRoute><RiderProfileSecurity /></RiderRoute>} />
+          {/* Seller flow */}
+          <Route path="/seller" element={<SellerDashboard />} />
+          <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="/seller/dispatch" element={<SellerDispatch />} />
+          <Route path="/seller/tracking" element={<SellerTracking />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -155,3 +155,24 @@ export function saveDispatchPhotos(orderId: string, photos: DispatchPhotos) {
   m[orderId] = { ...photos, savedAt: new Date().toISOString() };
   localStorage.setItem(DISPATCH_KEY, JSON.stringify(m));
 }
+
+const ACTIVE_KEY = "seller:activeOrderId";
+
+export function getActiveOrderId(): string {
+  return localStorage.getItem(ACTIVE_KEY) || recentOrders[0].id;
+}
+
+export function setActiveOrderId(id: string) {
+  localStorage.setItem(ACTIVE_KEY, id);
+}
+
+export function getOrderById(id: string): SellerOrder | undefined {
+  return recentOrders.find((o) => o.id === id);
+}
+
+export function getPhotoStatus(orderId: string): "complete" | "partial" | "missing" {
+  const p = getDispatchPhotos(orderId);
+  if (p.before && p.after) return "complete";
+  if (p.before || p.after) return "partial";
+  return "missing";
+}

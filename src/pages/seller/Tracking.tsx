@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Camera, Check, ImageOff, MapPin, Package, Phone, Star, Truck } from "lucide-react";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { OrderCompletedDialog, ReturnVerifiedDialog } from "@/components/seller/SettlementModals";
-import { DispatchPhotos, getDispatchPhotos } from "@/lib/sellerMock";
+import { DispatchPhotos, getActiveOrderId, getDispatchPhotos, getOrderById } from "@/lib/sellerMock";
 
 const steps = [
   { key: "accepted", label: "Order accepted", time: "10:02 AM", done: true },
@@ -16,23 +17,61 @@ const steps = [
 ];
 
 export default function SellerTracking() {
+  const [params] = useSearchParams();
+  const orderId = useMemo(() => params.get("orderId") || getActiveOrderId(), [params]);
+  const order = getOrderById(orderId);
   const [photos, setPhotos] = useState<DispatchPhotos>({ before: null, after: null });
-  useEffect(() => setPhotos(getDispatchPhotos("ORD-3082")), []);
+  useEffect(() => setPhotos(getDispatchPhotos(orderId)), [orderId]);
+
+  function scrollToEvidence() {
+    document.getElementById("dispatch-evidence")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <SellerShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Live tracking</h1>
-          <p className="text-sm text-muted-foreground">Order ORD-3082 • Tunde is en route to buyer</p>
+          <p className="text-sm text-muted-foreground">
+            Order {orderId}{order ? ` • ${order.buyer}` : ""} • Tunde is en route to buyer
+          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
+          {(photos.before || photos.after) && (
+            <button
+              type="button"
+              onClick={scrollToEvidence}
+              className="group flex items-center gap-1.5 rounded-md border bg-card p-1 pr-2 shadow-sm transition hover:border-primary/40"
+              aria-label="Jump to dispatch evidence"
+            >
+              {(["before", "after"] as const).map((k) => (
+                <div key={k} className="relative">
+                  {photos[k] ? (
+                    <img
+                      src={photos[k] as string}
+                      alt={`${k} packaging thumbnail`}
+                      className="h-9 w-9 rounded object-cover ring-1 ring-border"
+                    />
+                  ) : (
+                    <div className="grid h-9 w-9 place-items-center rounded bg-secondary text-muted-foreground">
+                      <ImageOff className="h-4 w-4" />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground">
+                Evidence
+              </span>
+            </button>
+          )}
+          <div className="flex gap-2">
           <OrderCompletedDialog>
             <Button variant="outline" size="sm">Mark completed</Button>
           </OrderCompletedDialog>
           <ReturnVerifiedDialog>
             <Button variant="outline" size="sm">Return verified</Button>
           </ReturnVerifiedDialog>
+          </div>
         </div>
       </div>
 
@@ -167,7 +206,7 @@ export default function SellerTracking() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card id="dispatch-evidence">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm">
                 <Camera className="h-4 w-4 text-primary" /> Dispatch evidence

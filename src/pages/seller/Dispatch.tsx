@@ -1,15 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { AlertCircle, Camera, CheckCircle2, ImagePlus, ShieldCheck, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AlertCircle, Camera, CheckCircle2, ImagePlus, RefreshCcw, ShieldCheck, Trash2 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ReviewAcceptDialog, DispatchScheduledDialog, RiderArrivedDialog } from "@/components/seller/OrderModals";
 import { toast } from "sonner";
-import { getDispatchPhotos, saveDispatchPhotos } from "@/lib/sellerMock";
-
-const ACTIVE_ORDER_ID = "ORD-3082";
+import {
+  getActiveOrderId,
+  getDispatchPhotos,
+  getOrderById,
+  saveDispatchPhotos,
+  setActiveOrderId,
+} from "@/lib/sellerMock";
 
 function UploadZone({
   label,
@@ -32,6 +36,7 @@ function UploadZone({
   }
 
   return (
+    <div className="space-y-2">
     <div
       onDragOver={(e) => {
         e.preventDefault();
@@ -59,6 +64,7 @@ function UploadZone({
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) readFile(f);
+          if (ref.current) ref.current.value = "";
         }}
       />
       {value ? (
@@ -69,16 +75,6 @@ function UploadZone({
             <span className="inline-flex items-center gap-1 text-sm">
               <CheckCircle2 className="h-4 w-4 text-success" /> Uploaded
             </span>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(null);
-              }}
-            >
-              <Trash2 className="mr-1 h-3 w-3" /> Replace
-            </Button>
           </div>
         </>
       ) : (
@@ -93,23 +89,50 @@ function UploadZone({
         </div>
       )}
     </div>
+      {value && (
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="flex-1"
+            onClick={() => ref.current?.click()}
+          >
+            <RefreshCcw className="mr-1.5 h-3.5 w-3.5" /> Retake
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="flex-1 text-destructive hover:text-destructive"
+            onClick={() => onChange(null)}
+          >
+            <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Remove
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 
 export default function SellerDispatch() {
+  const nav = useNavigate();
+  const [params] = useSearchParams();
+  const orderId = useMemo(() => params.get("orderId") || getActiveOrderId(), [params]);
+  const order = getOrderById(orderId);
   const [before, setBefore] = useState<string | null>(null);
   const [after, setAfter] = useState<string | null>(null);
-  const nav = useNavigate();
 
   useEffect(() => {
-    const p = getDispatchPhotos(ACTIVE_ORDER_ID);
+    setActiveOrderId(orderId);
+    const p = getDispatchPhotos(orderId);
     setBefore(p.before);
     setAfter(p.after);
-  }, []);
+  }, [orderId]);
 
   useEffect(() => {
-    saveDispatchPhotos(ACTIVE_ORDER_ID, { before, after });
-  }, [before, after]);
+    saveDispatchPhotos(orderId, { before, after });
+  }, [before, after, orderId]);
 
   const ready = before && after;
 
@@ -117,7 +140,9 @@ export default function SellerDispatch() {
     <SellerShell>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Prepare for dispatch</h1>
-        <p className="text-sm text-muted-foreground">Order ORD-3082 • Ifeoma A.</p>
+        <p className="text-sm text-muted-foreground">
+          Order {orderId}{order ? ` • ${order.buyer}` : ""}
+        </p>
       </div>
 
       <Alert className="border-primary/30 bg-primary/5 text-foreground">
@@ -171,7 +196,7 @@ export default function SellerDispatch() {
           disabled={!ready}
           onClick={() => {
             toast.success("Packaging confirmed — escrow protection active");
-            nav("/seller/tracking");
+            nav(`/seller/tracking?orderId=${orderId}`);
           }}
         >
           Confirm packaging

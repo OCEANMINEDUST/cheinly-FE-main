@@ -1,10 +1,12 @@
-import { Check, MapPin, Package, Phone, Star, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Camera, Check, ImageOff, MapPin, Package, Phone, Star, Truck } from "lucide-react";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { OrderCompletedDialog, ReturnVerifiedDialog } from "@/components/seller/SettlementModals";
+import { DispatchPhotos, getDispatchPhotos } from "@/lib/sellerMock";
 
 const steps = [
   { key: "accepted", label: "Order accepted", time: "10:02 AM", done: true },
@@ -14,6 +16,9 @@ const steps = [
 ];
 
 export default function SellerTracking() {
+  const [photos, setPhotos] = useState<DispatchPhotos>({ before: null, after: null });
+  useEffect(() => setPhotos(getDispatchPhotos("ORD-3082")), []);
+
   return (
     <SellerShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -159,6 +164,40 @@ export default function SellerTracking() {
                   <div className="font-semibold text-primary">Active</div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Camera className="h-4 w-4 text-primary" /> Dispatch evidence
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {(["before", "after"] as const).map((k) => {
+                  const src = photos[k];
+                  return (
+                    <div key={k} className="space-y-1">
+                      <div className="text-xs font-medium capitalize text-muted-foreground">{k} packaging</div>
+                      <div className="relative aspect-square overflow-hidden rounded-md border bg-secondary/40">
+                        {src ? (
+                          <img src={src} alt={`${k} packaging`} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="grid h-full place-items-center text-muted-foreground">
+                            <ImageOff className="h-5 w-5" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {!photos.before && !photos.after && (
+                <div className="mt-3 text-xs text-muted-foreground">
+                  No photos uploaded yet. Add them on the dispatch screen.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

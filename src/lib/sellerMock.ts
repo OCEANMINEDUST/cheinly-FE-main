@@ -127,3 +127,31 @@ export function statusVariant(s: OrderStatus): { label: string; cls: string } {
       return { label: "Returned", cls: "bg-destructive/15 text-destructive border-destructive/30" };
   }
 }
+
+// ---------- Dispatch photo persistence ----------
+export interface DispatchPhotos {
+  before: string | null;
+  after: string | null;
+  savedAt?: string;
+}
+
+const DISPATCH_KEY = "seller:dispatchPhotos";
+
+function readMap(): Record<string, DispatchPhotos> {
+  try {
+    return JSON.parse(localStorage.getItem(DISPATCH_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+export function getDispatchPhotos(orderId: string): DispatchPhotos {
+  const m = readMap();
+  return m[orderId] || { before: null, after: null };
+}
+
+export function saveDispatchPhotos(orderId: string, photos: DispatchPhotos) {
+  const m = readMap();
+  m[orderId] = { ...photos, savedAt: new Date().toISOString() };
+  localStorage.setItem(DISPATCH_KEY, JSON.stringify(m));
+}

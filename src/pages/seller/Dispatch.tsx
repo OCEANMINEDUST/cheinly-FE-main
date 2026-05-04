@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertCircle, Camera, CheckCircle2, ImagePlus, ShieldCheck, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SellerShell } from "@/components/seller/SellerShell";
@@ -7,6 +7,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ReviewAcceptDialog, DispatchScheduledDialog, RiderArrivedDialog } from "@/components/seller/OrderModals";
 import { toast } from "sonner";
+import { getDispatchPhotos, saveDispatchPhotos } from "@/lib/sellerMock";
+
+const ACTIVE_ORDER_ID = "ORD-3082";
 
 function UploadZone({
   label,
@@ -97,6 +100,16 @@ export default function SellerDispatch() {
   const [before, setBefore] = useState<string | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const nav = useNavigate();
+
+  useEffect(() => {
+    const p = getDispatchPhotos(ACTIVE_ORDER_ID);
+    setBefore(p.before);
+    setAfter(p.after);
+  }, []);
+
+  useEffect(() => {
+    saveDispatchPhotos(ACTIVE_ORDER_ID, { before, after });
+  }, [before, after]);
 
   const ready = before && after;
 

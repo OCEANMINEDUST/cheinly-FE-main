@@ -54,6 +54,8 @@ import { RiderRoute } from "./components/rider/RiderRoute";
 import SellerDashboard from "./pages/seller/Dashboard";
 import SellerDispatch from "./pages/seller/Dispatch";
 import SellerTracking from "./pages/seller/Tracking";
+import SellerOrders from "./pages/seller/Orders";
+import SellerTransactions from "./pages/seller/Transactions";
 
 const queryClient = new QueryClient();
 
@@ -117,6 +119,8 @@ const App = () => (
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
           <Route path="/seller/dispatch" element={<SellerDispatch />} />
           <Route path="/seller/tracking" element={<SellerTracking />} />
+          <Route path="/seller/orders" element={<SellerOrders />} />
+          <Route path="/seller/transactions" element={<SellerTransactions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

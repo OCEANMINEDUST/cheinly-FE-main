@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Filter, Package, Search, Truck } from "lucide-react";
+import { ArrowUpRight, Camera, CheckCircle2, Filter, ImageOff, Package, Search, Truck } from "lucide-react";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { OrderStatus, naira, recentOrders, statusVariant } from "@/lib/sellerMock";
+import { OrderStatus, getPhotoStatus, naira, recentOrders, setActiveOrderId, statusVariant } from "@/lib/sellerMock";
+
+function PhotoBadge({ orderId }: { orderId: string }) {
+  const s = getPhotoStatus(orderId);
+  if (s === "complete") {
+    return (
+      <Badge variant="outline" className="bg-success/15 text-success border-success/30 gap-1">
+        <CheckCircle2 className="h-3 w-3" /> Photos
+      </Badge>
+    );
+  }
+  if (s === "partial") {
+    return (
+      <Badge variant="outline" className="bg-gold/15 text-gold border-gold/30 gap-1">
+        <Camera className="h-3 w-3" /> 1 of 2
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="outline" className="bg-muted text-muted-foreground gap-1">
+      <ImageOff className="h-3 w-3" /> No photos
+    </Badge>
+  );
+}
 
 export default function SellerOrders() {
   const [q, setQ] = useState("");
@@ -133,20 +156,25 @@ export default function SellerOrders() {
                       {o.address}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={v.cls}>{v.label}</Badge>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Badge variant="outline" className={v.cls}>{v.label}</Badge>
+                        <PhotoBadge orderId={o.id} />
+                      </div>
                     </TableCell>
                     <TableCell className="text-right font-medium">{naira(o.amount)}</TableCell>
                     <TableCell className="pr-6 text-right">
                       {o.status === "pending" ? (
-                        <Button asChild size="sm">
-                          <Link to="/seller/dispatch">Dispatch <ArrowUpRight className="ml-1 h-3 w-3" /></Link>
+                        <Button asChild size="sm" onClick={() => setActiveOrderId(o.id)}>
+                          <Link to={`/seller/dispatch?orderId=${o.id}`}>Dispatch <ArrowUpRight className="ml-1 h-3 w-3" /></Link>
                         </Button>
                       ) : o.status === "in_transit" ? (
-                        <Button asChild variant="outline" size="sm">
-                          <Link to="/seller/tracking">Track</Link>
+                        <Button asChild variant="outline" size="sm" onClick={() => setActiveOrderId(o.id)}>
+                          <Link to={`/seller/tracking?orderId=${o.id}`}>Track</Link>
                         </Button>
                       ) : (
-                        <Button variant="ghost" size="sm">View</Button>
+                        <Button asChild variant="ghost" size="sm" onClick={() => setActiveOrderId(o.id)}>
+                          <Link to={`/seller/dispatch?orderId=${o.id}`}>View</Link>
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>

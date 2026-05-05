@@ -56,6 +56,9 @@ import SellerDispatch from "./pages/seller/Dispatch";
 import SellerTracking from "./pages/seller/Tracking";
 import SellerOrders from "./pages/seller/Orders";
 import SellerTransactions from "./pages/seller/Transactions";
+import SellerDispute from "./pages/seller/Dispute";
+import SellerNegotiate from "./pages/seller/Negotiate";
+import SellerEscalate from "./pages/seller/Escalate";
 
 const queryClient = new QueryClient();
 
@@ -121,6 +124,9 @@ const App = () => (
           <Route path="/seller/tracking" element={<SellerTracking />} />
           <Route path="/seller/orders" element={<SellerOrders />} />
           <Route path="/seller/transactions" element={<SellerTransactions />} />
+          <Route path="/seller/dispute" element={<SellerDispute />} />
+          <Route path="/seller/negotiate" element={<SellerNegotiate />} />
+          <Route path="/seller/escalate" element={<SellerEscalate />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,10 +1,22 @@
-import { ArrowUpRight, Lock, Wallet, ShieldCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { ArrowUpRight, Lock, Wallet, ShieldCheck, Plus, AlertTriangle, Scale } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -24,6 +36,11 @@ import {
 } from "@/lib/sellerMock";
 
 export default function SellerDashboard() {
+  const nav = useNavigate();
+  const [fundOpen, setFundOpen] = useState(false);
+  const [sendOpen, setSendOpen] = useState(false);
+  const [amount, setAmount] = useState("");
+
   return (
     <SellerShell>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -31,9 +48,14 @@ export default function SellerDashboard() {
           <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome back, Adunni</h1>
           <p className="text-sm text-muted-foreground">Here's how {sellerProfile.store} is performing today.</p>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/seller/orders">View all orders<ArrowUpRight className="ml-1 h-4 w-4" /></Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link to="/seller/orders">View all orders<ArrowUpRight className="ml-1 h-4 w-4" /></Link>
+          </Button>
+          <Button size="sm" className="bg-gold-gradient text-gold-foreground hover:opacity-90" onClick={() => setSendOpen(true)}>
+            <Plus className="mr-1 h-4 w-4" /> Send a Package
+          </Button>
+        </div>
       </div>
 
       {/* Balance cards */}
@@ -51,7 +73,9 @@ export default function SellerDashboard() {
           </CardHeader>
           <CardContent className="relative z-10 flex items-center justify-between text-sm text-white/80">
             <span className="inline-flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Held in escrow</span>
-            <span>14 active orders</span>
+            <Button size="sm" variant="secondary" className="bg-white/15 text-white hover:bg-white/25" onClick={() => setFundOpen(true)}>
+              <Plus className="mr-1 h-3.5 w-3.5" /> Fund Wallet
+            </Button>
           </CardContent>
         </Card>
 
@@ -203,6 +227,92 @@ export default function SellerDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Resolution shortcuts */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Card className="group cursor-pointer transition hover:shadow-card" onClick={() => nav("/seller/dispute")}>
+          <CardHeader className="flex-row items-center gap-3 space-y-0">
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-destructive/15 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Open dispute</CardTitle>
+              <CardDescription>Review buyer evidence & respond</CardDescription>
+            </div>
+            <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5" />
+          </CardHeader>
+        </Card>
+        <Card className="group cursor-pointer transition hover:shadow-card" onClick={() => nav("/seller/negotiate")}>
+          <CardHeader className="flex-row items-center gap-3 space-y-0">
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/15 text-primary">
+              <Scale className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Negotiate refund</CardTitle>
+              <CardDescription>Counter-offer or escalate</CardDescription>
+            </div>
+            <ArrowUpRight className="ml-auto h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5" />
+          </CardHeader>
+        </Card>
+      </div>
+
+      {/* Fund Wallet modal */}
+      <Dialog open={fundOpen} onOpenChange={setFundOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Fund Protected Balance</DialogTitle>
+            <DialogDescription>Top up your escrow float used to settle disputes faster.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Label htmlFor="amount">Amount (₦)</Label>
+            <Input id="amount" inputMode="numeric" placeholder="50,000" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9,]/g, ""))} />
+            <div className="flex gap-2">
+              {[10000, 50000, 100000].map((v) => (
+                <Button key={v} variant="outline" size="sm" onClick={() => setAmount(v.toLocaleString())}>+{naira(v)}</Button>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setFundOpen(false)}>Cancel</Button>
+            <Button
+              className="bg-gold-gradient text-gold-foreground hover:opacity-90"
+              onClick={() => {
+                setFundOpen(false);
+                toast({ title: "Wallet funded", description: `${amount ? "₦" + amount : "Amount"} added to Protected Balance.` });
+                setAmount("");
+              }}
+            >
+              Confirm deposit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Send Package modal */}
+      <Dialog open={sendOpen} onOpenChange={setSendOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send a Package</DialogTitle>
+            <DialogDescription>Start a new dispatch — we'll match a verified rider in minutes.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3">
+            <div>
+              <Label htmlFor="recipient">Recipient name</Label>
+              <Input id="recipient" placeholder="e.g. Ifeoma A." />
+            </div>
+            <div>
+              <Label htmlFor="addr">Drop-off address</Label>
+              <Input id="addr" placeholder="12 Bourdillon Rd, Ikoyi" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSendOpen(false)}>Cancel</Button>
+            <Button onClick={() => { setSendOpen(false); nav("/seller/dispatch"); }}>
+              Continue to dispatch
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SellerShell>
   );
 }

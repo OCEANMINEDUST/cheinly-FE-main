@@ -176,3 +176,40 @@ export function getPhotoStatus(orderId: string): "complete" | "partial" | "missi
   if (p.before || p.after) return "partial";
   return "missing";
 }
+// ---------- Dispute / negotiation mock ----------
+export interface DisputeStage {
+  id: 1 | 2 | 3 | 4;
+  label: string;
+  caption: string;
+}
+
+export const disputeStages: DisputeStage[] = [
+  { id: 1, label: "Before Packaging", caption: "Item condition at studio" },
+  { id: 2, label: "After Packaging", caption: "Sealed parcel at handover" },
+  { id: 3, label: "Upon Arrival", caption: "Rider drop-off photo" },
+  { id: 4, label: "Upon Opening", caption: "Buyer unboxing evidence" },
+];
+
+export const disputeOrder = {
+  id: "ORD-3078",
+  product: "Adire Silk Scarf",
+  variant: "Indigo • One size",
+  amount: 9500,
+  paidOn: "2026-04-29",
+  buyer: "Kemi R.",
+  issue: "Item arrived with visible tear along the hem.",
+};
+
+export interface ChatMessage {
+  id: string;
+  from: "buyer" | "seller" | "system";
+  text: string;
+  time: string;
+  tone?: "info" | "success" | "warn";
+}
+
+export const initialChat: ChatMessage[] = [
+  { id: "m1", from: "system", text: "PARTIAL REFUND REQUEST INITIATED", time: "10:02", tone: "info" },
+  { id: "m2", from: "buyer", text: "Hi — the scarf arrived torn at the hem. Can I get a partial refund of ₦4,500?", time: "10:04" },
+  { id: "m3", from: "system", text: "Buyer requested ₦4,500 refund", time: "10:04", tone: "warn" },
+];

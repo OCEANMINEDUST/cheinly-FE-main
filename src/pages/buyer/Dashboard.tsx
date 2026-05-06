@@ -121,6 +121,14 @@ const BuyerDashboard = () => {
         <div>
           <h1 className="font-display text-4xl text-foreground">Welcome to Cheinly, {mockBuyer.name},</h1>
           <p className="text-muted-foreground text-sm mt-1">Your secure marketplace account is ready.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={() => navigate("/buyer/invite-seller")}>
+              <Send className="mr-1.5 h-3.5 w-3.5" /> Invite a seller
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <a href="/help">Help Centre</a>
+            </Button>
+          </div>
         </div>
 
         {/* Stats grid */}

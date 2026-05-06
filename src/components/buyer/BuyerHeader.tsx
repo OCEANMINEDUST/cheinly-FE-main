@@ -1,8 +1,9 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Bell, Lock, Search } from "lucide-react";
+import { Lock } from "lucide-react";
 import logo from "@/assets/cheinly-logo.jpeg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
+import { HeaderActions } from "@/components/shared/HeaderActions";
 
 interface BuyerHeaderProps {
   variant?: "checkout" | "dashboard";
@@ -48,18 +49,7 @@ export const BuyerHeader = ({ variant = "checkout" }: BuyerHeaderProps) => {
 
         <div className="flex items-center gap-3">
           {isDashboard ? (
-            <>
-              <button className="hidden sm:flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors" aria-label="Search">
-                <Search className="h-4 w-4" />
-              </button>
-              <button className="relative h-9 w-9 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors" aria-label="Notifications">
-                <Bell className="h-4 w-4" />
-                <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-gold" />
-              </button>
-              <div className="h-9 w-9 rounded-full bg-gold-gradient text-gold-foreground flex items-center justify-center text-xs font-semibold ring-1 ring-gold/40">
-                G
-              </div>
-            </>
+            <HeaderActions role="buyer" />
           ) : (
             <Badge variant="outline" className="hidden sm:inline-flex gap-1.5 border-primary/40 text-primary">
               <Lock className="h-3 w-3" /> Secure Checkout

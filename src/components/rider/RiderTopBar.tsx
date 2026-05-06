@@ -1,4 +1,4 @@
-import { Menu, Bell } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { LogOut, FileText, Wallet, HelpCircle, Settings, ShieldCheck } from "lucide-react";
 import { getRider, resetRiderDemo, formatNaira } from "@/lib/riderMock";
 import { toast } from "sonner";
+import { HeaderActions } from "@/components/shared/HeaderActions";
 
 interface RiderTopBarProps {
   title: string;
@@ -84,11 +85,7 @@ export const RiderTopBar = ({ title, subtitle, trailing }: RiderTopBarProps) => 
         <p className="truncate font-display text-lg leading-tight text-foreground">{title}</p>
         {subtitle ? <p className="truncate text-xs text-muted-foreground">{subtitle}</p> : null}
       </div>
-      {trailing ?? (
-        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
-          <Bell className="h-5 w-5" />
-        </Button>
-      )}
+      {trailing ?? <HeaderActions role="rider" compact />}
     </div>
   );
 };

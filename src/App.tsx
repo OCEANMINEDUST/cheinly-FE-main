@@ -59,6 +59,14 @@ import SellerTransactions from "./pages/seller/Transactions";
 import SellerDispute from "./pages/seller/Dispute";
 import SellerNegotiate from "./pages/seller/Negotiate";
 import SellerEscalate from "./pages/seller/Escalate";
+import HelpCentre from "./pages/help/HelpCentre";
+import HelpArticle from "./pages/help/HelpArticle";
+import HelpContact from "./pages/help/HelpContact";
+import HelpAgent from "./pages/help/HelpAgent";
+import InviteCompose from "./pages/invite/InviteCompose";
+import InvitedLanding from "./pages/invite/InvitedLanding";
+import InvitedDashboard from "./pages/invite/InvitedDashboard";
+import InvitedWithdraw from "./pages/invite/InvitedWithdraw";
 
 const queryClient = new QueryClient();
 
@@ -127,6 +135,16 @@ const App = () => (
           <Route path="/seller/dispute" element={<SellerDispute />} />
           <Route path="/seller/negotiate" element={<SellerNegotiate />} />
           <Route path="/seller/escalate" element={<SellerEscalate />} />
+          {/* Help Centre (shared) */}
+          <Route path="/help" element={<HelpCentre />} />
+          <Route path="/help/article/:slug" element={<HelpArticle />} />
+          <Route path="/help/contact" element={<HelpContact />} />
+          <Route path="/help/agent" element={<HelpAgent />} />
+          {/* Invite seller flow */}
+          <Route path="/buyer/invite-seller" element={<InviteCompose />} />
+          <Route path="/invite/seller/:token" element={<InvitedLanding />} />
+          <Route path="/invited/:token/dashboard" element={<InvitedDashboard />} />
+          <Route path="/invited/:token/withdraw" element={<InvitedWithdraw />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

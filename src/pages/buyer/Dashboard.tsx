@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mockBuyer, mockProduct, formatNaira } from "@/lib/buyerMock";
+import { rememberBuyer, getBuyerSession } from "@/lib/buyerSession";
 import { buyerOrders, orderStatusLabel } from "@/lib/orderMock";
 import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
 import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
@@ -38,9 +39,13 @@ const BuyerDashboard = () => {
   }).toString();
 
   useEffect(() => {
-    if (entry !== "secure-checkout") {
+    const session = getBuyerSession();
+    if (entry !== "secure-checkout" && !session) {
       navigate(`/buyer/product?productId=${encodeURIComponent(productId)}`, { replace: true });
+      return;
     }
+    // Remember this device for next visit
+    rememberBuyer({ name: mockBuyer.name, email: mockBuyer.email, productId });
   }, [entry, navigate, productId]);
 
   const fee = +(amount * 0.015).toFixed(2);

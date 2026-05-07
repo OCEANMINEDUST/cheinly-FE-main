@@ -30,6 +30,9 @@ import BuyerReturnDispatch from "./pages/buyer/ReturnDispatch";
 import BuyerRiderPayout from "./pages/buyer/RiderPayout";
 import BuyerWrongItem from "./pages/buyer/WrongItem";
 import BuyerRedelivery from "./pages/buyer/Redelivery";
+import BuyerOrders from "./pages/buyer/Orders";
+import BuyerTransactions from "./pages/buyer/Transactions";
+import BuyerHelp from "./pages/buyer/Help";
 import RiderEntry from "./pages/rider/Entry";
 import RiderOnboarding from "./pages/rider/Onboarding";
 import RiderDocumentReview from "./pages/rider/DocumentReview";
@@ -104,6 +107,9 @@ const App = () => (
           <Route path="/buyer/rider-payout" element={<BuyerRiderPayout />} />
           <Route path="/buyer/wrong-item" element={<BuyerWrongItem />} />
           <Route path="/buyer/redelivery" element={<BuyerRedelivery />} />
+          <Route path="/buyer/orders" element={<BuyerOrders />} />
+          <Route path="/buyer/transactions" element={<BuyerTransactions />} />
+          <Route path="/buyer/help" element={<BuyerHelp />} />
           {/* Rider flow */}
           <Route path="/rider" element={<RiderEntry />} />
           <Route path="/rider/login" element={<RiderLogin />} />

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2, Lock } from "lucide-react";
+import { getBuyerSession, buyerDashboardUrl } from "@/lib/buyerSession";
 
 /**
  * Entry route for buyers redirected from WhatsApp.
@@ -13,7 +14,14 @@ const BuyerEntry = () => {
   const productId = params.get("productId") ?? params.get("id") ?? "MD-9521X";
 
   useEffect(() => {
-    const t = setTimeout(() => navigate(`/buyer/product?productId=${encodeURIComponent(productId)}`, { replace: true }), 900);
+    const session = getBuyerSession();
+    const t = setTimeout(() => {
+      if (session) {
+        navigate(buyerDashboardUrl(session), { replace: true });
+      } else {
+        navigate(`/buyer/product?productId=${encodeURIComponent(productId)}`, { replace: true });
+      }
+    }, 900);
     return () => clearTimeout(t);
   }, [navigate, productId]);
 

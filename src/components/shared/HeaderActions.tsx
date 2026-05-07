@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string }> = {
   seller: { profile: "/seller/dashboard", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO" },
-  buyer: { profile: "/buyer/dashboard", orders: "/buyer/order", help: "/help", home: "/buy", name: "Goodness", initials: "G" },
+  buyer: { profile: "/buyer/dashboard", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G" },
   rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA" },
 };
 

@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ShieldCheck, Network, Lock, Sparkles, Zap, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/cheinly-logo.jpeg";
+import { useEffect, useState } from "react";
+import { getBuyerSession, buyerDashboardUrl, type BuyerSession } from "@/lib/buyerSession";
 
 const features = [
   {
@@ -39,8 +41,21 @@ const features = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [session, setSession] = useState<BuyerSession | null>(null);
+  useEffect(() => { setSession(getBuyerSession()); }, []);
   return (
     <div className="min-h-screen bg-background">
+      {session && (
+        <div className="bg-primary text-primary-foreground text-sm">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-6 py-2">
+            <span>Welcome back, {session.name} — this device is remembered.</span>
+            <Button size="sm" variant="secondary" className="bg-card text-foreground hover:bg-card/80" onClick={() => navigate(buyerDashboardUrl(session))}>
+              Continue to dashboard <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+      )}
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">

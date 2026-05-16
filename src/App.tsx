@@ -70,6 +70,7 @@ import InviteCompose from "./pages/invite/InviteCompose";
 import InvitedLanding from "./pages/invite/InvitedLanding";
 import InvitedDashboard from "./pages/invite/InvitedDashboard";
 import InvitedWithdraw from "./pages/invite/InvitedWithdraw";
+import InvitedTransaction from "./pages/invite/InvitedTransaction";
 
 const queryClient = new QueryClient();
 
@@ -149,6 +150,7 @@ const App = () => (
           {/* Invite seller flow */}
           <Route path="/buyer/invite-seller" element={<InviteCompose />} />
           <Route path="/invite/seller/:token" element={<InvitedLanding />} />
+          <Route path="/invite/transaction/:token" element={<InvitedTransaction />} />
           <Route path="/invited/:token/dashboard" element={<InvitedDashboard />} />
           <Route path="/invited/:token/withdraw" element={<InvitedWithdraw />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

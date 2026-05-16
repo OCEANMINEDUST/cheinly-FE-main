@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { notificationsFor, iconFor, type Role } from "@/lib/notifications";
+import { forgetBuyer } from "@/lib/buyerSession";
 import { toast } from "sonner";
 
 const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string }> = {
@@ -136,6 +137,11 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
           <DropdownMenuItem onClick={() => nav(profile.orders)}><Settings className="mr-2 h-4 w-4" /> My activity</DropdownMenuItem>
           <DropdownMenuItem onClick={() => nav(profile.help)}><HelpCircle className="mr-2 h-4 w-4" /> Help Centre</DropdownMenuItem>
           <DropdownMenuSeparator />
+          {role === "buyer" && (
+            <DropdownMenuItem onClick={() => { forgetBuyer(); toast.success("This device has been forgotten."); }}>
+              <LogOut className="mr-2 h-4 w-4" /> Forget this device
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => { toast.success("Signed out"); nav("/"); }} className="text-destructive focus:text-destructive">
             <LogOut className="mr-2 h-4 w-4" /> Sign out
           </DropdownMenuItem>

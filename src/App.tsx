@@ -76,6 +76,7 @@ import SupplierOnboarding from "./pages/supplier/Onboarding";
 import SupplierOrders from "./pages/supplier/Orders";
 import SupplierTransactions from "./pages/supplier/Transactions";
 import SupplierFulfillment from "./pages/supplier/Fulfillment";
+import SupplierInvite from "./pages/supplier/Invite";
 
 const queryClient = new QueryClient();
 
@@ -165,6 +166,7 @@ const App = () => (
           <Route path="/supplier/orders" element={<SupplierOrders />} />
           <Route path="/supplier/transactions" element={<SupplierTransactions />} />
           <Route path="/supplier/fulfillment" element={<SupplierFulfillment />} />
+          <Route path="/supplier/invite/:orderId" element={<SupplierInvite />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

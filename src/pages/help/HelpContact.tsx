@@ -112,7 +112,7 @@ export default function HelpContact() {
           </Card>
 
           <Card className="rounded-2xl border-0 bg-slate-900 p-5 text-white">
-            <div className="mb-2 flex items-center gap-2"><Sparkles className="h-4 w-4 text-amber-300" /><span className="text-sm font-semibold">Moniewise Community</span></div>
+            <div className="mb-2 flex items-center gap-2"><Sparkles className="h-4 w-4 text-amber-300" /><span className="text-sm font-semibold">Cheinly Community</span></div>
             <p className="text-xs text-white/70">Join 12,000+ sellers & buyers swapping tips and resolving issues together.</p>
             <Button size="sm" className="mt-3 w-full bg-blue-600 hover:bg-blue-700">
               <MessageSquare className="mr-2 h-4 w-4" /> Join the community

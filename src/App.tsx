@@ -70,6 +70,22 @@ import InviteCompose from "./pages/invite/InviteCompose";
 import InvitedLanding from "./pages/invite/InvitedLanding";
 import InvitedDashboard from "./pages/invite/InvitedDashboard";
 import InvitedWithdraw from "./pages/invite/InvitedWithdraw";
+import InvitedTransaction from "./pages/invite/InvitedTransaction";
+import SupplierDashboard from "./pages/supplier/Dashboard";
+import SupplierOnboarding from "./pages/supplier/Onboarding";
+import SupplierOrders from "./pages/supplier/Orders";
+import SupplierTransactions from "./pages/supplier/Transactions";
+import SupplierFulfillment from "./pages/supplier/Fulfillment";
+import SupplierInvite from "./pages/supplier/Invite";
+import SupplierDisputeReview from "./pages/supplier/DisputeReview";
+import SupplierReturnTracking from "./pages/supplier/ReturnTracking";
+import SupplierReturnInspection from "./pages/supplier/ReturnInspection";
+import SupplierAccountOverview from "./pages/supplier/AccountOverview";
+import SupplierSettingsKyc from "./pages/supplier/SettingsKyc";
+import SupplierPerformance from "./pages/supplier/Performance";
+import SupplierTierProgress from "./pages/supplier/TierProgress";
+import SupplierMarketLookup from "./pages/supplier/MarketLookup";
+import { RoleAccessRoute } from "./components/shared/RoleAccessRoute";
 
 const queryClient = new QueryClient();
 
@@ -132,15 +148,15 @@ const App = () => (
           <Route path="/rider/profile/bank" element={<RiderRoute><RiderProfileBank /></RiderRoute>} />
           <Route path="/rider/profile/security" element={<RiderRoute><RiderProfileSecurity /></RiderRoute>} />
           {/* Seller flow */}
-          <Route path="/seller" element={<SellerDashboard />} />
-          <Route path="/seller/dashboard" element={<SellerDashboard />} />
-          <Route path="/seller/dispatch" element={<SellerDispatch />} />
-          <Route path="/seller/tracking" element={<SellerTracking />} />
-          <Route path="/seller/orders" element={<SellerOrders />} />
-          <Route path="/seller/transactions" element={<SellerTransactions />} />
-          <Route path="/seller/dispute" element={<SellerDispute />} />
-          <Route path="/seller/negotiate" element={<SellerNegotiate />} />
-          <Route path="/seller/escalate" element={<SellerEscalate />} />
+          <Route path="/seller" element={<RoleAccessRoute required="seller"><SellerDashboard /></RoleAccessRoute>} />
+          <Route path="/seller/dashboard" element={<RoleAccessRoute required="seller"><SellerDashboard /></RoleAccessRoute>} />
+          <Route path="/seller/dispatch" element={<RoleAccessRoute required="seller"><SellerDispatch /></RoleAccessRoute>} />
+          <Route path="/seller/tracking" element={<RoleAccessRoute required="seller"><SellerTracking /></RoleAccessRoute>} />
+          <Route path="/seller/orders" element={<RoleAccessRoute required="seller"><SellerOrders /></RoleAccessRoute>} />
+          <Route path="/seller/transactions" element={<RoleAccessRoute required="seller"><SellerTransactions /></RoleAccessRoute>} />
+          <Route path="/seller/dispute" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
+          <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
+          <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
           {/* Help Centre (shared) */}
           <Route path="/help" element={<HelpCentre />} />
           <Route path="/help/article/:slug" element={<HelpArticle />} />
@@ -149,8 +165,25 @@ const App = () => (
           {/* Invite seller flow */}
           <Route path="/buyer/invite-seller" element={<InviteCompose />} />
           <Route path="/invite/seller/:token" element={<InvitedLanding />} />
+          <Route path="/invite/transaction/:token" element={<InvitedTransaction />} />
           <Route path="/invited/:token/dashboard" element={<InvitedDashboard />} />
           <Route path="/invited/:token/withdraw" element={<InvitedWithdraw />} />
+          {/* Supplier flow */}
+          <Route path="/supplier" element={<RoleAccessRoute required="supplier"><SupplierDashboard /></RoleAccessRoute>} />
+          <Route path="/supplier/dashboard" element={<RoleAccessRoute required="supplier"><SupplierDashboard /></RoleAccessRoute>} />
+          <Route path="/supplier/onboarding" element={<RoleAccessRoute required="supplier"><SupplierOnboarding /></RoleAccessRoute>} />
+          <Route path="/supplier/orders" element={<RoleAccessRoute required="supplier"><SupplierOrders /></RoleAccessRoute>} />
+          <Route path="/supplier/transactions" element={<RoleAccessRoute required="supplier"><SupplierTransactions /></RoleAccessRoute>} />
+          <Route path="/supplier/fulfillment" element={<RoleAccessRoute required="supplier"><SupplierFulfillment /></RoleAccessRoute>} />
+          <Route path="/supplier/invite/:orderId" element={<RoleAccessRoute required="supplier"><SupplierInvite /></RoleAccessRoute>} />
+          <Route path="/supplier/dispute-review" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
+          <Route path="/supplier/return-tracking" element={<RoleAccessRoute required="supplier"><SupplierReturnTracking /></RoleAccessRoute>} />
+          <Route path="/supplier/return-inspection" element={<RoleAccessRoute required="supplier"><SupplierReturnInspection /></RoleAccessRoute>} />
+          <Route path="/supplier/account" element={<RoleAccessRoute required="supplier"><SupplierAccountOverview /></RoleAccessRoute>} />
+          <Route path="/supplier/settings-kyc" element={<RoleAccessRoute required="supplier"><SupplierSettingsKyc /></RoleAccessRoute>} />
+          <Route path="/supplier/performance" element={<RoleAccessRoute required="supplier"><SupplierPerformance /></RoleAccessRoute>} />
+          <Route path="/supplier/tier-progress" element={<RoleAccessRoute required="supplier"><SupplierTierProgress /></RoleAccessRoute>} />
+          <Route path="/supplier/market-lookup" element={<RoleAccessRoute required="supplier"><SupplierMarketLookup /></RoleAccessRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

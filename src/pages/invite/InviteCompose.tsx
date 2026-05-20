@@ -115,6 +115,7 @@ export default function InviteCompose() {
                 <Button onClick={wa} className="bg-emerald-600 hover:bg-emerald-700" disabled={!sellerPhone}><MessageCircle className="mr-2 h-4 w-4" /> WhatsApp</Button>
                 <Button onClick={email} variant="outline"><Mail className="mr-2 h-4 w-4" /> Email</Button>
                 <Button variant="ghost" onClick={() => nav(`/invite/seller/${token}`)}>Preview seller view →</Button>
+                <Button variant="ghost" onClick={() => nav(`/invite/transaction/${token}`)}>Preview buyer view →</Button>
               </div>
             </div>
           )}

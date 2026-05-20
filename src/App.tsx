@@ -71,6 +71,11 @@ import InvitedLanding from "./pages/invite/InvitedLanding";
 import InvitedDashboard from "./pages/invite/InvitedDashboard";
 import InvitedWithdraw from "./pages/invite/InvitedWithdraw";
 import InvitedTransaction from "./pages/invite/InvitedTransaction";
+import SupplierDashboard from "./pages/supplier/Dashboard";
+import SupplierOnboarding from "./pages/supplier/Onboarding";
+import SupplierOrders from "./pages/supplier/Orders";
+import SupplierTransactions from "./pages/supplier/Transactions";
+import SupplierFulfillment from "./pages/supplier/Fulfillment";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +158,13 @@ const App = () => (
           <Route path="/invite/transaction/:token" element={<InvitedTransaction />} />
           <Route path="/invited/:token/dashboard" element={<InvitedDashboard />} />
           <Route path="/invited/:token/withdraw" element={<InvitedWithdraw />} />
+          {/* Supplier flow */}
+          <Route path="/supplier" element={<SupplierDashboard />} />
+          <Route path="/supplier/dashboard" element={<SupplierDashboard />} />
+          <Route path="/supplier/onboarding" element={<SupplierOnboarding />} />
+          <Route path="/supplier/orders" element={<SupplierOrders />} />
+          <Route path="/supplier/transactions" element={<SupplierTransactions />} />
+          <Route path="/supplier/fulfillment" element={<SupplierFulfillment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

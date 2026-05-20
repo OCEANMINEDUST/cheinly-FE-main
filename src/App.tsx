@@ -77,6 +77,13 @@ import SupplierOrders from "./pages/supplier/Orders";
 import SupplierTransactions from "./pages/supplier/Transactions";
 import SupplierFulfillment from "./pages/supplier/Fulfillment";
 import SupplierInvite from "./pages/supplier/Invite";
+import SupplierDisputeReview from "./pages/supplier/DisputeReview";
+import SupplierReturnTracking from "./pages/supplier/ReturnTracking";
+import SupplierReturnInspection from "./pages/supplier/ReturnInspection";
+import SupplierAccountOverview from "./pages/supplier/AccountOverview";
+import SupplierSettingsKyc from "./pages/supplier/SettingsKyc";
+import SupplierPerformance from "./pages/supplier/Performance";
+import SupplierTierProgress from "./pages/supplier/TierProgress";
 
 const queryClient = new QueryClient();
 
@@ -167,6 +174,13 @@ const App = () => (
           <Route path="/supplier/transactions" element={<SupplierTransactions />} />
           <Route path="/supplier/fulfillment" element={<SupplierFulfillment />} />
           <Route path="/supplier/invite/:orderId" element={<SupplierInvite />} />
+          <Route path="/supplier/dispute-review" element={<SupplierDisputeReview />} />
+          <Route path="/supplier/return-tracking" element={<SupplierReturnTracking />} />
+          <Route path="/supplier/return-inspection" element={<SupplierReturnInspection />} />
+          <Route path="/supplier/account" element={<SupplierAccountOverview />} />
+          <Route path="/supplier/settings-kyc" element={<SupplierSettingsKyc />} />
+          <Route path="/supplier/performance" element={<SupplierPerformance />} />
+          <Route path="/supplier/tier-progress" element={<SupplierTierProgress />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

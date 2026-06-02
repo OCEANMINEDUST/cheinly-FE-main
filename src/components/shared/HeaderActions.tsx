@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string; settings: string; kyc: string }> = {
   seller: { profile: "/seller/dashboard", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO", settings: "/seller/transactions", kyc: "/supplier/settings-kyc" },
+  supplier: { profile: "/supplier/account", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS", settings: "/supplier/settings-kyc", kyc: "/supplier/settings-kyc" },
   buyer: { profile: "/buyer/dashboard", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G", settings: "/buyer/transactions", kyc: "/buyer/help?section=kyc" },
   rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA", settings: "/rider/profile/security", kyc: "/rider/document-review" },
 };

@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/cheinly-logo.jpeg";
 import { useEffect, useState } from "react";
 import { getBuyerSession, buyerDashboardUrl, type BuyerSession } from "@/lib/buyerSession";
+import { setAccountRole } from "@/lib/accountRole";
 
 const features = [
   {
@@ -70,6 +71,14 @@ const Index = () => {
           </nav>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:inline-flex border-gold/40 text-gold hover:bg-gold/10 hover:text-gold"
+              onClick={() => { setAccountRole("supplier"); navigate("/supplier/dashboard"); }}
+            >
+              Supplier portal
+            </Button>
             <Button asChild variant="hero" size="sm">
               <Link to="/auth/signup">
                 Get started <ArrowRight className="h-4 w-4" />

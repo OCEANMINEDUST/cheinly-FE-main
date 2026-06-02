@@ -21,7 +21,16 @@ export default function SupplierDashboard() {
       <section className="mt-8">
         <div className="mb-3 flex items-center justify-between"><h2 className="font-display text-2xl">New Supply Orders</h2><Button asChild size="sm"><Link to="/supplier/orders">View all</Link></Button></div>
         <div className="grid gap-4 md:grid-cols-2">
-          {orders.map((o) => <Card key={o.id} className="p-4"><div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div><div className="mt-3 flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">{o.id}</span><span className="font-semibold">₦{o.amount.toLocaleString("en-NG")}</span></div><Button asChild className="mt-3 w-full"><Link to="/supplier/fulfillment">Start fulfillment</Link></Button></Card>)}
+          {orders.map((o) => (
+            <Card key={o.id} className="p-4">
+              <div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div>
+              <div className="mt-3 flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">{o.id}</span><span className="font-semibold">₦{o.amount.toLocaleString("en-NG")}</span></div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <Button asChild><Link to="/supplier/fulfillment">Start fulfillment</Link></Button>
+                <Button asChild variant="outline"><Link to={`/supplier/invite/${o.id}`}>Invite</Link></Button>
+              </div>
+            </Card>
+          ))}
         </div>
       </section>
     </SupplierShell>

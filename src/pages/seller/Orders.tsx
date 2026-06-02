@@ -22,6 +22,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { OrderStatus, getPhotoStatus, naira, recentOrders, setActiveOrderId, statusVariant } from "@/lib/sellerMock";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
+
+type OrderFilter = OrderStatus | "all";
+
+const orderFilters = [
+  ["all", "Total"],
+  ["pending", "Pending"],
+  ["in_transit", "In transit"],
+  ["delivered", "Delivered"],
+  ["returned", "Returned"],
+] as const satisfies ReadonlyArray<readonly [OrderFilter, string]>;
 
 function PhotoBadge({ orderId }: { orderId: string }) {
   const s = getPhotoStatus(orderId);
@@ -48,7 +59,7 @@ function PhotoBadge({ orderId }: { orderId: string }) {
 
 export default function SellerOrders() {
   const [q, setQ] = useState("");
-  const [status, setStatus] = useState<OrderStatus | "all">("all");
+  const [status, setStatus] = useState<OrderFilter>("all");
 
   const rows = useMemo(() => {
     return recentOrders.filter((o) => {
@@ -71,6 +82,8 @@ export default function SellerOrders() {
 
   return (
     <SellerShell>
+      <FlowStructurePanel role="seller" active="orders" compact />
+
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Orders</h1>
@@ -82,17 +95,11 @@ export default function SellerOrders() {
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-5">
-        {([
-          ["all", "Total"],
-          ["pending", "Pending"],
-          ["in_transit", "In transit"],
-          ["delivered", "Delivered"],
-          ["returned", "Returned"],
-        ] as const).map(([k, label]) => (
-          <Card key={k} className="cursor-pointer transition hover:border-primary/40" onClick={() => setStatus(k as any)}>
+        {orderFilters.map(([k, label]) => (
+          <Card key={k} className="cursor-pointer transition hover:border-primary/40" onClick={() => setStatus(k)}>
             <CardHeader className="pb-2">
               <CardDescription className="text-xs">{label}</CardDescription>
-              <CardTitle className="text-2xl">{(totals as any)[k]}</CardTitle>
+              <CardTitle className="text-2xl">{totals[k]}</CardTitle>
             </CardHeader>
           </Card>
         ))}
@@ -111,7 +118,7 @@ export default function SellerOrders() {
           </div>
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={status} onValueChange={(v) => setStatus(v as any)}>
+            <Select value={status} onValueChange={(v) => setStatus(v as OrderFilter)}>
               <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All statuses</SelectItem>

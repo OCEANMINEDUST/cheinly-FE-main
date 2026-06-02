@@ -1,15 +1,11 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Store } from "lucide-react";
+import { flowNav } from "@/components/marketplace/flowStructure";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { HeaderActions } from "@/components/shared/HeaderActions";
 
-const links = [
-  { to: "/seller/dashboard", label: "Overview" },
-  { to: "/seller/transactions", label: "Transactions" },
-  { to: "/seller/orders", label: "Orders" },
-  { to: "/help", label: "Help Centre" },
-];
+const links = flowNav("seller");
 
 export function SellerHeader() {
   const loc = useLocation();
@@ -31,7 +27,7 @@ export function SellerHeader() {
               className={({ isActive }) =>
                 cn(
                   "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
-                  (isActive || loc.pathname.startsWith(l.to)) && (l.to === "/help" ? "bg-primary/15 text-primary" : "bg-secondary text-foreground"),
+                  (isActive || loc.pathname.startsWith(l.to)) && "bg-secondary text-foreground",
                 )
               }
             >

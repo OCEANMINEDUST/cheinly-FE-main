@@ -114,6 +114,7 @@ const App = () => (
           <Route path="/buyer/confirm-delivery" element={<BuyerDeliveryConfirmation />} />
           <Route path="/buyer/authentication" element={<BuyerAuthentication />} />
           <Route path="/buyer/dispute" element={<BuyerDispute />} />
+          <Route path="/buyer/disputes" element={<BuyerDispute />} />
           <Route path="/buyer/verify-items" element={<BuyerMultiItemVerification />} />
           <Route path="/buyer/report-issue" element={<BuyerReportIssue />} />
           <Route path="/buyer/negotiation" element={<BuyerNegotiation />} />
@@ -155,6 +156,7 @@ const App = () => (
           <Route path="/seller/orders" element={<RoleAccessRoute required="seller"><SellerOrders /></RoleAccessRoute>} />
           <Route path="/seller/transactions" element={<RoleAccessRoute required="seller"><SellerTransactions /></RoleAccessRoute>} />
           <Route path="/seller/dispute" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
+          <Route path="/seller/disputes" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
           <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
           <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
           {/* Help Centre (shared) */}
@@ -177,6 +179,7 @@ const App = () => (
           <Route path="/supplier/fulfillment" element={<RoleAccessRoute required="supplier"><SupplierFulfillment /></RoleAccessRoute>} />
           <Route path="/supplier/invite/:orderId" element={<RoleAccessRoute required="supplier"><SupplierInvite /></RoleAccessRoute>} />
           <Route path="/supplier/dispute-review" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
+          <Route path="/supplier/disputes" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
           <Route path="/supplier/return-tracking" element={<RoleAccessRoute required="supplier"><SupplierReturnTracking /></RoleAccessRoute>} />
           <Route path="/supplier/return-inspection" element={<RoleAccessRoute required="supplier"><SupplierReturnInspection /></RoleAccessRoute>} />
           <Route path="/supplier/account" element={<RoleAccessRoute required="supplier"><SupplierAccountOverview /></RoleAccessRoute>} />

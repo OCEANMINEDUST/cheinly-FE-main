@@ -1,10 +1,13 @@
 import { SupplierShell } from "@/components/supplier/SupplierShell";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function SupplierTransactions() {
   return (
     <SupplierShell>
+      <FlowStructurePanel role="supplier" active="transactions" compact />
+
       <h1 className="font-display text-3xl">Transaction Details</h1>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <Card className="p-5">

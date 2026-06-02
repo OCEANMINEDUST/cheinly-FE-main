@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { buyerOrders, orderStatusLabel } from "@/lib/orderMock";
 import { formatNaira, mockProduct } from "@/lib/buyerMock";
 import { cn } from "@/lib/utils";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const statusClass = (s: string) =>
   cn(
@@ -42,6 +43,8 @@ const BuyerOrders = () => {
           <h1 className="font-display text-3xl">My Orders</h1>
           <p className="text-sm text-muted-foreground">{q ? `Filtered by "${q}"` : "All purchases linked to your secure account."}</p>
         </header>
+
+        <FlowStructurePanel role="buyer" active="orders" compact />
 
         {orders.length === 0 ? (
           <Card className="p-12 text-center">

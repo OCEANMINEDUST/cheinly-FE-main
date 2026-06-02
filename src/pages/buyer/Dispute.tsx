@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getBuyerOrderById } from "@/lib/orderMock";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 type ResolutionOption = "refund-full" | "refund-partial" | "replacement" | "talk";
 
@@ -54,6 +55,8 @@ const BuyerDispute = () => {
       <BuyerHeader variant="dashboard" />
 
       <main className="mx-auto flex-1 w-full max-w-7xl px-5 py-8 lg:px-8 space-y-6">
+        <FlowStructurePanel role="buyer" active="disputes" compact />
+
         <div className="space-y-2">
           <button onClick={() => navigate(`/buyer/authentication?${baseQuery}`)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gold">
             <ArrowLeft className="h-4 w-4" /> Back to verification

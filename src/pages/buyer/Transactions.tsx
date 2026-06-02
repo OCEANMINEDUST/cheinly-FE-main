@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatNaira } from "@/lib/buyerMock";
 import { cn } from "@/lib/utils";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 type Tx = {
   id: string;
@@ -56,6 +57,8 @@ const BuyerTransactions = () => {
           <h1 className="font-display text-3xl">Transactions</h1>
           <p className="text-sm text-muted-foreground">Every move in and out of your Protected Balance.</p>
         </header>
+
+        <FlowStructurePanel role="buyer" active="transactions" compact />
 
         <div className="grid gap-3 sm:grid-cols-3">
           <Card className="p-4"><p className="text-xs text-muted-foreground">Money in</p><p className="font-display text-2xl text-success">{formatNaira(totalIn)}</p></Card>

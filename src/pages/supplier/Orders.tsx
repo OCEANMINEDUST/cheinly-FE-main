@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { SupplierShell } from "@/components/supplier/SupplierShell";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ const rows = [
 export default function SupplierOrders() {
   return (
     <SupplierShell>
+      <FlowStructurePanel role="supplier" active="orders" compact />
+
       <h1 className="font-display text-3xl">Order Tracking</h1>
       <Card className="mt-5 p-0 overflow-hidden">
         <Table>

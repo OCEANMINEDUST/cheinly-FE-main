@@ -3,6 +3,7 @@ import { SupplierShell } from "@/components/supplier/SupplierShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const orders = [
   { id: "SUP-1001", buyer: "Goodness", item: "Imported Sneakers x500", status: "pending fulfillment", amount: 5200000 },
@@ -12,7 +13,9 @@ const orders = [
 export default function SupplierDashboard() {
   return (
     <SupplierShell>
-      <h1 className="font-display text-3xl">Supplier Dashboard</h1>
+      <FlowStructurePanel role="supplier" active="overview" />
+
+      <h1 className="mt-8 font-display text-3xl">Supplier Dashboard</h1>
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         <Card className="p-5 text-white bg-[linear-gradient(135deg,hsl(210_85%_42%),hsl(220_70%_28%))]"><p className="text-xs">Protected Balance</p><p className="font-display text-3xl">₦5,200,000</p></Card>
         <Card className="p-5 text-white bg-[linear-gradient(135deg,hsl(160_60%_32%),hsl(165_62%_22%))]"><p className="text-xs">Earnings</p><p className="font-display text-3xl">₦1,850,000</p></Card>

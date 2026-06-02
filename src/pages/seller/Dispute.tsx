@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { disputeOrder, disputeStages, naira } from "@/lib/sellerMock";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const timeline = [
   { icon: AlertTriangle, label: "Dispute opened", time: "Today 10:02", done: true, tone: "destructive" as const },
@@ -17,7 +18,9 @@ const timeline = [
 export default function SellerDispute() {
   return (
     <SellerShell>
-      <div className="mb-4 flex items-center gap-3">
+      <FlowStructurePanel role="seller" active="disputes" compact />
+
+      <div className="mb-4 mt-6 flex items-center gap-3">
         <Button asChild variant="ghost" size="sm">
           <Link to="/seller/dashboard"><ArrowLeft className="mr-1 h-4 w-4" /> Back</Link>
         </Button>

@@ -43,7 +43,7 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
 
   const suggestions = useMemo(() => {
     const term = q.trim().toLowerCase();
-    const scoped = helpSuggestions.filter((s) => s.roles.includes((accountRole as any)) || s.roles.includes(role as any));
+    const scoped = helpSuggestions.filter((s) => (s.roles as readonly string[]).includes(accountRole) || (s.roles as readonly string[]).includes(role));
     if (!term) return scoped.slice(0, 4);
     return scoped.filter((s) => s.title.toLowerCase().includes(term)).slice(0, 5);
   }, [q]);

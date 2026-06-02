@@ -15,6 +15,7 @@ import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
 import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -99,6 +100,8 @@ const BuyerDashboard = () => {
       <BuyerHeader variant="dashboard" />
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-5 lg:px-8 py-8 space-y-8">
+        <FlowStructurePanel role="buyer" active="overview" />
+
         {/* Complete order banner */}
         <Card className="overflow-hidden border-0 shadow-card">
           <div className="bg-gradient-to-r from-primary/90 to-primary/60 text-primary-foreground p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -34,6 +34,7 @@ import {
   sellerProfile,
   statusVariant,
 } from "@/lib/sellerMock";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 export default function SellerDashboard() {
   const nav = useNavigate();
@@ -43,7 +44,9 @@ export default function SellerDashboard() {
 
   return (
     <SellerShell>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <FlowStructurePanel role="seller" active="overview" />
+
+      <div className="mb-6 mt-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome back, Adunni</h1>
           <p className="text-sm text-muted-foreground">Here's how {sellerProfile.store} is performing today.</p>

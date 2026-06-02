@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { naira, recentTxns, sellerProfile } from "@/lib/sellerMock";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 type Filter = "all" | "settled" | "pending" | "refund";
 
@@ -30,6 +31,8 @@ export default function SellerTransactions() {
 
   return (
     <SellerShell>
+      <FlowStructurePanel role="seller" active="transactions" compact />
+
       <div className="mb-6">
         <h1 className="font-display text-3xl font-semibold tracking-tight">Transactions</h1>
         <p className="text-sm text-muted-foreground">Movement between Protected and True balances.</p>

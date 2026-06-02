@@ -27,6 +27,7 @@ const routes: Array<{ path: string; Component: React.ComponentType }> = [
   { path: "/supplier/fulfillment", Component: SupplierFulfillment },
   { path: "/supplier/invite/:orderId", Component: SupplierInvite },
   { path: "/supplier/dispute-review", Component: SupplierDisputeReview },
+  { path: "/supplier/disputes", Component: SupplierDisputeReview },
   { path: "/supplier/return-tracking", Component: SupplierReturnTracking },
   { path: "/supplier/return-inspection", Component: SupplierReturnInspection },
   { path: "/supplier/account", Component: SupplierAccountOverview },

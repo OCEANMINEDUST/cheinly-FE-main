@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import sneaker from "@/assets/sneaker.jpg";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const base = ["Buyer opened claim", "Evidence uploaded", "Supplier review pending", "Return dispatch", "Refund completed"];
 
@@ -17,7 +18,9 @@ export default function SupplierDisputeReview() {
 
   return (
     <SupplierShell>
-      <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive">
+      <FlowStructurePanel role="supplier" active="disputes" compact />
+
+      <div className="mt-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive">
         <div className="flex items-center justify-between"><p className="font-semibold">Mismatch Alert</p><Badge variant="outline" className="border-destructive text-destructive">Action Required</Badge></div>
       </div>
       <div className="mt-3 text-sm">Current status: <span className="font-semibold capitalize">{status.replace("-", " ")}</span></div>

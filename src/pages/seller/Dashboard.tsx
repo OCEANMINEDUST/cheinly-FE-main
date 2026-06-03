@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { ArrowUpRight, Lock, Wallet, ShieldCheck, Plus, AlertTriangle, Scale } from "lucide-react";
+import { ArrowUpRight, Lock, Wallet, ShieldCheck, Plus, AlertTriangle, Scale, Star, Trophy, BadgeCheck, Package, TrendingUp, ShieldAlert, Truck, FileCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SellerShell } from "@/components/seller/SellerShell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +35,6 @@ import {
   sellerProfile,
   statusVariant,
 } from "@/lib/sellerMock";
-import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 export default function SellerDashboard() {
   const nav = useNavigate();
@@ -44,9 +44,7 @@ export default function SellerDashboard() {
 
   return (
     <SellerShell>
-      <FlowStructurePanel role="seller" active="overview" />
-
-      <div className="mb-6 mt-8 flex flex-wrap items-end justify-between gap-3">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome back, Adunni</h1>
           <p className="text-sm text-muted-foreground">Here's how {sellerProfile.store} is performing today.</p>
@@ -60,6 +58,86 @@ export default function SellerDashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Performance Summary */}
+      <section className="mb-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Performance Summary</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Performance Score", value: "92", suffix: "/100", icon: TrendingUp },
+            { label: "Success Rate", value: "97.4%", icon: BadgeCheck },
+            { label: "Completion Rate", value: "95.1%", icon: FileCheck },
+            { label: "Customer Rating", value: "4.8", suffix: " ★", icon: Star },
+          ].map((m) => (
+            <Card key={m.label}>
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2"><m.icon className="h-4 w-4" /> {m.label}</CardDescription>
+                <CardTitle className="text-2xl font-semibold">{m.value}<span className="text-sm font-normal text-muted-foreground">{m.suffix ?? ""}</span></CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Tier Progress + Account Status */}
+      <section className="mb-6 grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2"><Trophy className="h-4 w-4 text-gold" /> Tier Progress</CardDescription>
+            <CardTitle className="text-xl">Gold Seller</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Bronze · Silver · <span className="font-medium text-gold">Gold</span> · Platinum</span>
+              <span className="font-medium">72% to Platinum</span>
+            </div>
+            <Progress value={72} />
+            <p className="text-xs text-muted-foreground">Benefits: lower escrow fees, priority dispatch, featured listings.</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-success" /> Account Status</CardDescription>
+            <CardTitle className="text-xl">Verified</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-3 gap-3 text-center">
+            <div><p className="text-xs text-muted-foreground">KYC</p><Badge variant="outline" className="mt-1 bg-success/15 text-success border-success/30">Approved</Badge></div>
+            <div><p className="text-xs text-muted-foreground">Profile</p><p className="mt-1 font-semibold">85%</p></div>
+            <div><p className="text-xs text-muted-foreground">Verification</p><Badge variant="outline" className="mt-1 bg-success/15 text-success border-success/30">Verified</Badge></div>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Business Metrics */}
+      <section className="mb-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Business Metrics</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Total Orders", value: "1,284", icon: Package },
+            { label: "Active Orders", value: "37", icon: Truck },
+            { label: "Total Revenue", value: naira(8420500), icon: TrendingUp },
+            { label: "Open Disputes", value: "2", icon: ShieldAlert },
+          ].map((m) => (
+            <Card key={m.label}>
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2"><m.icon className="h-4 w-4" /> {m.label}</CardDescription>
+                <CardTitle className="text-2xl font-semibold">{m.value}</CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Quick Actions */}
+      <section className="mb-6">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Quick Actions</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Button variant="outline" className="h-auto justify-start gap-2 py-3" onClick={() => setSendOpen(true)}><Plus className="h-4 w-4" /> Create Order</Button>
+          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/orders"><Truck className="h-4 w-4" /> Track Return</Link></Button>
+          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/dispute"><AlertTriangle className="h-4 w-4" /> Raise Dispute</Link></Button>
+          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/profile"><BadgeCheck className="h-4 w-4" /> Complete KYC</Link></Button>
+        </div>
+      </section>
 
       {/* Balance cards */}
       <div className="grid gap-4 md:grid-cols-2">

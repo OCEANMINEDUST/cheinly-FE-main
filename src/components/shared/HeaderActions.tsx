@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, ShieldCheck, CheckCheck, ChevronRight } from "lucide-react";
+import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, ShieldCheck, CheckCheck, ChevronRight, Bot, MessageCircle, Send } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,39 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
 
   return (
     <div className="flex items-center gap-1.5">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" aria-label="AI chatbot"><Bot className="h-[18px] w-[18px]" /></Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-60">
+          <DropdownMenuLabel>
+            <div className="text-sm font-medium">Cheinly AI Assistant</div>
+            <div className="text-xs text-muted-foreground capitalize">{role} chatbot</div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a
+              href={`https://wa.me/2348000000000?text=${encodeURIComponent(`Hi Cheinly, I'm a ${role} and I need help.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="mr-2 h-4 w-4 text-success" /> Chat on WhatsApp
+            </a>
+          </DropdownMenuItem>
+          {(role === "seller" || role === "supplier") && (
+            <DropdownMenuItem asChild>
+              <a
+                href={`https://t.me/CheinlyBot?start=${role}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Send className="mr-2 h-4 w-4 text-primary" /> Chat on Telegram
+              </a>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <Popover open={searchOpen} onOpenChange={setSearchOpen}>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="icon" aria-label="Search"><Search className="h-[18px] w-[18px]" /></Button>

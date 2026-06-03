@@ -1,8 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { flowByKey, marketplaceFlows, roleLabels, type FlowKey, type MarketplaceRole } from "./flowStructure";
-import { cn } from "@/lib/utils";
+import type { FlowKey, MarketplaceRole } from "./flowStructure";
 
 type FlowStructurePanelProps = {
   role: MarketplaceRole;
@@ -10,14 +6,11 @@ type FlowStructurePanelProps = {
   compact?: boolean;
 };
 
-export function FlowStructurePanel({ role, active, compact = false }: FlowStructurePanelProps) {
-  const activeFlow = flowByKey[active];
-  const ActiveIcon = activeFlow.icon;
-
-  if (compact) {
-    return (
-      <Card className="border-primary/20 bg-primary/5 shadow-sm">
-        <CardHeader className="pb-3">
+// Descriptive flow narration removed by request — kept as a no-op so existing
+// imports across buyer/seller/supplier pages continue to compile.
+export function FlowStructurePanel(_props: FlowStructurePanelProps) {
+  return null;
+}
           <div className="flex items-center gap-2">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
               <ActiveIcon className="h-4 w-4" />

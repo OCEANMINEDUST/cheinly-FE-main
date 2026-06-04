@@ -4,6 +4,7 @@ import logo from "@/assets/cheinly-logo.jpeg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
 import { HeaderActions } from "@/components/shared/HeaderActions";
+import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
 import { flowNav } from "@/components/marketplace/flowStructure";
 
 interface BuyerHeaderProps {
@@ -47,9 +48,12 @@ export const BuyerHeader = ({ variant = "checkout" }: BuyerHeaderProps) => {
           {isDashboard ? (
             <HeaderActions role="buyer" />
           ) : (
-            <Badge variant="outline" className="hidden sm:inline-flex gap-1.5 border-primary/40 text-primary">
-              <Lock className="h-3 w-3" /> Secure Checkout
-            </Badge>
+            <>
+              <AIChatbotButton role="buyer" />
+              <Badge variant="outline" className="hidden sm:inline-flex gap-1.5 border-primary/40 text-primary">
+                <Lock className="h-3 w-3" /> Secure Checkout
+              </Badge>
+            </>
           )}
           <ThemeToggle />
         </div>

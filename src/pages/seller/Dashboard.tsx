@@ -135,7 +135,7 @@ export default function SellerDashboard() {
           <Button variant="outline" className="h-auto justify-start gap-2 py-3" onClick={() => setSendOpen(true)}><Plus className="h-4 w-4" /> Create Order</Button>
           <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/orders"><Truck className="h-4 w-4" /> Track Return</Link></Button>
           <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/dispute"><AlertTriangle className="h-4 w-4" /> Raise Dispute</Link></Button>
-          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/profile"><BadgeCheck className="h-4 w-4" /> Complete KYC</Link></Button>
+          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/seller/settings#kyc"><BadgeCheck className="h-4 w-4" /> Complete KYC</Link></Button>
         </div>
       </section>
 

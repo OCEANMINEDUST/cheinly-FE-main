@@ -1,4 +1,4 @@
-import { Home, CreditCard, Package, Scale, type LucideIcon } from "lucide-react";
+import { Home, CreditCard, Package, Scale, Settings, type LucideIcon } from "lucide-react";
 
 export type MarketplaceRole = "buyer" | "seller" | "supplier";
 export type FlowKey = "overview" | "transactions" | "orders" | "disputes";
@@ -18,12 +18,18 @@ export type FlowDefinition = {
 
 export const flowNav = (role: MarketplaceRole) => {
   const base = `/${role}`;
-  return [
+  const links = [
     { to: `${base}/dashboard`, label: "Overview", icon: Home },
     { to: `${base}/transactions`, label: "Transactions", icon: CreditCard },
     { to: `${base}/orders`, label: "Orders", icon: Package },
     { to: `${base}/disputes`, label: "Disputes", icon: Scale },
   ];
+
+  if (role === "seller" || role === "supplier") {
+    links.push({ to: `${base}/settings`, label: "Settings", icon: Settings });
+  }
+
+  return links;
 };
 
 export const marketplaceFlows: FlowDefinition[] = [

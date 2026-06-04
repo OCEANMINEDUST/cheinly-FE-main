@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Star, Trophy, BadgeCheck, Package, TrendingUp, ShieldAlert, Truck, FileCheck, ShieldCheck, Plus, AlertTriangle } from "lucide-react";
+import { SellerStorefrontPanel } from "@/components/shared/SellerStorefrontPanel";
 
 const orders = [
   { id: "SUP-1001", buyer: "Goodness", item: "Imported Sneakers x500", status: "pending fulfillment", amount: 5200000 },
@@ -15,6 +16,10 @@ export default function SupplierDashboard() {
   return (
     <SupplierShell>
       <h1 className="font-display text-3xl">Supplier Dashboard</h1>
+
+      <section className="mt-6">
+        <SellerStorefrontPanel username="globalsneakers" />
+      </section>
 
       {/* Performance Summary */}
       <section className="mt-6">

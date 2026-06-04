@@ -91,6 +91,9 @@ import SupplierMarketLookup from "./pages/supplier/MarketLookup";
 import SupplierAccountSettings from "./pages/supplier/AccountSettings";
 import SupplierAIChatbot from "./pages/supplier/AIChatbot";
 import { RoleAccessRoute } from "./components/shared/RoleAccessRoute";
+import BioStore from "./pages/store/BioStore";
+import ProductPublic from "./pages/store/ProductPublic";
+import ChatPage from "./pages/chat/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -198,6 +201,10 @@ const App = () => (
           <Route path="/supplier/settings" element={<RoleAccessRoute required="supplier"><SupplierAccountSettings /></RoleAccessRoute>} />
           <Route path="/supplier/ai-chatbot" element={<RoleAccessRoute required="supplier"><SupplierAIChatbot /></RoleAccessRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* Public storefront + chat */}
+          <Route path="/u/:username" element={<BioStore />} />
+          <Route path="/p/:productId" element={<ProductPublic />} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

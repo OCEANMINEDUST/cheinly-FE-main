@@ -131,8 +131,8 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
           <DropdownMenuItem onClick={() => nav(profile.profile)}><User className="mr-2 h-4 w-4" /> Account settings</DropdownMenuItem>
           <DropdownMenuItem onClick={() => nav(profile.kyc)}><ShieldCheck className="mr-2 h-4 w-4" /> KYC status</DropdownMenuItem>
           <DropdownMenuItem onClick={() => nav(profile.help)}><HelpCircle className="mr-2 h-4 w-4" /> Help Centre</DropdownMenuItem>
-          {accountRole === "seller" && <DropdownMenuItem onClick={() => { setAccountRole("supplier"); nav("/supplier/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Supplier</DropdownMenuItem>}
-          {accountRole === "supplier" && <DropdownMenuItem onClick={() => { setAccountRole("seller"); nav("/seller/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Seller</DropdownMenuItem>}
+          {role === "seller" && accountRole === "seller" && <DropdownMenuItem onClick={() => { setAccountRole("supplier"); nav("/supplier/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Supplier</DropdownMenuItem>}
+          {role === "supplier" && accountRole === "supplier" && <DropdownMenuItem onClick={() => { setAccountRole("seller"); nav("/seller/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Seller</DropdownMenuItem>}
           {role === "buyer" && (
             <DropdownMenuItem onClick={() => { forgetBuyer(); toast.success("This device has been forgotten."); }}>
               <LogOut className="mr-2 h-4 w-4" /> Forget this device

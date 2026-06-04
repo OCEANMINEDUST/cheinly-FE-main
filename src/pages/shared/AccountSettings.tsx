@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -152,6 +153,7 @@ export default function AccountSettings({ role }: AccountSettingsProps) {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Recommended structure</CardTitle>
+
               <CardDescription>Jump to a settings area.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-1">

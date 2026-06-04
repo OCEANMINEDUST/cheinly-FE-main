@@ -1,3 +1,10 @@
+
+import { MessageCircle, Send } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { getAccountRole } from "@/lib/accountRole";
+import {
+=======
 import { Bot, ExternalLink, MessageCircle, Send, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { getAccountRole } from "@/lib/accountRole";
 import {
   chatbotPagePath,
+
   chatbotRoleLabels,
   getChatbotContext,
   getChatbotDeepLink,
@@ -16,18 +24,26 @@ import {
 import type { Role } from "@/lib/notifications";
 import { cn } from "@/lib/utils";
 
+
+
 const roleTips: Record<ChatbotRole, string[]> = {
   buyer: ["Ask about order status, delivery, refunds, and disputes.", "Paste your order reference so the assistant can route you faster.", "WhatsApp support is available from every buyer screen."],
   seller: ["Ask about dispatch, payouts, KYC, disputes, and account settings.", "Share an order or transaction reference for contextual help.", "Use WhatsApp or Telegram from seller screens."],
   supplier: ["Ask about fulfillment, return inspection, tier progress, and payouts.", "Include supply order IDs or return IDs for faster guidance.", "Use WhatsApp or Telegram from supplier screens."],
 };
 
+
 const isChatbotRole = (role: Role): role is ChatbotRole => role === "buyer" || role === "seller" || role === "supplier";
 
 const canShowForRole = (role: ChatbotRole) => {
   if (role === "buyer") return true;
   return getAccountRole() === role;
+
+const channelStyles: Record<ChatbotChannel, string> = {
+  whatsapp: "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 hover:text-emerald-800",
+  telegram: "border-sky-500/40 bg-sky-500/10 text-sky-700 hover:bg-sky-500/20 hover:text-sky-800",
 };
+
 
 export function AIChatbotButton({ role, compact = false, className }: { role: Role; compact?: boolean; className?: string }) {
   const location = useLocation();
@@ -36,9 +52,15 @@ export function AIChatbotButton({ role, compact = false, className }: { role: Ro
 
   const context = getChatbotContext(role, location.pathname);
   const path = `${location.pathname}${location.search}${location.hash}`;
+
+  const channels: Array<{ channel: ChatbotChannel; label: string; icon: typeof MessageCircle; enabled: boolean }> = [
+    { channel: "whatsapp", label: "WhatsApp", icon: MessageCircle, enabled: true },
+    { channel: "telegram", label: "Telegram", icon: Send, enabled: role === "seller" || role === "supplier" },
+
   const channels: Array<{ channel: ChatbotChannel; label: string; icon: typeof MessageCircle; enabled: boolean; className?: string }> = [
     { channel: "whatsapp", label: "Start on WhatsApp", icon: MessageCircle, enabled: true, className: "bg-emerald-600 text-white hover:bg-emerald-700" },
     { channel: "telegram", label: "Start on Telegram", icon: Send, enabled: role === "seller" || role === "supplier" },
+
   ];
 
   const clickChannel = (channel: ChatbotChannel) => {
@@ -46,6 +68,31 @@ export function AIChatbotButton({ role, compact = false, className }: { role: Ro
   };
 
   return (
+
+    <div className={cn("flex items-center gap-1", className)} aria-label={`${chatbotRoleLabels[role]} chatbot invite links`}>
+      {channels.filter((item) => item.enabled).map((item) => (
+        <Button
+          key={item.channel}
+          asChild
+          variant="outline"
+          size={compact ? "sm" : "icon"}
+          className={cn(channelStyles[item.channel], compact && "gap-2")}
+        >
+          <a
+            href={getChatbotDeepLink({ role, channel: item.channel, context, path })}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Invite/open ${chatbotRoleLabels[role]} AI chatbot on ${item.label}`}
+            aria-label={`Invite/open ${chatbotRoleLabels[role]} AI chatbot on ${item.label}`}
+            onClick={() => clickChannel(item.channel)}
+          >
+            <item.icon className="h-[18px] w-[18px]" />
+            {compact && <span>{item.label}</span>}
+          </a>
+        </Button>
+      ))}
+    </div>
+
     <Dialog>
       <DialogTrigger asChild>
         <Button

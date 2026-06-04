@@ -33,6 +33,7 @@ import BuyerRedelivery from "./pages/buyer/Redelivery";
 import BuyerOrders from "./pages/buyer/Orders";
 import BuyerTransactions from "./pages/buyer/Transactions";
 import BuyerHelp from "./pages/buyer/Help";
+import BuyerAIChatbot from "./pages/buyer/AIChatbot";
 import RiderEntry from "./pages/rider/Entry";
 import RiderOnboarding from "./pages/rider/Onboarding";
 import RiderDocumentReview from "./pages/rider/DocumentReview";
@@ -62,6 +63,8 @@ import SellerTransactions from "./pages/seller/Transactions";
 import SellerDispute from "./pages/seller/Dispute";
 import SellerNegotiate from "./pages/seller/Negotiate";
 import SellerEscalate from "./pages/seller/Escalate";
+import SellerAccountSettings from "./pages/seller/AccountSettings";
+import SellerAIChatbot from "./pages/seller/AIChatbot";
 import HelpCentre from "./pages/help/HelpCentre";
 import HelpArticle from "./pages/help/HelpArticle";
 import HelpContact from "./pages/help/HelpContact";
@@ -85,6 +88,8 @@ import SupplierSettingsKyc from "./pages/supplier/SettingsKyc";
 import SupplierPerformance from "./pages/supplier/Performance";
 import SupplierTierProgress from "./pages/supplier/TierProgress";
 import SupplierMarketLookup from "./pages/supplier/MarketLookup";
+import SupplierAccountSettings from "./pages/supplier/AccountSettings";
+import SupplierAIChatbot from "./pages/supplier/AIChatbot";
 import { RoleAccessRoute } from "./components/shared/RoleAccessRoute";
 
 const queryClient = new QueryClient();
@@ -127,6 +132,7 @@ const App = () => (
           <Route path="/buyer/orders" element={<BuyerOrders />} />
           <Route path="/buyer/transactions" element={<BuyerTransactions />} />
           <Route path="/buyer/help" element={<BuyerHelp />} />
+          <Route path="/buyer/ai-chatbot" element={<BuyerAIChatbot />} />
           {/* Rider flow */}
           <Route path="/rider" element={<RiderEntry />} />
           <Route path="/rider/login" element={<RiderLogin />} />
@@ -159,6 +165,8 @@ const App = () => (
           <Route path="/seller/disputes" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
           <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
           <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
+          <Route path="/seller/settings" element={<RoleAccessRoute required="seller"><SellerAccountSettings /></RoleAccessRoute>} />
+          <Route path="/seller/ai-chatbot" element={<RoleAccessRoute required="seller"><SellerAIChatbot /></RoleAccessRoute>} />
           {/* Help Centre (shared) */}
           <Route path="/help" element={<HelpCentre />} />
           <Route path="/help/article/:slug" element={<HelpArticle />} />
@@ -187,6 +195,8 @@ const App = () => (
           <Route path="/supplier/performance" element={<RoleAccessRoute required="supplier"><SupplierPerformance /></RoleAccessRoute>} />
           <Route path="/supplier/tier-progress" element={<RoleAccessRoute required="supplier"><SupplierTierProgress /></RoleAccessRoute>} />
           <Route path="/supplier/market-lookup" element={<RoleAccessRoute required="supplier"><SupplierMarketLookup /></RoleAccessRoute>} />
+          <Route path="/supplier/settings" element={<RoleAccessRoute required="supplier"><SupplierAccountSettings /></RoleAccessRoute>} />
+          <Route path="/supplier/ai-chatbot" element={<RoleAccessRoute required="supplier"><SupplierAIChatbot /></RoleAccessRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

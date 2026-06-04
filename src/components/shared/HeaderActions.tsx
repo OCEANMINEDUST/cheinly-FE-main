@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, ShieldCheck, CheckCheck, ChevronRight, Bot, MessageCircle, Send } from "lucide-react";
+import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, ShieldCheck, CheckCheck, ChevronRight } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,11 @@ import { notificationsFor, iconFor, type Role } from "@/lib/notifications";
 import { forgetBuyer } from "@/lib/buyerSession";
 import { getAccountRole, setAccountRole } from "@/lib/accountRole";
 import { toast } from "sonner";
+import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
 
 const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string; settings: string; kyc: string }> = {
-  seller: { profile: "/seller/dashboard", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO", settings: "/seller/transactions", kyc: "/supplier/settings-kyc" },
-  supplier: { profile: "/supplier/account", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS", settings: "/supplier/settings-kyc", kyc: "/supplier/settings-kyc" },
+  seller: { profile: "/seller/settings", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO", settings: "/seller/settings", kyc: "/seller/settings#kyc" },
+  supplier: { profile: "/supplier/settings", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS", settings: "/supplier/settings", kyc: "/supplier/settings#kyc" },
   buyer: { profile: "/buyer/dashboard", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G", settings: "/buyer/transactions", kyc: "/buyer/help?section=kyc" },
   rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA", settings: "/rider/profile/security", kyc: "/rider/document-review" },
 };
@@ -46,7 +47,7 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
     const scoped = helpSuggestions.filter((s) => (s.roles as readonly string[]).includes(accountRole) || (s.roles as readonly string[]).includes(role));
     if (!term) return scoped.slice(0, 4);
     return scoped.filter((s) => s.title.toLowerCase().includes(term)).slice(0, 5);
-  }, [q]);
+  }, [accountRole, q, role]);
 
   const submitSearch = () => {
     if (!q.trim()) return;
@@ -62,38 +63,7 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
 
   return (
     <div className="flex items-center gap-1.5">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="AI chatbot"><Bot className="h-[18px] w-[18px]" /></Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-60">
-          <DropdownMenuLabel>
-            <div className="text-sm font-medium">Cheinly AI Assistant</div>
-            <div className="text-xs text-muted-foreground capitalize">{role} chatbot</div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <a
-              href={`https://wa.me/2348000000000?text=${encodeURIComponent(`Hi Cheinly, I'm a ${role} and I need help.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="mr-2 h-4 w-4 text-success" /> Chat on WhatsApp
-            </a>
-          </DropdownMenuItem>
-          {(role === "seller" || role === "supplier") && (
-            <DropdownMenuItem asChild>
-              <a
-                href={`https://t.me/CheinlyBot?start=${role}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Send className="mr-2 h-4 w-4 text-primary" /> Chat on Telegram
-              </a>
-            </DropdownMenuItem>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <AIChatbotButton role={role} compact={compact} />
 
       <Popover open={searchOpen} onOpenChange={setSearchOpen}>
         <PopoverTrigger asChild>

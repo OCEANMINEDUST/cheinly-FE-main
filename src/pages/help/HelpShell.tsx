@@ -33,7 +33,7 @@ export function HelpShell({ children }: { children: ReactNode }) {
               <NavLink key={l.to+l.label} to={l.to} className={() => cn("rounded-full px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900", ((l.activeOnly && loc.pathname === "/help") || (!l.activeOnly && loc.pathname.startsWith(l.to))) && (l.to === "/help" ? "bg-blue-600 text-white hover:text-white" : "bg-slate-100 text-slate-900"))}>{l.label}</NavLink>
             ))}
           </nav>
-          <div className="ml-auto hidden md:block"><HeaderActions role="seller" /></div>
+          <div className="ml-auto hidden md:block"><HeaderActions role={accountRole} /></div>
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen((v) => !v)} aria-label="Open menu">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</Button>
         </div>
         {mobileOpen && (
@@ -43,7 +43,7 @@ export function HelpShell({ children }: { children: ReactNode }) {
                 <NavLink key={l.to+l.label+"m"} to={l.to} onClick={() => setMobileOpen(false)} className={() => cn("rounded-lg px-3 py-2 text-sm font-medium text-slate-600", ((l.activeOnly && loc.pathname === "/help") || (!l.activeOnly && loc.pathname.startsWith(l.to))) && "bg-blue-50 text-blue-700")}>{l.label}</NavLink>
               ))}
             </nav>
-            <div className="flex justify-end"><HeaderActions role="seller" compact /></div>
+            <div className="flex justify-end"><HeaderActions role={accountRole} compact /></div>
           </div>
         )}
       </header>

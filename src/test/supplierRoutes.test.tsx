@@ -18,6 +18,8 @@ import SupplierSettingsKyc from "@/pages/supplier/SettingsKyc";
 import SupplierPerformance from "@/pages/supplier/Performance";
 import SupplierTierProgress from "@/pages/supplier/TierProgress";
 import SupplierMarketLookup from "@/pages/supplier/MarketLookup";
+import SupplierAccountSettings from "@/pages/supplier/AccountSettings";
+import SupplierAIChatbot from "@/pages/supplier/AIChatbot";
 
 const routes: Array<{ path: string; Component: React.ComponentType }> = [
   { path: "/supplier/dashboard", Component: SupplierDashboard },
@@ -35,6 +37,8 @@ const routes: Array<{ path: string; Component: React.ComponentType }> = [
   { path: "/supplier/performance", Component: SupplierPerformance },
   { path: "/supplier/tier-progress", Component: SupplierTierProgress },
   { path: "/supplier/market-lookup", Component: SupplierMarketLookup },
+  { path: "/supplier/settings", Component: SupplierAccountSettings },
+  { path: "/supplier/ai-chatbot", Component: SupplierAIChatbot },
 ];
 
 const initialFor = (path: string) =>

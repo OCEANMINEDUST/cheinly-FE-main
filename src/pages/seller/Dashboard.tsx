@@ -35,6 +35,7 @@ import {
   sellerProfile,
   statusVariant,
 } from "@/lib/sellerMock";
+import { SellerStorefrontPanel } from "@/components/shared/SellerStorefrontPanel";
 
 export default function SellerDashboard() {
   const nav = useNavigate();
@@ -60,6 +61,10 @@ export default function SellerDashboard() {
       </div>
 
       {/* Performance Summary */}
+      <section className="mb-6">
+        <SellerStorefrontPanel username="adunni" />
+      </section>
+
       <section className="mb-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Performance Summary</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

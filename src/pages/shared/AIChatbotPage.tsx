@@ -1,4 +1,6 @@
+
 import { ExternalLink, MessageCircle, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { Bot, ExternalLink, MessageCircle, Send, ShieldCheck, Sparkles } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,7 +47,11 @@ export default function AIChatbotPage({ role }: { role: ChatbotRole }) {
                 Start a role-aware conversation with Cheinly AI. Your selected channel opens with the {chatbotRoleLabels[role].toLowerCase()} role and current chat context already included.
               </p>
             </div>
+
             <div className="flex h-16 w-20 items-center justify-center gap-2 rounded-2xl bg-primary/10 text-primary"><MessageCircle className="h-7 w-7 text-emerald-600" />{role !== "buyer" && <Send className="h-7 w-7 text-sky-600" />}</div>
+
+            <div className="grid h-16 w-16 place-items-center rounded-2xl bg-primary/10 text-primary"><Bot className="h-8 w-8" /></div>
+
           </div>
         </div>
       </section>

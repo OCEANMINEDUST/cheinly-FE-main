@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, Share2 } from "lucide-react";
-import { FaWhatsapp, FaTelegram, FaInstagram, FaTiktok } from "react-icons/fa";
+import { Copy, Check, Share2, MessageCircle, Send, Instagram, Music2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -51,16 +50,16 @@ export function ShareButtons({ url, title = "Check this out on Cheinly", channel
         <Btn onClick={copy} label="Copy link">{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}<span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span></Btn>
       )}
       {channels?.includes("whatsapp") && (
-        <Btn label="Share on WhatsApp" href={`https://wa.me/?text=${encodeURIComponent(text)}`}><FaWhatsapp className="h-4 w-4" /><span className="hidden sm:inline">WhatsApp</span></Btn>
+        <Btn label="Share on WhatsApp" href={`https://wa.me/?text=${encodeURIComponent(text)}`}><MessageCircle className="h-4 w-4 text-emerald-600" /><span className="hidden sm:inline">WhatsApp</span></Btn>
       )}
       {channels?.includes("telegram") && (
-        <Btn label="Share on Telegram" href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`}><FaTelegram className="h-4 w-4" /><span className="hidden sm:inline">Telegram</span></Btn>
+        <Btn label="Share on Telegram" href={`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`}><Send className="h-4 w-4 text-sky-600" /><span className="hidden sm:inline">Telegram</span></Btn>
       )}
       {channels?.includes("instagram") && (
-        <Btn label="Share on Instagram" onClick={copy}><FaInstagram className="h-4 w-4" /><span className="hidden sm:inline">Instagram</span></Btn>
+        <Btn label="Copy link for Instagram" onClick={copy}><Instagram className="h-4 w-4" /><span className="hidden sm:inline">Instagram</span></Btn>
       )}
       {channels?.includes("tiktok") && (
-        <Btn label="Share on TikTok" onClick={copy}><FaTiktok className="h-4 w-4" /><span className="hidden sm:inline">TikTok</span></Btn>
+        <Btn label="Copy link for TikTok" onClick={copy}><Music2 className="h-4 w-4" /><span className="hidden sm:inline">TikTok</span></Btn>
       )}
       {channels?.includes("native") && (
         <Btn onClick={native} label="Share"><Share2 className="h-4 w-4" /><span className="hidden sm:inline">Share</span></Btn>

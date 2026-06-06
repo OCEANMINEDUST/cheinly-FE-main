@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Landmark, Package, Send, ShoppingBag, Wallet } from "lucide-react";
+import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Landmark, Package, PackagePlus, Send, ShoppingBag, Wallet } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -130,6 +130,9 @@ const BuyerDashboard = () => {
           <h1 className="font-display text-4xl text-foreground">Welcome to Cheinly, {mockBuyer.name},</h1>
           <p className="text-muted-foreground text-sm mt-1">Your secure marketplace account is ready.</p>
           <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => navigate("/buyer/send-package")} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <PackagePlus className="mr-1.5 h-3.5 w-3.5" /> Send a package
+            </Button>
             <Button size="sm" variant="outline" onClick={() => navigate("/buyer/invite-seller")}>
               <Send className="mr-1.5 h-3.5 w-3.5" /> Invite a seller
             </Button>

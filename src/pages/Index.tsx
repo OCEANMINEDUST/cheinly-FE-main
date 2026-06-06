@@ -139,13 +139,71 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Platform stats */}
-      <section id="platform" className="border-t border-border/50 bg-card/30 py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3">
+      {/* Value Propositions */}
+      <section id="platform" className="border-t border-border/50 bg-card/30 py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs uppercase tracking-[0.25em] text-gold">Why Cheinly</p>
+            <h2 className="mt-3 font-display text-4xl text-foreground md:text-5xl">
+              Built for buyers and sellers who <span className="text-gold">expect more</span>.
+            </h2>
+          </div>
+
+          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Trusted Shopping",
+                description: "Shop with confidence from verified sellers and trusted brands. Every transaction is designed to create a safer buying and selling experience.",
+              },
+              {
+                icon: Users,
+                title: "Social Discovery",
+                description: "Discover trending products, recommendations, and opportunities through a commerce ecosystem powered by real user interactions and marketplace activity.",
+              },
+              {
+                icon: UserCircle,
+                title: "Personalized Experience",
+                description: "Get product suggestions, offers, and shopping experiences tailored to your interests, preferences, and purchasing behavior.",
+              },
+              {
+                icon: Bell,
+                title: "Real-Time Engagement",
+                description: "Stay connected with instant order updates, delivery tracking, notifications, and seller interactions throughout your shopping journey.",
+              },
+              {
+                icon: MapPin,
+                title: "Nationwide Reach",
+                description: "Buy and sell across cities and regions with access to a growing network of merchants, customers, and logistics partners.",
+              },
+              {
+                icon: Wrench,
+                title: "Smart Commerce Tools",
+                description: "Powerful tools help buyers make informed decisions and help sellers manage products, orders, inventory, and customer relationships efficiently.",
+              },
+            ].map(({ icon: Icon, title, description }) => (
+              <Card key={title} className="group border-border/60 bg-card/60 backdrop-blur transition-all hover:border-gold/40 hover:shadow-glow">
+                <CardContent className="p-7">
+                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-gold-gradient text-gold-foreground">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display text-2xl text-foreground">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="border-t border-border/50 py-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { k: "99.99%", v: "Network uptime" },
-            { k: "< 80ms", v: "Global edge latency" },
-            { k: "SOC 2 II", v: "Audited & certified" },
+            { k: "10,000+", v: "Products Available" },
+            { k: "5,000+", v: "Verified Sellers" },
+            { k: "24/7", v: "Marketplace Access" },
+            { k: "Growing Daily", v: "Active Buyers & Sellers" },
           ].map(({ k, v }) => (
             <div key={v} className="text-center">
               <div className="font-display text-5xl text-gold md:text-6xl">{k}</div>

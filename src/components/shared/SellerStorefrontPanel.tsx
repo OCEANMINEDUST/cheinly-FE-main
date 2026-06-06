@@ -1,4 +1,5 @@
-import { Send, MessageCircle, Link2 } from "lucide-react";
+import { Link2 } from "lucide-react";
+import { WhatsAppIcon, TelegramIcon } from "@/components/icons/BrandIcons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,12 +27,12 @@ export function SellerStorefrontPanel({ username, telegramBot = "CheinlyBot" }: 
         <div className="grid gap-3 sm:grid-cols-2">
           <Button asChild className="h-auto justify-start gap-2 bg-sky-600 py-3 text-white hover:bg-sky-700">
             <a href={`https://t.me/${telegramBot}?start=post_${username}`} target="_blank" rel="noreferrer">
-              <Send className="h-4 w-4" /> 📲 Post Products via Telegram
+              <TelegramIcon size={18} /> Post Products via Telegram
             </a>
           </Button>
           <Button asChild className="h-auto justify-start gap-2 bg-emerald-600 py-3 text-white hover:bg-emerald-700">
             <a href={`https://wa.me/${phone}`} target="_blank" rel="noreferrer">
-              <MessageCircle className="h-4 w-4" /> 🔔 WhatsApp Notifications
+              <WhatsAppIcon size={18} /> WhatsApp Notifications
             </a>
           </Button>
         </div>

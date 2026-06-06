@@ -1,5 +1,5 @@
-import { MessageCircle, Send } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { WhatsAppIcon, TelegramIcon } from "@/components/icons/BrandIcons";
 import { Button } from "@/components/ui/button";
 import { getAccountRole } from "@/lib/accountRole";
 import {
@@ -22,8 +22,8 @@ const canShowForRole = (role: ChatbotRole) => {
 };
 
 const channelStyles: Record<ChatbotChannel, string> = {
-  whatsapp: "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 hover:text-emerald-800",
-  telegram: "border-sky-500/40 bg-sky-500/10 text-sky-700 hover:bg-sky-500/20 hover:text-sky-800",
+  whatsapp: "border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20",
+  telegram: "border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20",
 };
 
 export function AIChatbotButton({ role, compact = false, className }: { role: Role; compact?: boolean; className?: string }) {
@@ -34,9 +34,9 @@ export function AIChatbotButton({ role, compact = false, className }: { role: Ro
   const context = getChatbotContext(role, location.pathname);
   const path = `${location.pathname}${location.search}${location.hash}`;
 
-  const channels: Array<{ channel: ChatbotChannel; label: string; icon: typeof MessageCircle; enabled: boolean }> = [
-    { channel: "whatsapp", label: "WhatsApp", icon: MessageCircle, enabled: true },
-    { channel: "telegram", label: "Telegram", icon: Send, enabled: role === "seller" || role === "supplier" },
+  const channels: Array<{ channel: ChatbotChannel; label: string; Icon: typeof WhatsAppIcon; enabled: boolean }> = [
+    { channel: "whatsapp", label: "WhatsApp", Icon: WhatsAppIcon, enabled: true },
+    { channel: "telegram", label: "Telegram", Icon: TelegramIcon, enabled: role === "seller" || role === "supplier" },
   ];
 
   return (
@@ -56,7 +56,7 @@ export function AIChatbotButton({ role, compact = false, className }: { role: Ro
             title={`Open ${chatbotRoleLabels[role]} AI chatbot on ${item.label}`}
             onClick={() => trackChatbotClick({ role, channel: item.channel, context, path })}
           >
-            <item.icon className="h-[18px] w-[18px]" />
+            <item.Icon size={18} />
             {compact && <span>{item.label}</span>}
           </a>
         </Button>

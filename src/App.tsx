@@ -35,6 +35,8 @@ import BuyerTransactions from "./pages/buyer/Transactions";
 import BuyerHelp from "./pages/buyer/Help";
 import BuyerAIChatbot from "./pages/buyer/AIChatbot";
 import BuyerSendPackage from "./pages/buyer/SendPackage";
+import BuyerSellerCatalog from "./pages/buyer/SellerCatalog";
+import BuyerPackingSlip from "./pages/buyer/PackingSlip";
 import RiderEntry from "./pages/rider/Entry";
 import RiderOnboarding from "./pages/rider/Onboarding";
 import RiderDocumentReview from "./pages/rider/DocumentReview";
@@ -138,6 +140,8 @@ const App = () => (
           <Route path="/buyer/help" element={<BuyerHelp />} />
           <Route path="/buyer/ai-chatbot" element={<BuyerAIChatbot />} />
           <Route path="/buyer/send-package" element={<BuyerSendPackage />} />
+          <Route path="/buyer/seller/:username" element={<BuyerSellerCatalog />} />
+          <Route path="/buyer/packing-slip" element={<BuyerPackingSlip />} />
           {/* Rider flow */}
           <Route path="/rider" element={<RiderEntry />} />
           <Route path="/rider/login" element={<RiderLogin />} />

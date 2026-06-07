@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import { ArrowRight, MessageCircle, Send, ShieldCheck, Store } from "lucide-react";
+import { ArrowRight, FileText, MessageCircle, Send, ShieldCheck, Store } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +59,11 @@ export default function BioStore() {
                 <a href={`https://t.me/${seller.telegram}?start=store_${seller.username}`} target="_blank" rel="noreferrer"><Send className="mr-2 h-4 w-4" /> Open Telegram Store</a>
               </Button>
             )}
+            <Button asChild variant="outline">
+              <Link to={`/buyer/packing-slip?seller=${encodeURIComponent(seller.username)}`}>
+                <FileText className="mr-2 h-4 w-4" /> Generate packing slip
+              </Link>
+            </Button>
           </div>
           <div className="mt-4 flex justify-center"><ShareButtons url={bioLink(seller.username)} title={`Shop ${seller.name} on Cheinly`} compact /></div>
         </section>

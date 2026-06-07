@@ -213,6 +213,30 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Primary CTA after value props */}
+      <section className="border-t border-border/50 py-16">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-display text-3xl text-foreground md:text-4xl">
+            Ready to start shopping?
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Jump into your dashboard to browse, track orders, and pay securely with Protected Balance.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild variant="hero" size="lg">
+              <Link to={session ? buyerDashboardUrl(session) : "/auth/login"}>
+                {session ? "Continue to dashboard" : "Go to buyer dashboard"} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            {!session && (
+              <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
+                <Link to="/auth/signup">Create an account</Link>
+              </Button>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section id="cta" className="relative overflow-hidden border-t border-border/50 py-28">
         <div className="absolute inset-0 -z-10 bg-hero" aria-hidden />

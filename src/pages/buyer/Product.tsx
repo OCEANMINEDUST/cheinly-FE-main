@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mockProduct, formatNaira } from "@/lib/buyerMock";
+import { MoreFromThisSeller } from "@/components/buyer/MoreFromThisSeller";
 
 const perkIcons = [Truck, RotateCcw, Gem, Ruler];
 
@@ -143,6 +144,12 @@ const BuyerProduct = () => {
             ))}
           </div>
         </section>
+
+        <MoreFromThisSeller
+          sellerUsername="globalsneakers"
+          excludeProductId={productId}
+          sellerNameOverride={mockProduct.seller.name}
+        />
       </main>
 
       <BuyerFooter variant="checkout" />

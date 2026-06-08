@@ -7,38 +7,6 @@ import logo from "@/assets/cheinly-logo.jpeg";
 import { useEffect, useState } from "react";
 import { getBuyerSession, buyerDashboardUrl, type BuyerSession } from "@/lib/buyerSession";
 
-const features = [
-  {
-    icon: ShieldCheck,
-    title: "Zero-trust security",
-    description: "Every request verified. Every session encrypted. Built on a defense-in-depth model trusted by enterprises.",
-  },
-  {
-    icon: Network,
-    title: "Connected intelligence",
-    description: "A unified mesh that links your people, data, and systems — delivering insight where decisions happen.",
-  },
-  {
-    icon: Lock,
-    title: "Granular access",
-    description: "Role-based permissions and adaptive policies keep the right doors open and the wrong ones closed.",
-  },
-  {
-    icon: Zap,
-    title: "Realtime sync",
-    description: "Sub-second propagation across your network so teams act on the truth, not yesterday's snapshot.",
-  },
-  {
-    icon: Globe2,
-    title: "Global by design",
-    description: "Multi-region presence with low-latency edges. Operate everywhere your business does.",
-  },
-  {
-    icon: Sparkles,
-    title: "Adaptive workflows",
-    description: "Intelligent automation that learns the patterns of your organization and orchestrates them at scale.",
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -64,7 +32,7 @@ const Index = () => {
             <span className="font-display text-2xl tracking-wider text-gold">CHEINLY</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <a href="#features" className="transition-colors hover:text-foreground">Features</a>
+            <a href="#platform" className="transition-colors hover:text-foreground">Features</a>
             <a href="#platform" className="transition-colors hover:text-foreground">Platform</a>
             <a href="#cta" className="transition-colors hover:text-foreground">Get started</a>
           </nav>
@@ -100,7 +68,7 @@ const Index = () => {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
-                <a href="#features">Explore features</a>
+                <a href="#platform">Explore features</a>
               </Button>
             </div>
           </div>
@@ -110,34 +78,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="border-t border-border/50 py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-gold">Platform</p>
-            <h2 className="mt-3 font-display text-4xl text-foreground md:text-5xl">
-              Crafted for organizations that <span className="text-gold">don't compromise</span>.
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              A focused set of capabilities that make secure, intelligent connectivity feel effortless.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, description }) => (
-              <Card key={title} className="group border-border/60 bg-card/60 backdrop-blur transition-all hover:border-gold/40 hover:shadow-glow">
-                <CardContent className="p-7">
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-gold-gradient text-gold-foreground">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-display text-2xl text-foreground">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Value Propositions */}
       <section id="platform" className="border-t border-border/50 bg-card/30 py-24">
@@ -270,7 +210,7 @@ const Index = () => {
             <span className="ml-2">© {new Date().getFullYear()}</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="#features" className="hover:text-foreground">Features</a>
+            <a href="#platform" className="hover:text-foreground">Features</a>
             <a href="#platform" className="hover:text-foreground">Platform</a>
             <Link to="/auth/login" className="hover:text-foreground">Sign in</Link>
           </div>

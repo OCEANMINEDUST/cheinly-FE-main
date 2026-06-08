@@ -1,18 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, CheckCircle2, FileText, Search, Store } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3, Search, Store } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatNaira, getProductsBySeller, getSellerByUsername } from "@/lib/storefront";
+import { formatNaira, getProductsBySeller, getSellerByUsername, rankSellerProducts } from "@/lib/storefront";
 
 const SellerCatalog = () => {
   const { username = "" } = useParams();
   const seller = getSellerByUsername(username);
-  const products = useMemo(() => getProductsBySeller(username), [username]);
+  const products = useMemo(() => rankSellerProducts(getProductsBySeller(username)), [username]);
   const [q, setQ] = useState("");
 
   const filtered = products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
@@ -29,14 +29,12 @@ const SellerCatalog = () => {
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Seller Catalog</p>
               <h1 className="font-display text-3xl text-foreground">{seller?.name ?? `@${username}`}</h1>
-              <p className="text-sm text-muted-foreground">{filtered.length} product{filtered.length === 1 ? "" : "s"}</p>
+              <p className="text-sm text-muted-foreground">
+                {products.length} active product{products.length === 1 ? "" : "s"}
+                {q ? ` • ${filtered.length} matching` : ""}
+              </p>
             </div>
           </div>
-          <Button asChild variant="outline">
-            <Link to={`/buyer/packing-slip?seller=${encodeURIComponent(username)}`}>
-              <FileText className="mr-2 h-4 w-4" /> Generate packing slip
-            </Link>
-          </Button>
         </div>
 
         <div className="mt-6 max-w-md">
@@ -53,15 +51,19 @@ const SellerCatalog = () => {
               <CardContent className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium text-foreground line-clamp-2">{p.name}</h3>
-                  <Badge variant="outline" className="shrink-0 border-success/40 text-success">
-                    <CheckCircle2 className="mr-1 h-3 w-3" /> In stock
+                  <Badge
+                    variant="outline"
+                    className={p.inStock ? "shrink-0 border-success/40 text-success" : "shrink-0 border-muted-foreground/30 text-muted-foreground"}
+                  >
+                    {p.inStock ? <CheckCircle2 className="mr-1 h-3 w-3" /> : <Clock3 className="mr-1 h-3 w-3" />}
+                    {p.inStock ? "In stock" : "Restocking"}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground line-clamp-2">{p.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="font-display text-lg text-gold">{formatNaira(p.price)}</span>
                   <Button asChild size="sm">
-                    <Link to={`/buyer/product?productId=${encodeURIComponent(p.id)}`}>
+                    <Link to={`/p/${encodeURIComponent(p.id)}`}>
                       View <ArrowRight className="ml-1 h-3 w-3" />
                     </Link>
                   </Button>

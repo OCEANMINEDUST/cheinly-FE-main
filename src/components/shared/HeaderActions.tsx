@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, ShieldCheck, CheckCheck, ChevronRight } from "lucide-react";
+import { Bell, Search, X, ArrowRight, User, Settings, HelpCircle, LogOut, CheckCheck, ChevronRight } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -13,17 +13,17 @@ import { getAccountRole, setAccountRole } from "@/lib/accountRole";
 import { toast } from "sonner";
 import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
 
-const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string; settings: string; kyc: string }> = {
-  seller: { profile: "/seller/settings", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO", settings: "/seller/settings", kyc: "/seller/settings#kyc" },
-  supplier: { profile: "/supplier/settings", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS", settings: "/supplier/settings", kyc: "/supplier/settings#kyc" },
-  buyer: { profile: "/buyer/dashboard", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G", settings: "/buyer/transactions", kyc: "/buyer/help?section=kyc" },
-  rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA", settings: "/rider/profile/security", kyc: "/rider/document-review" },
+const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string }> = {
+  seller: { profile: "/seller/dashboard", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO" },
+  supplier: { profile: "/supplier/dashboard", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS" },
+  buyer: { profile: "/buyer/settings", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G" },
+  rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA" },
 };
 
 const helpSuggestions = [
   { id: "escrow", title: "How escrow protects every transaction", roles: ["seller", "supplier", "buyer"] as const },
   { id: "dispute", title: "Open a dispute & upload evidence", roles: ["seller", "supplier", "buyer"] as const },
-  { id: "kyc", title: "Verify your identity (KYC)", roles: ["seller", "supplier", "buyer"] as const },
+  { id: "kyc", title: "Verify your identity (KYC)", roles: ["seller", "supplier"] as const },
   { id: "withdraw", title: "Withdraw to your bank account", roles: ["seller", "supplier", "buyer"] as const },
   { id: "invite-seller", title: "Invite a seller who isn't on Cheinly", roles: ["buyer"] as const },
   { id: "2fa", title: "Set up two-factor authentication", roles: ["seller", "supplier", "buyer"] as const },
@@ -128,8 +128,7 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel><div className="text-sm font-medium">{profile.name}</div><div className="text-xs text-muted-foreground capitalize">{role} account</div></DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => nav(profile.profile)}><User className="mr-2 h-4 w-4" /> Account settings</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => nav(profile.kyc)}><ShieldCheck className="mr-2 h-4 w-4" /> KYC status</DropdownMenuItem>
+          {role === "buyer" && <DropdownMenuItem onClick={() => nav(profile.profile)}><User className="mr-2 h-4 w-4" /> Account settings</DropdownMenuItem>}
           <DropdownMenuItem onClick={() => nav(profile.help)}><HelpCircle className="mr-2 h-4 w-4" /> Help Centre</DropdownMenuItem>
           {role === "seller" && accountRole === "seller" && <DropdownMenuItem onClick={() => { setAccountRole("supplier"); nav("/supplier/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Supplier</DropdownMenuItem>}
           {role === "supplier" && accountRole === "supplier" && <DropdownMenuItem onClick={() => { setAccountRole("seller"); nav("/seller/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Seller</DropdownMenuItem>}

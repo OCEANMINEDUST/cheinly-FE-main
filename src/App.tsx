@@ -21,6 +21,8 @@ import BuyerReceipt from "./pages/buyer/Receipt";
 import BuyerDeliveryConfirmation from "./pages/buyer/DeliveryConfirmation";
 import BuyerAuthentication from "./pages/buyer/Authentication";
 import BuyerDispute from "./pages/buyer/Dispute";
+import BuyerDisputes from "./pages/buyer/Disputes";
+import BuyerAccountSettings from "./pages/buyer/AccountSettings";
 import BuyerMultiItemVerification from "./pages/buyer/MultiItemVerification";
 import BuyerReportIssue from "./pages/buyer/ReportIssue";
 import BuyerNegotiation from "./pages/buyer/Negotiation";
@@ -64,6 +66,7 @@ import SellerTracking from "./pages/seller/Tracking";
 import SellerOrders from "./pages/seller/Orders";
 import SellerTransactions from "./pages/seller/Transactions";
 import SellerDispute from "./pages/seller/Dispute";
+import SellerDisputes from "./pages/seller/Disputes";
 import SellerNegotiate from "./pages/seller/Negotiate";
 import SellerEscalate from "./pages/seller/Escalate";
 import SellerAccountSettings from "./pages/seller/AccountSettings";
@@ -84,6 +87,7 @@ import SupplierTransactions from "./pages/supplier/Transactions";
 import SupplierFulfillment from "./pages/supplier/Fulfillment";
 import SupplierInvite from "./pages/supplier/Invite";
 import SupplierDisputeReview from "./pages/supplier/DisputeReview";
+import SupplierDisputes from "./pages/supplier/Disputes";
 import SupplierReturnTracking from "./pages/supplier/ReturnTracking";
 import SupplierReturnInspection from "./pages/supplier/ReturnInspection";
 import SupplierAccountOverview from "./pages/supplier/AccountOverview";
@@ -125,7 +129,7 @@ const App = () => (
           <Route path="/buyer/confirm-delivery" element={<BuyerDeliveryConfirmation />} />
           <Route path="/buyer/authentication" element={<BuyerAuthentication />} />
           <Route path="/buyer/dispute" element={<BuyerDispute />} />
-          <Route path="/buyer/disputes" element={<BuyerDispute />} />
+          <Route path="/buyer/disputes" element={<BuyerDisputes />} />
           <Route path="/buyer/verify-items" element={<BuyerMultiItemVerification />} />
           <Route path="/buyer/report-issue" element={<BuyerReportIssue />} />
           <Route path="/buyer/negotiation" element={<BuyerNegotiation />} />
@@ -140,6 +144,7 @@ const App = () => (
           <Route path="/buyer/help" element={<BuyerHelp />} />
           <Route path="/buyer/ai-chatbot" element={<BuyerAIChatbot />} />
           <Route path="/buyer/send-package" element={<BuyerSendPackage />} />
+          <Route path="/buyer/settings" element={<BuyerAccountSettings />} />
           <Route path="/buyer/seller/:username" element={<BuyerSellerCatalog />} />
           <Route path="/buyer/packing-slip" element={<BuyerPackingSlip />} />
           {/* Rider flow */}
@@ -171,7 +176,7 @@ const App = () => (
           <Route path="/seller/orders" element={<RoleAccessRoute required="seller"><SellerOrders /></RoleAccessRoute>} />
           <Route path="/seller/transactions" element={<RoleAccessRoute required="seller"><SellerTransactions /></RoleAccessRoute>} />
           <Route path="/seller/dispute" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
-          <Route path="/seller/disputes" element={<RoleAccessRoute required="seller"><SellerDispute /></RoleAccessRoute>} />
+          <Route path="/seller/disputes" element={<RoleAccessRoute required="seller"><SellerDisputes /></RoleAccessRoute>} />
           <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
           <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
           <Route path="/seller/settings" element={<RoleAccessRoute required="seller"><SellerAccountSettings /></RoleAccessRoute>} />
@@ -196,7 +201,7 @@ const App = () => (
           <Route path="/supplier/fulfillment" element={<RoleAccessRoute required="supplier"><SupplierFulfillment /></RoleAccessRoute>} />
           <Route path="/supplier/invite/:orderId" element={<RoleAccessRoute required="supplier"><SupplierInvite /></RoleAccessRoute>} />
           <Route path="/supplier/dispute-review" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
-          <Route path="/supplier/disputes" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
+          <Route path="/supplier/disputes" element={<RoleAccessRoute required="supplier"><SupplierDisputes /></RoleAccessRoute>} />
           <Route path="/supplier/return-tracking" element={<RoleAccessRoute required="supplier"><SupplierReturnTracking /></RoleAccessRoute>} />
           <Route path="/supplier/return-inspection" element={<RoleAccessRoute required="supplier"><SupplierReturnInspection /></RoleAccessRoute>} />
           <Route path="/supplier/account" element={<RoleAccessRoute required="supplier"><SupplierAccountOverview /></RoleAccessRoute>} />

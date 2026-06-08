@@ -5,28 +5,73 @@ type EventName =
 
 type EventPayload = Record<string, string | number | boolean | undefined>;
 
+type DataLayerEntry =
+  | Record<string, string | number | boolean | undefined>
+  | Parameters<NonNullable<Window["gtag"]>>;
+
+declare global {
+  interface Window {
+    dataLayer?: DataLayerEntry[];
+    gtag?: (...args: ["js", Date] | ["config", string] | ["event", EventName, EventPayload]) => void;
+  }
+}
+
+const GA4_MEASUREMENT_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID;
+let ga4Initialized = false;
+
+const getDataLayer = () => {
+  window.dataLayer = window.dataLayer || [];
+  return window.dataLayer;
+};
+
+function gtag(...args: Parameters<NonNullable<Window["gtag"]>>) {
+  getDataLayer().push(args);
+}
+
+const loadGa4Script = (measurementId: string) => {
+  if (document.querySelector(`script[data-ga4-measurement-id="${measurementId}"]`)) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+  script.dataset.ga4MeasurementId = measurementId;
+  document.head.appendChild(script);
+};
+
+export function initGA4(measurementId = GA4_MEASUREMENT_ID) {
+  getDataLayer();
+
+  if (!measurementId || ga4Initialized) {
+    return;
+  }
+
+  ga4Initialized = true;
+  window.gtag = window.gtag || gtag;
+  loadGa4Script(measurementId);
+  window.gtag("js", new Date());
+  window.gtag("config", measurementId);
+}
+
 export function trackEvent(name: EventName, payload: EventPayload = {}) {
-  const fullPayload = {
-    event: name,
+  const eventPayload = {
     timestamp: new Date().toISOString(),
     page: window.location.pathname + window.location.search,
     ...payload,
   };
 
+  const dataLayerPayload = {
+    event: name,
+    ...eventPayload,
+  };
+
   // Console log for development visibility
-  // eslint-disable-next-line no-console
-  console.log("[Analytics]", fullPayload);
+  console.log("[Analytics]", dataLayerPayload);
 
-  // Ready for production analytics provider (e.g., Google Analytics, Mixpanel, Segment)
-  // @ts-expect-error — allow gtag injection
+  getDataLayer().push(dataLayerPayload);
+
   if (typeof window.gtag === "function") {
-    // @ts-expect-error
-    window.gtag("event", name, payload);
-  }
-
-  // @ts-expect-error — allow dataLayer push for GTM
-  if (typeof window.dataLayer !== "undefined") {
-    // @ts-expect-error
-    window.dataLayer.push(fullPayload);
+    window.gtag("event", name, eventPayload);
   }
 }

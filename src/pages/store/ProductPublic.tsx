@@ -1,9 +1,10 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ShieldCheck, MessageCircle, Store, Lock } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShareButtons } from "@/components/shared/ShareButtons";
+import { MoreFromThisSeller } from "@/components/buyer/MoreFromThisSeller";
 import { formatNaira, getProductById, getSellerByUsername, productLink } from "@/lib/storefront";
 import { rememberBuyer } from "@/lib/buyerSession";
 
@@ -42,44 +43,53 @@ export default function ProductPublic() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-4xl gap-8 px-5 py-10 md:grid-cols-2">
-        <Card className="overflow-hidden">
-          <img src={product.image} alt={product.name} className="h-72 w-full object-cover md:h-full" />
-        </Card>
+      <main className="mx-auto max-w-4xl px-5 py-10">
+        <div className="grid gap-8 md:grid-cols-2">
+          <Card className="overflow-hidden">
+            <img src={product.image} alt={product.name} className="h-72 w-full object-cover md:h-full" />
+          </Card>
 
-        <div className="space-y-5">
-          <div>
-            <p className="font-mono text-xs text-muted-foreground">{product.id}</p>
-            <h1 className="mt-1 font-display text-3xl">{product.name}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{product.description}</p>
-            <p className="mt-3 font-display text-3xl text-primary">{formatNaira(product.price)}</p>
-          </div>
-
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Seller</p>
-                <p className="font-medium">{seller.name}</p>
-                <p className="text-xs text-muted-foreground">@{seller.username}</p>
-              </div>
-              <Button asChild variant="outline" size="sm"><Link to={`/u/${seller.username}`}><Store className="mr-1 h-4 w-4" /> View store</Link></Button>
+          <div className="space-y-5">
+            <div>
+              <p className="font-mono text-xs text-muted-foreground">{product.id}</p>
+              <h1 className="mt-1 font-display text-3xl">{product.name}</h1>
+              <p className="mt-2 text-sm text-muted-foreground">{product.description}</p>
+              <p className="mt-3 font-display text-3xl text-primary">{formatNaira(product.price)}</p>
             </div>
-          </Card>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <Button onClick={buyViaEscrow} className="bg-gold-gradient text-gold-foreground hover:opacity-90"><Lock className="mr-2 h-4 w-4" /> Buy via Escrow</Button>
-            <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
-              <a href={`https://wa.me/${seller.phone}?text=${encodeURIComponent(`Hi, I'm interested in ${product.name} (${product.id}) on Cheinly.`)}`} target="_blank" rel="noreferrer">
-                <MessageCircle className="mr-2 h-4 w-4" /> Chat on WhatsApp
-              </a>
-            </Button>
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground">Seller</p>
+                  <p className="font-medium">{seller.name}</p>
+                  <p className="text-xs text-muted-foreground">@{seller.username}</p>
+                </div>
+                <Button asChild variant="outline" size="sm"><Link to={`/u/${seller.username}`}><Store className="mr-1 h-4 w-4" /> View store</Link></Button>
+              </div>
+            </Card>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button onClick={buyViaEscrow} className="bg-gold-gradient text-gold-foreground hover:opacity-90"><Lock className="mr-2 h-4 w-4" /> Buy via Escrow</Button>
+              <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                <a href={`https://wa.me/${seller.phone}?text=${encodeURIComponent(`Hi, I'm interested in ${product.name} (${product.id}) on Cheinly.`)}`} target="_blank" rel="noreferrer">
+                  <MessageCircle className="mr-2 h-4 w-4" /> Chat on WhatsApp
+                </a>
+              </Button>
+            </div>
+
+            <Card className="p-4">
+              <p className="mb-2 text-sm font-medium">Share this product</p>
+              <ShareButtons url={productLink(product.id)} title={`${product.name} on Cheinly — ${formatNaira(product.price)}`} compact />
+            </Card>
           </div>
-
-          <Card className="p-4">
-            <p className="mb-2 text-sm font-medium">Share this product</p>
-            <ShareButtons url={productLink(product.id)} title={`${product.name} on Cheinly — ${formatNaira(product.price)}`} compact />
-          </Card>
         </div>
+
+        <MoreFromThisSeller
+          sellerUsername={seller.username}
+          excludeProductId={product.id}
+          sellerNameOverride={seller.name}
+          getProductPath={(id) => `/p/${encodeURIComponent(id)}`}
+        />
       </main>
     </div>
   );

@@ -1,24 +1,29 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatNaira, getProductsBySeller, getSellerByUsername } from "@/lib/storefront";
+import { formatNaira, getMoreFromSellerProducts, getProductsBySeller, getSellerByUsername } from "@/lib/storefront";
 import { trackEvent } from "@/lib/analytics";
 
 type Props = {
   sellerUsername: string;
   excludeProductId?: string;
   sellerNameOverride?: string;
+  getProductPath?: (productId: string) => string;
 };
 
-export const MoreFromThisSeller = ({ sellerUsername, excludeProductId, sellerNameOverride }: Props) => {
+export const MoreFromThisSeller = ({
+  sellerUsername,
+  excludeProductId,
+  sellerNameOverride,
+  getProductPath = (productId) => `/buyer/product?productId=${encodeURIComponent(productId)}`,
+}: Props) => {
   const seller = getSellerByUsername(sellerUsername);
-  const all = getProductsBySeller(sellerUsername).filter((p) => p.id !== excludeProductId);
-  // Randomize when no ranking data, then take 3–6
-  const picks = [...all].sort(() => Math.random() - 0.5).slice(0, 6);
+  const all = getProductsBySeller(sellerUsername).filter((p) => p.id.toLowerCase() !== excludeProductId?.toLowerCase());
+  const picks = getMoreFromSellerProducts(sellerUsername, excludeProductId, 6);
 
-  if (picks.length === 0) return null;
+  if (picks.length < 3) return null;
 
   const sellerName = sellerNameOverride ?? seller?.name ?? sellerUsername;
 
@@ -40,8 +45,8 @@ export const MoreFromThisSeller = ({ sellerUsername, excludeProductId, sellerNam
   };
 
   return (
-    <section className="mt-20 border-t border-border pt-12">
-      <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+    <section className="mt-16 border-t border-border pt-10">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">More From This Seller</p>
           <h2 className="mt-1 font-display text-2xl text-foreground">Sold by {sellerName}</h2>
@@ -56,29 +61,30 @@ export const MoreFromThisSeller = ({ sellerUsername, excludeProductId, sellerNam
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {picks.map((p) => (
           <Card key={p.id} className="overflow-hidden border-border/60 bg-card/60 backdrop-blur transition-all hover:border-gold/40 hover:shadow-card">
-            <Link
-              to={`/buyer/product?productId=${encodeURIComponent(p.id)}`}
-              onClick={() => handleProductClick(p.id, p.name)}
-            >
+            <Link to={getProductPath(p.id)} onClick={() => handleProductClick(p.id, p.name)}>
               <img src={p.image} alt={p.name} className="h-40 w-full object-cover" loading="lazy" />
             </Link>
             <CardContent className="space-y-3 p-4">
               <div className="flex items-start justify-between gap-2">
                 <Link
-                  to={`/buyer/product?productId=${encodeURIComponent(p.id)}`}
+                  to={getProductPath(p.id)}
                   onClick={() => handleProductClick(p.id, p.name)}
                   className="font-medium text-foreground line-clamp-2 hover:underline"
                 >
                   {p.name}
                 </Link>
-                <Badge variant="outline" className="shrink-0 border-success/40 text-success">
-                  <CheckCircle2 className="mr-1 h-3 w-3" /> In stock
+                <Badge
+                  variant="outline"
+                  className={p.inStock ? "shrink-0 border-success/40 text-success" : "shrink-0 border-muted-foreground/30 text-muted-foreground"}
+                >
+                  {p.inStock ? <CheckCircle2 className="mr-1 h-3 w-3" /> : <Clock3 className="mr-1 h-3 w-3" />}
+                  {p.inStock ? "In stock" : "Restocking"}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-display text-lg text-gold">{formatNaira(p.price)}</span>
                 <Button asChild size="sm" onClick={() => handleProductClick(p.id, p.name)}>
-                  <Link to={`/buyer/product?productId=${encodeURIComponent(p.id)}`}>View Product</Link>
+                  <Link to={getProductPath(p.id)}>View Product</Link>
                 </Button>
               </div>
             </CardContent>

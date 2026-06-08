@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Network, Lock, Sparkles, Zap, Globe2, Users, UserCircle, Bell, MapPin, Wrench } from "lucide-react";
+import { ArrowRight, ShieldCheck, Sparkles, Users, UserCircle, Bell, MapPin, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";

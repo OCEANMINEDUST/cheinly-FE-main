@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ReviewAcceptDialog, DispatchScheduledDialog, RiderArrivedDialog } from "@/components/seller/OrderModals";
 import { toast } from "sonner";
+import { PackagingItemsList, PackagingItem, makeEmptyItem } from "@/components/shared/PackagingItemsList";
 import {
   getActiveOrderId,
   getDispatchPhotos,
@@ -122,6 +123,7 @@ export default function SellerDispatch() {
   const order = getOrderById(orderId);
   const [before, setBefore] = useState<string | null>(null);
   const [after, setAfter] = useState<string | null>(null);
+  const [packItems, setPackItems] = useState<PackagingItem[]>([makeEmptyItem()]);
 
   useEffect(() => {
     setActiveOrderId(orderId);
@@ -135,6 +137,10 @@ export default function SellerDispatch() {
   }, [before, after, orderId]);
 
   const ready = before && after;
+  const itemsValid =
+    packItems.length > 0 &&
+    packItems.every((i) => i.name.trim().length > 0 && i.photos.length > 0);
+  const canConfirm = !!ready && itemsValid;
 
   return (
     <SellerShell>
@@ -179,6 +185,20 @@ export default function SellerDispatch() {
         </div>
       )}
 
+      <Card className="mt-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium">3. Packaging contents</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PackagingItemsList items={packItems} onChange={setPackItems} />
+          {!itemsValid && (
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <AlertCircle className="h-4 w-4" /> Each item needs a name and at least one photo.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-card p-4 shadow-sm">
         <div className="flex flex-wrap gap-2">
           <ReviewAcceptDialog>
@@ -193,7 +213,7 @@ export default function SellerDispatch() {
         </div>
         <Button
           size="lg"
-          disabled={!ready}
+          disabled={!canConfirm}
           onClick={() => {
             toast.success("Packaging confirmed — escrow protection active");
             nav(`/seller/tracking?orderId=${orderId}`);

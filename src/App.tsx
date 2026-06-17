@@ -39,6 +39,8 @@ import BuyerAIChatbot from "./pages/buyer/AIChatbot";
 import BuyerSendPackage from "./pages/buyer/SendPackage";
 import BuyerSellerCatalog from "./pages/buyer/SellerCatalog";
 import BuyerPackingSlip from "./pages/buyer/PackingSlip";
+import BuyerBrowse from "./pages/buyer/Browse";
+import BuyerLogin from "./pages/buyer/Login";
 import RiderEntry from "./pages/rider/Entry";
 import RiderOnboarding from "./pages/rider/Onboarding";
 import RiderDocumentReview from "./pages/rider/DocumentReview";
@@ -147,6 +149,8 @@ const App = () => (
           <Route path="/buyer/settings" element={<BuyerAccountSettings />} />
           <Route path="/buyer/seller/:username" element={<BuyerSellerCatalog />} />
           <Route path="/buyer/packing-slip" element={<BuyerPackingSlip />} />
+          <Route path="/buyer/browse" element={<BuyerBrowse />} />
+          <Route path="/buyer/login" element={<BuyerLogin />} />
           {/* Rider flow */}
           <Route path="/rider" element={<RiderEntry />} />
           <Route path="/rider/login" element={<RiderLogin />} />

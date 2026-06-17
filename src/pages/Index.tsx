@@ -63,12 +63,14 @@ const Index = () => {
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild variant="hero" size="lg">
-                <Link to="/auth/login">
-                  Enter the portal <ArrowRight className="h-4 w-4" />
+                <Link to="/buyer/browse">
+                  Browse products <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
-                <a href="#platform">Explore features</a>
+                <Link to={session ? buyerDashboardUrl(session) : "/buyer/login"}>
+                  {session ? "Continue to dashboard" : "Sign in as buyer"}
+                </Link>
               </Button>
             </div>
           </div>
@@ -164,15 +166,13 @@ const Index = () => {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild variant="hero" size="lg">
-              <Link to={session ? buyerDashboardUrl(session) : "/auth/login"}>
+              <Link to={session ? buyerDashboardUrl(session) : "/buyer/login"}>
                 {session ? "Continue to dashboard" : "Go to buyer dashboard"} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            {!session && (
-              <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
-                <Link to="/auth/signup">Create an account</Link>
-              </Button>
-            )}
+            <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
+              <Link to="/buyer/browse">Browse products</Link>
+            </Button>
           </div>
         </div>
       </section>

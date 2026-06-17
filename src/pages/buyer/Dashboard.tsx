@@ -41,13 +41,16 @@ const BuyerDashboard = () => {
 
   useEffect(() => {
     const session = getBuyerSession();
-    if (entry !== "secure-checkout" && !session) {
-      navigate(`/buyer/product?productId=${encodeURIComponent(productId)}`, { replace: true });
+    // Synced buyer account: any device with a remembered session sees the
+    // dashboard immediately. Unknown devices must sign in first (Google or email),
+    // unless they're coming from the secure-checkout product flow.
+    if (!session && entry !== "secure-checkout") {
+      navigate(`/buyer/login?next=${encodeURIComponent(`/buyer/dashboard?productId=${productId}&entry=secure-checkout&mode=${mode}&provider=${provider}`)}`, { replace: true });
       return;
     }
     // Remember this device for next visit
     rememberBuyer({ name: mockBuyer.name, email: mockBuyer.email, productId });
-  }, [entry, navigate, productId]);
+  }, [entry, navigate, productId, mode, provider]);
 
   const fee = +(amount * 0.015).toFixed(2);
   const final = amount + fee;

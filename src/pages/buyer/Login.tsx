@@ -148,6 +148,16 @@ const BuyerLogin = () => {
             Just looking?{" "}
             <Link to="/buyer/browse" className="text-gold hover:underline">Browse products</Link>
           </p>
+          <div className="pt-4 border-t border-border/50">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              By signing in, you agree to the{" "}
+              <Link to="/policies#terms" target="_blank" className="text-gold hover:underline">Terms of Service</Link>,{" "}
+              <Link to="/policies#payment" target="_blank" className="text-gold hover:underline">Payment Policy</Link>,{" "}
+              <Link to="/policies#merchant" target="_blank" className="text-gold hover:underline">Merchant Policy</Link>,{" "}
+              <Link to="/policies#refund" target="_blank" className="text-gold hover:underline">Refund Policy</Link>, and{" "}
+              <Link to="/policies#privacy" target="_blank" className="text-gold hover:underline">Privacy Policy</Link>.
+            </p>
+          </div>
         </div>
       </AuthCard>
     </AuthLayout>

@@ -103,6 +103,7 @@ import { RoleAccessRoute } from "./components/shared/RoleAccessRoute";
 import BioStore from "./pages/store/BioStore";
 import ProductPublic from "./pages/store/ProductPublic";
 import ChatPage from "./pages/chat/ChatPage";
+import Policies from "./pages/Policies";
 
 const queryClient = new QueryClient();
 
@@ -220,6 +221,7 @@ const App = () => (
           <Route path="/u/:username" element={<BioStore />} />
           <Route path="/p/:productId" element={<ProductPublic />} />
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/policies" element={<Policies />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

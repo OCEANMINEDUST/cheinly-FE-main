@@ -98,8 +98,13 @@ const RiderSignup = () => {
           <Link to="/rider/login" className="text-primary hover:underline">Sign in</Link>
         </p>
 
-        <p className="text-center text-xs text-muted-foreground">
-          By continuing you agree to the Cheinly Rider terms & privacy policy.
+        <p className="text-center text-xs text-muted-foreground leading-relaxed">
+          By continuing you agree to the{" "}
+          <Link to="/policies#terms" target="_blank" className="text-primary hover:underline">Terms of Service</Link>,{" "}
+          <Link to="/policies#payment" target="_blank" className="text-primary hover:underline">Payment Policy</Link>,{" "}
+          <Link to="/policies#merchant" target="_blank" className="text-primary hover:underline">Merchant Policy</Link>,{" "}
+          <Link to="/policies#refund" target="_blank" className="text-primary hover:underline">Refund Policy</Link>, and{" "}
+          <Link to="/policies#privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</Link>.
         </p>
       </div>
     </RiderShell>

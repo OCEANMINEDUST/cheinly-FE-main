@@ -61,6 +61,12 @@ const Index = () => {
             <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
               Cheinly unifies access, identity, and intelligence into a single elegant network — so your business moves faster, safer, and smarter.
             </p>
+            
+            <div className="mx-auto mt-8 max-w-lg rounded-2xl border border-gold/20 bg-gold/5 p-4 text-sm font-medium text-gold shadow-glow">
+              <ShieldCheck className="mx-auto mb-2 h-6 w-6" />
+              “Every payment on Cheinly is protected. Funds are held securely in escrow and only released after delivery and transaction verification.”
+            </div>
+
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild variant="hero" size="lg">
                 <Link to="/buyer/browse">
@@ -202,17 +208,54 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground md:flex-row">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="" className="h-6 w-6 rounded-md object-cover ring-1 ring-gold/30" />
-            <span className="font-display tracking-wider text-gold">CHEINLY</span>
-            <span className="ml-2">© {new Date().getFullYear()}</span>
+      <footer className="border-t border-border/50 py-16 bg-card/20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
+            <div className="lg:col-span-2">
+              <Link to="/" className="flex items-center gap-3 mb-6">
+                <img src={logo} alt="" className="h-8 w-8 rounded-md object-cover ring-1 ring-gold/30" />
+                <span className="font-display tracking-wider text-gold text-lg">CHEINLY</span>
+              </Link>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Cheinly is a secure commerce platform connecting verified sellers, buyers, and independent delivery riders through a protected transaction, escrow, and fulfillment system.
+              </p>
+              <div className="mt-6 text-xs text-muted-foreground">
+                © {new Date().getFullYear()} Cheinly. All rights reserved.
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Legal & Terms</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#terms" className="hover:text-gold transition-colors">Terms of Service</Link></li>
+                <li><Link to="/policies#privacy" className="hover:text-gold transition-colors">Privacy Policy</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Trust & Protection</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#payment" className="hover:text-gold transition-colors">Escrow & Buyer Protection</Link></li>
+                <li><Link to="/policies#refund" className="hover:text-gold transition-colors">Refund & Dispute Policy</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Merchant Hub</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#merchant" className="hover:text-gold transition-colors">Seller Guidelines</Link></li>
+                <li><Link to="/auth/signup" className="hover:text-gold transition-colors">Onboarding Portal</Link></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="#platform" className="hover:text-foreground">Features</a>
-            <a href="#platform" className="hover:text-foreground">Platform</a>
-            <Link to="/auth/login" className="hover:text-foreground">Sign in</Link>
+          
+          <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+            <h3 className="font-semibold text-foreground">Support & Safety</h3>
+            <div className="flex flex-wrap gap-4 text-muted-foreground">
+              <Link to="/help/contact" className="hover:text-gold transition-colors">Contact Support</Link>
+              <span className="hidden sm:inline">•</span>
+              <Link to="/help/agent" className="hover:text-gold transition-colors">Report Fraud / Secure Escrow Check</Link>
+            </div>
           </div>
         </div>
       </footer>

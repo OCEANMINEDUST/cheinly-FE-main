@@ -9,22 +9,22 @@ interface RiderShellProps {
 }
 
 /**
- * Mobile-first wrapper. Locks content to a 480px column centered on the page,
- * with optional sticky top bar and bottom nav.
+ * Webview wrapper for the rider area.
+ * Contains optional sticky top bar and bottom nav.
  */
 export const RiderShell = ({ children, className, bottomNav, topBar }: RiderShellProps) => {
   return (
-    <div className="min-h-screen w-full bg-muted/40">
-      <div className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col bg-background shadow-card">
+    <div className="min-h-screen w-full bg-background text-foreground">
+      <div className="mx-auto flex min-h-screen w-full flex-col">
         {topBar ? (
           <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-            {topBar}
+            <div className="mx-auto w-full max-w-7xl">{topBar}</div>
           </div>
         ) : null}
-        <main className={cn("flex-1", bottomNav && "pb-24", className)}>{children}</main>
+        <main className={cn("mx-auto flex-1 w-full max-w-7xl", bottomNav && "pb-24", className)}>{children}</main>
         {bottomNav ? (
           <div className="sticky bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur">
-            {bottomNav}
+            <div className="mx-auto w-full max-w-7xl">{bottomNav}</div>
           </div>
         ) : null}
       </div>

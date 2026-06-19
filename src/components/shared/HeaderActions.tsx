@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { notificationsFor, iconFor, type Role } from "@/lib/notifications";
 import { forgetBuyer } from "@/lib/buyerSession";
+
 import { getAccountRole, setAccountRole } from "@/lib/accountRole";
 import { toast } from "sonner";
 import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
@@ -138,7 +139,18 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
+
+          {role === "buyer" && (
+            <DropdownMenuItem onClick={() => { forgetBuyer(); toast.success("This device has been forgotten."); }}>
+              <LogOut className="mr-2 h-4 w-4" /> Forget this device
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={() => { toast.success("Signed out"); nav("/"); }} className="text-destructive focus:text-destructive">
+            <LogOut className="mr-2 h-4 w-4" /> Sign out
+          </DropdownMenuItem>
+
           <DropdownMenuItem onClick={() => { toast.success("Signed out"); nav("/"); }} className="text-destructive focus:text-destructive"><LogOut className="mr-2 h-4 w-4" /> Sign out</DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

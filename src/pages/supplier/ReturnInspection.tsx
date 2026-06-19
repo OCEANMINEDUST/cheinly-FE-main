@@ -4,6 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+
+
+export default function SupplierReturnInspection() {
+  const [img, setImg] = useState<string | null>(null);
+
 import { toast } from "sonner";
 
 const EXPECTED_PIN = "4782";
@@ -32,9 +37,15 @@ export default function SupplierReturnInspection() {
         </div>
         <div>
           <Label>4-digit Handover PIN</Label>
+
+          <Input className="mt-2 max-w-xs" maxLength={4} placeholder="Enter rider-provided PIN" />
+        </div>
+        <Button>Confirm Receipt & Finalize Refund</Button>
+
           <Input value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))} className="mt-2 max-w-xs" maxLength={4} placeholder="Enter rider-provided PIN" />
         </div>
         <Button onClick={finalize} disabled={finalized}>{finalized ? "Refund Finalized" : "Confirm Receipt & Finalize Refund"}</Button>
+
       </Card>
     </SupplierShell>
   );

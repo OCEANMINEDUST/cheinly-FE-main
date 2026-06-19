@@ -3,9 +3,11 @@ import { SupplierShell } from "@/components/supplier/SupplierShell";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
 import { Progress } from "@/components/ui/progress";
 import { Star, Trophy, BadgeCheck, Package, TrendingUp, ShieldAlert, Truck, FileCheck, ShieldCheck, Plus, AlertTriangle } from "lucide-react";
 import { SellerStorefrontPanel } from "@/components/shared/SellerStorefrontPanel";
+
 
 const orders = [
   { id: "SUP-1001", buyer: "Goodness", item: "Imported Sneakers x500", status: "pending fulfillment", amount: 5200000 },
@@ -16,6 +18,7 @@ export default function SupplierDashboard() {
   return (
     <SupplierShell>
       <h1 className="font-display text-3xl">Supplier Dashboard</h1>
+
 
       <section className="mt-6">
         <SellerStorefrontPanel username="globalsneakers" />
@@ -91,6 +94,7 @@ export default function SupplierDashboard() {
         </div>
       </section>
 
+
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         <Card className="p-5 text-white bg-[linear-gradient(135deg,hsl(210_85%_42%),hsl(220_70%_28%))]"><p className="text-xs">Protected Balance</p><p className="font-display text-3xl">₦5,200,000</p></Card>
         <Card className="p-5 text-white bg-[linear-gradient(135deg,hsl(160_60%_32%),hsl(165_62%_22%))]"><p className="text-xs">Earnings</p><p className="font-display text-3xl">₦1,850,000</p></Card>
@@ -99,6 +103,9 @@ export default function SupplierDashboard() {
       <section className="mt-8">
         <div className="mb-3 flex items-center justify-between"><h2 className="font-display text-2xl">New Supply Orders</h2><Button asChild size="sm"><Link to="/supplier/orders">View all</Link></Button></div>
         <div className="grid gap-4 md:grid-cols-2">
+
+          {orders.map((o) => <Card key={o.id} className="p-4"><div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div><div className="mt-3 flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">{o.id}</span><span className="font-semibold">₦{o.amount.toLocaleString("en-NG")}</span></div><Button asChild className="mt-3 w-full"><Link to="/supplier/fulfillment">Start fulfillment</Link></Button></Card>)}
+
           {orders.map((o) => (
             <Card key={o.id} className="p-4">
               <div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div>
@@ -109,6 +116,7 @@ export default function SupplierDashboard() {
               </div>
             </Card>
           ))}
+
         </div>
       </section>
     </SupplierShell>

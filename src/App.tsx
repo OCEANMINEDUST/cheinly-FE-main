@@ -89,6 +89,7 @@ import SupplierTransactions from "./pages/supplier/Transactions";
 import SupplierFulfillment from "./pages/supplier/Fulfillment";
 import SupplierInvite from "./pages/supplier/Invite";
 import SupplierDisputeReview from "./pages/supplier/DisputeReview";
+
 import SupplierDisputes from "./pages/supplier/Disputes";
 import SupplierReturnTracking from "./pages/supplier/ReturnTracking";
 import SupplierReturnInspection from "./pages/supplier/ReturnInspection";
@@ -96,6 +97,7 @@ import SupplierAccountOverview from "./pages/supplier/AccountOverview";
 import SupplierSettingsKyc from "./pages/supplier/SettingsKyc";
 import SupplierPerformance from "./pages/supplier/Performance";
 import SupplierTierProgress from "./pages/supplier/TierProgress";
+
 import SupplierMarketLookup from "./pages/supplier/MarketLookup";
 import SupplierAccountSettings from "./pages/supplier/AccountSettings";
 import SupplierAIChatbot from "./pages/supplier/AIChatbot";
@@ -198,6 +200,22 @@ const App = () => (
           <Route path="/invited/:token/dashboard" element={<InvitedDashboard />} />
           <Route path="/invited/:token/withdraw" element={<InvitedWithdraw />} />
           {/* Supplier flow */}
+
+          <Route path="/supplier" element={<SupplierDashboard />} />
+          <Route path="/supplier/dashboard" element={<SupplierDashboard />} />
+          <Route path="/supplier/onboarding" element={<SupplierOnboarding />} />
+          <Route path="/supplier/orders" element={<SupplierOrders />} />
+          <Route path="/supplier/transactions" element={<SupplierTransactions />} />
+          <Route path="/supplier/fulfillment" element={<SupplierFulfillment />} />
+          <Route path="/supplier/invite/:orderId" element={<SupplierInvite />} />
+          <Route path="/supplier/dispute-review" element={<SupplierDisputeReview />} />
+          <Route path="/supplier/return-tracking" element={<SupplierReturnTracking />} />
+          <Route path="/supplier/return-inspection" element={<SupplierReturnInspection />} />
+          <Route path="/supplier/account" element={<SupplierAccountOverview />} />
+          <Route path="/supplier/settings-kyc" element={<SupplierSettingsKyc />} />
+          <Route path="/supplier/performance" element={<SupplierPerformance />} />
+          <Route path="/supplier/tier-progress" element={<SupplierTierProgress />} />
+
           <Route path="/supplier" element={<RoleAccessRoute required="supplier"><SupplierDashboard /></RoleAccessRoute>} />
           <Route path="/supplier/dashboard" element={<RoleAccessRoute required="supplier"><SupplierDashboard /></RoleAccessRoute>} />
           <Route path="/supplier/onboarding" element={<RoleAccessRoute required="supplier"><SupplierOnboarding /></RoleAccessRoute>} />
@@ -216,6 +234,7 @@ const App = () => (
           <Route path="/supplier/market-lookup" element={<RoleAccessRoute required="supplier"><SupplierMarketLookup /></RoleAccessRoute>} />
           <Route path="/supplier/settings" element={<RoleAccessRoute required="supplier"><SupplierAccountSettings /></RoleAccessRoute>} />
           <Route path="/supplier/ai-chatbot" element={<RoleAccessRoute required="supplier"><SupplierAIChatbot /></RoleAccessRoute>} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           {/* Public storefront + chat */}
           <Route path="/u/:username" element={<BioStore />} />

@@ -3,7 +3,9 @@ import { SupplierShell } from "@/components/supplier/SupplierShell";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { PackagingItemsList, PackagingItem, makeEmptyItem } from "@/components/shared/PackagingItemsList";
+
 
 function UploadCard({ title }: { title: string }) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -11,7 +13,9 @@ function UploadCard({ title }: { title: string }) {
 }
 
 export default function SupplierFulfillment() {
+
   const [packItems, setPackItems] = useState<PackagingItem[]>([makeEmptyItem()]);
+
   return (
     <SupplierShell>
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -24,6 +28,7 @@ export default function SupplierFulfillment() {
             <Card className="p-4"><p className="font-medium">3. Rider Handover</p><p className="mt-2 text-sm text-muted-foreground">Confirm physical handoff to logistics rider.</p></Card>
             <Card className="p-4"><p className="font-medium">4. Delivery Confirmation</p><p className="mt-2 text-sm text-muted-foreground">Final proof and completion trigger.</p></Card>
           </div>
+
           <Card className="mt-5 p-5">
             <p className="font-medium">Packaging contents</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -33,6 +38,7 @@ export default function SupplierFulfillment() {
               <PackagingItemsList items={packItems} onChange={setPackItems} title="Items in this shipment" description="" />
             </div>
           </Card>
+
         </div>
         <aside className="space-y-4">
           <Card className="p-4"><p className="text-xs text-muted-foreground">Protected Balance</p><p className="font-display text-3xl">₦5,200,000</p></Card>

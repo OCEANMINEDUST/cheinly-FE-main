@@ -4,6 +4,8 @@ import logo from "@/assets/cheinly-logo.jpeg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
 import { HeaderActions } from "@/components/shared/HeaderActions";
+import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
+import { flowNav } from "@/components/marketplace/flowStructure";
 
 interface BuyerHeaderProps {
   variant?: "checkout" | "dashboard";
@@ -23,12 +25,7 @@ export const BuyerHeader = ({ variant = "checkout" }: BuyerHeaderProps) => {
           </Link>
           {isDashboard && (
             <nav className="hidden md:flex items-center gap-1 text-sm">
-              {[
-                { to: "/buyer/dashboard", label: "Overview" },
-                { to: "/buyer/transactions", label: "Transactions" },
-                { to: "/buyer/orders", label: "Orders" },
-                { to: "/buyer/help", label: "Help Centre" },
-              ].map((item) => (
+              {flowNav("buyer").map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
@@ -51,9 +48,12 @@ export const BuyerHeader = ({ variant = "checkout" }: BuyerHeaderProps) => {
           {isDashboard ? (
             <HeaderActions role="buyer" />
           ) : (
-            <Badge variant="outline" className="hidden sm:inline-flex gap-1.5 border-primary/40 text-primary">
-              <Lock className="h-3 w-3" /> Secure Checkout
-            </Badge>
+            <>
+              <AIChatbotButton role="buyer" />
+              <Badge variant="outline" className="hidden sm:inline-flex gap-1.5 border-primary/40 text-primary">
+                <Lock className="h-3 w-3" /> Secure Checkout
+              </Badge>
+            </>
           )}
           <ThemeToggle />
         </div>

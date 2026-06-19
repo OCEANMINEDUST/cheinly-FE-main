@@ -436,9 +436,12 @@ const SignUp = () => {
             <label className="flex items-start gap-3 rounded-lg border border-border bg-secondary/40 p-3">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} className="mt-0.5" />
               <span className="text-xs text-muted-foreground leading-relaxed">
-                I agree to Cheinly's{" "}
-                <Link to="#" className="text-gold hover:underline">Terms</Link> and{" "}
-                <Link to="#" className="text-gold hover:underline">Privacy Policy</Link>, and consent to phone verification.
+                I agree to the{" "}
+                <Link to="/policies#terms" target="_blank" className="text-gold hover:underline">Terms of Service</Link>,{" "}
+                <Link to="/policies#payment" target="_blank" className="text-gold hover:underline">Payment Policy</Link>,{" "}
+                <Link to="/policies#merchant" target="_blank" className="text-gold hover:underline">Merchant Policy</Link>,{" "}
+                <Link to="/policies#refund" target="_blank" className="text-gold hover:underline">Refund Policy</Link>, and{" "}
+                <Link to="/policies#privacy" target="_blank" className="text-gold hover:underline">Privacy Policy</Link>.
               </span>
             </label>
 
@@ -531,9 +534,12 @@ const SignUp = () => {
             <label className="flex items-start gap-3 rounded-lg border border-border bg-secondary/40 p-3">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} className="mt-0.5" />
               <span className="text-xs text-muted-foreground leading-relaxed">
-                I agree to Cheinly's{" "}
-                <Link to="#" className="text-gold hover:underline">Terms</Link> and{" "}
-                <Link to="#" className="text-gold hover:underline">Privacy Policy</Link>, and consent to phone verification.
+                I agree to the{" "}
+                <Link to="/policies#terms" target="_blank" className="text-gold hover:underline">Terms of Service</Link>,{" "}
+                <Link to="/policies#payment" target="_blank" className="text-gold hover:underline">Payment Policy</Link>,{" "}
+                <Link to="/policies#merchant" target="_blank" className="text-gold hover:underline">Merchant Policy</Link>,{" "}
+                <Link to="/policies#refund" target="_blank" className="text-gold hover:underline">Refund Policy</Link>, and{" "}
+                <Link to="/policies#privacy" target="_blank" className="text-gold hover:underline">Privacy Policy</Link>.
               </span>
             </label>
 

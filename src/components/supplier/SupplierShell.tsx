@@ -1,8 +1,12 @@
+
 import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
+
 import { PackageCheck } from "lucide-react";
 import { HeaderActions } from "@/components/shared/HeaderActions";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
 
 const links = [
   { to: "/supplier/dashboard", label: "Overview" },
@@ -12,6 +16,15 @@ const links = [
 ];
 
 export function SupplierShell({ children }: { children: React.ReactNode }) {
+
+import { flowNav } from "@/components/marketplace/flowStructure";
+
+const primaryLinks = flowNav("supplier");
+
+export function SupplierShell({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+
   return (
     <div className="min-h-screen bg-background bg-hero">
       <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur">
@@ -22,11 +35,19 @@ export function SupplierShell({ children }: { children: React.ReactNode }) {
             <Badge variant="secondary" className="ml-1">Supplier</Badge>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
+
             {links.map((l) => (
               <NavLink key={l.to} to={l.to} className={({isActive}) => cn("px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground", isActive && "bg-secondary text-foreground")}>{l.label}</NavLink>
             ))}
           </nav>
           <div className="ml-auto"><HeaderActions role="seller" /></div>
+
+            {primaryLinks.map((l) => (
+              <NavLink key={l.to} to={l.to} className={({isActive}) => cn("px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground", (isActive || location.pathname.startsWith(l.to)) && "bg-secondary text-foreground")}>{l.label}</NavLink>
+            ))}
+          </nav>
+          <div className="ml-auto"><HeaderActions role="supplier" /></div>
+
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-5 py-8 lg:px-8">{children}</main>

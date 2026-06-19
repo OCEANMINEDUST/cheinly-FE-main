@@ -65,3 +65,9 @@ export const buyerDashboardUrl = (s: BuyerSession) => {
   });
   return `/buyer/dashboard?${params.toString()}`;
 };
+
+/**
+ * Returns true if this device has a synced buyer account.
+ * Used by routes that should auto-skip sign-in for remembered devices.
+ */
+export const hasBuyerSession = () => getBuyerSession() !== null;

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { returnDispatchCase } from "@/lib/orderMock";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { PackagingItemsList, PackagingItem, makeEmptyItem } from "@/components/shared/PackagingItemsList";
 
 const BuyerReturnDispatch = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const BuyerReturnDispatch = () => {
   const [code, setCode] = useState("");
   const [verified, setVerified] = useState(false);
   const [capture, setCapture] = useState<string | null>(null);
+  const [returnItems, setReturnItems] = useState<PackagingItem[]>([makeEmptyItem()]);
 
   const handleVerify = () => {
     if (code !== returnDispatchCase.pickupCode) {
@@ -45,6 +47,13 @@ const BuyerReturnDispatch = () => {
     }
     if (!capture) {
       toast.error("Capture the return item before continuing.");
+      return;
+    }
+    const itemsValid =
+      returnItems.length > 0 &&
+      returnItems.every((i) => i.name.trim().length > 0 && i.photos.length > 0);
+    if (!itemsValid) {
+      toast.error("List each returned item and add at least one photo per item.");
       return;
     }
     toast.success("Return dispatch authenticated. Heading to the seller.");
@@ -140,6 +149,19 @@ const BuyerReturnDispatch = () => {
             </CardContent>
           </Card>
         </div>
+
+        <Card className={cn("shadow-card", !verified && "opacity-70")}>
+          <CardContent className="space-y-4 p-5">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Step 3</p>
+              <h2 className="font-display text-2xl text-foreground">Returned items checklist</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                List every item being returned with photos. If you're returning more than one piece, add a photo for each.
+              </p>
+            </div>
+            <PackagingItemsList items={returnItems} onChange={setReturnItems} title="Items being returned" description="" />
+          </CardContent>
+        </Card>
 
         <Alert className="border-gold/30 bg-gold/10 text-foreground [&>svg]:text-gold">
           <Lock className="h-4 w-4" />

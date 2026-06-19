@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Network, Lock, Sparkles, Zap, Globe2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Sparkles, Users, UserCircle, Bell, MapPin, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -7,38 +7,6 @@ import logo from "@/assets/cheinly-logo.jpeg";
 import { useEffect, useState } from "react";
 import { getBuyerSession, buyerDashboardUrl, type BuyerSession } from "@/lib/buyerSession";
 
-const features = [
-  {
-    icon: ShieldCheck,
-    title: "Zero-trust security",
-    description: "Every request verified. Every session encrypted. Built on a defense-in-depth model trusted by enterprises.",
-  },
-  {
-    icon: Network,
-    title: "Connected intelligence",
-    description: "A unified mesh that links your people, data, and systems — delivering insight where decisions happen.",
-  },
-  {
-    icon: Lock,
-    title: "Granular access",
-    description: "Role-based permissions and adaptive policies keep the right doors open and the wrong ones closed.",
-  },
-  {
-    icon: Zap,
-    title: "Realtime sync",
-    description: "Sub-second propagation across your network so teams act on the truth, not yesterday's snapshot.",
-  },
-  {
-    icon: Globe2,
-    title: "Global by design",
-    description: "Multi-region presence with low-latency edges. Operate everywhere your business does.",
-  },
-  {
-    icon: Sparkles,
-    title: "Adaptive workflows",
-    description: "Intelligent automation that learns the patterns of your organization and orchestrates them at scale.",
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -64,7 +32,7 @@ const Index = () => {
             <span className="font-display text-2xl tracking-wider text-gold">CHEINLY</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <a href="#features" className="transition-colors hover:text-foreground">Features</a>
+            <a href="#platform" className="transition-colors hover:text-foreground">Features</a>
             <a href="#platform" className="transition-colors hover:text-foreground">Platform</a>
             <a href="#cta" className="transition-colors hover:text-foreground">Get started</a>
           </nav>
@@ -93,14 +61,22 @@ const Index = () => {
             <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
               Cheinly unifies access, identity, and intelligence into a single elegant network — so your business moves faster, safer, and smarter.
             </p>
+            
+            <div className="mx-auto mt-8 max-w-lg rounded-2xl border border-gold/20 bg-gold/5 p-4 text-sm font-medium text-gold shadow-glow">
+              <ShieldCheck className="mx-auto mb-2 h-6 w-6" />
+              “Every payment on Cheinly is protected. Funds are held securely in escrow and only released after delivery and transaction verification.”
+            </div>
+
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild variant="hero" size="lg">
-                <Link to="/auth/login">
-                  Enter the portal <ArrowRight className="h-4 w-4" />
+                <Link to="/buyer/browse">
+                  Browse products <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
-                <a href="#features">Explore features</a>
+                <Link to={session ? buyerDashboardUrl(session) : "/buyer/login"}>
+                  {session ? "Continue to dashboard" : "Sign in as buyer"}
+                </Link>
               </Button>
             </div>
           </div>
@@ -110,21 +86,50 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="border-t border-border/50 py-24">
+
+      {/* Value Propositions */}
+      <section id="platform" className="border-t border-border/50 bg-card/30 py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-gold">Platform</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-gold">Why Cheinly</p>
             <h2 className="mt-3 font-display text-4xl text-foreground md:text-5xl">
-              Crafted for organizations that <span className="text-gold">don't compromise</span>.
+              Built for buyers and sellers who <span className="text-gold">expect more</span>.
             </h2>
-            <p className="mt-4 text-muted-foreground">
-              A focused set of capabilities that make secure, intelligent connectivity feel effortless.
-            </p>
           </div>
 
           <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, description }) => (
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Trusted Shopping",
+                description: "Shop with confidence from verified sellers and trusted brands. Every transaction is designed to create a safer buying and selling experience.",
+              },
+              {
+                icon: Users,
+                title: "Social Discovery",
+                description: "Discover trending products, recommendations, and opportunities through a commerce ecosystem powered by real user interactions and marketplace activity.",
+              },
+              {
+                icon: UserCircle,
+                title: "Personalized Experience",
+                description: "Get product suggestions, offers, and shopping experiences tailored to your interests, preferences, and purchasing behavior.",
+              },
+              {
+                icon: Bell,
+                title: "Real-Time Engagement",
+                description: "Stay connected with instant order updates, delivery tracking, notifications, and seller interactions throughout your shopping journey.",
+              },
+              {
+                icon: MapPin,
+                title: "Nationwide Reach",
+                description: "Buy and sell across cities and regions with access to a growing network of merchants, customers, and logistics partners.",
+              },
+              {
+                icon: Wrench,
+                title: "Smart Commerce Tools",
+                description: "Powerful tools help buyers make informed decisions and help sellers manage products, orders, inventory, and customer relationships efficiently.",
+              },
+            ].map(({ icon: Icon, title, description }) => (
               <Card key={title} className="group border-border/60 bg-card/60 backdrop-blur transition-all hover:border-gold/40 hover:shadow-glow">
                 <CardContent className="p-7">
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-gold-gradient text-gold-foreground">
@@ -139,19 +144,42 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Platform stats */}
-      <section id="platform" className="border-t border-border/50 bg-card/30 py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3">
+      {/* Stats */}
+      <section className="border-t border-border/50 py-20">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { k: "99.99%", v: "Network uptime" },
-            { k: "< 80ms", v: "Global edge latency" },
-            { k: "SOC 2 II", v: "Audited & certified" },
+            { k: "10,000+", v: "Products Available" },
+            { k: "5,000+", v: "Verified Sellers" },
+            { k: "24/7", v: "Marketplace Access" },
+            { k: "Growing Daily", v: "Active Buyers & Sellers" },
           ].map(({ k, v }) => (
             <div key={v} className="text-center">
               <div className="font-display text-5xl text-gold md:text-6xl">{k}</div>
               <div className="mt-2 text-sm uppercase tracking-[0.2em] text-muted-foreground">{v}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Primary CTA after value props */}
+      <section className="border-t border-border/50 py-16">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="font-display text-3xl text-foreground md:text-4xl">
+            Ready to start shopping?
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Jump into your dashboard to browse, track orders, and pay securely with Protected Balance.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button asChild variant="hero" size="lg">
+              <Link to={session ? buyerDashboardUrl(session) : "/buyer/login"}>
+                {session ? "Continue to dashboard" : "Go to buyer dashboard"} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="border-gold/40 text-gold hover:bg-gold/10 hover:text-gold">
+              <Link to="/buyer/browse">Browse products</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -180,17 +208,54 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground md:flex-row">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="" className="h-6 w-6 rounded-md object-cover ring-1 ring-gold/30" />
-            <span className="font-display tracking-wider text-gold">CHEINLY</span>
-            <span className="ml-2">© {new Date().getFullYear()}</span>
+      <footer className="border-t border-border/50 py-16 bg-card/20">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
+            <div className="lg:col-span-2">
+              <Link to="/" className="flex items-center gap-3 mb-6">
+                <img src={logo} alt="" className="h-8 w-8 rounded-md object-cover ring-1 ring-gold/30" />
+                <span className="font-display tracking-wider text-gold text-lg">CHEINLY</span>
+              </Link>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Cheinly is a secure commerce platform connecting verified sellers, buyers, and independent delivery riders through a protected transaction, escrow, and fulfillment system.
+              </p>
+              <div className="mt-6 text-xs text-muted-foreground">
+                © {new Date().getFullYear()} Cheinly. All rights reserved.
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Legal & Terms</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#terms" className="hover:text-gold transition-colors">Terms of Service</Link></li>
+                <li><Link to="/policies#privacy" className="hover:text-gold transition-colors">Privacy Policy</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Trust & Protection</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#payment" className="hover:text-gold transition-colors">Escrow & Buyer Protection</Link></li>
+                <li><Link to="/policies#refund" className="hover:text-gold transition-colors">Refund & Dispute Policy</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Merchant Hub</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link to="/policies#merchant" className="hover:text-gold transition-colors">Seller Guidelines</Link></li>
+                <li><Link to="/auth/signup" className="hover:text-gold transition-colors">Onboarding Portal</Link></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="#features" className="hover:text-foreground">Features</a>
-            <a href="#platform" className="hover:text-foreground">Platform</a>
-            <Link to="/auth/login" className="hover:text-foreground">Sign in</Link>
+          
+          <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+            <h3 className="font-semibold text-foreground">Support & Safety</h3>
+            <div className="flex flex-wrap gap-4 text-muted-foreground">
+              <Link to="/help/contact" className="hover:text-gold transition-colors">Contact Support</Link>
+              <span className="hidden sm:inline">•</span>
+              <Link to="/help/agent" className="hover:text-gold transition-colors">Report Fraud / Secure Escrow Check</Link>
+            </div>
           </div>
         </div>
       </footer>

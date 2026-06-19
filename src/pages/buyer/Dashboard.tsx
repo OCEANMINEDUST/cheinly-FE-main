@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Landmark, Package, Send, ShoppingBag, Wallet } from "lucide-react";
+import { ArrowRight, Banknote, Building2, ChevronRight, Copy, Inbox, Landmark, Package, PackagePlus, Send, ShoppingBag, Wallet } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { OrderProgressDialog } from "@/components/buyer/OrderProgressDialog";
 import { LiveTrackingDialog } from "@/components/buyer/LiveTrackingDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { FlowStructurePanel } from "@/components/marketplace/FlowStructurePanel";
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -40,13 +41,16 @@ const BuyerDashboard = () => {
 
   useEffect(() => {
     const session = getBuyerSession();
-    if (entry !== "secure-checkout" && !session) {
-      navigate(`/buyer/product?productId=${encodeURIComponent(productId)}`, { replace: true });
+    // Synced buyer account: any device with a remembered session sees the
+    // dashboard immediately. Unknown devices must sign in first (Google or email),
+    // unless they're coming from the secure-checkout product flow.
+    if (!session && entry !== "secure-checkout") {
+      navigate(`/buyer/login?next=${encodeURIComponent(`/buyer/dashboard?productId=${productId}&entry=secure-checkout&mode=${mode}&provider=${provider}`)}`, { replace: true });
       return;
     }
     // Remember this device for next visit
     rememberBuyer({ name: mockBuyer.name, email: mockBuyer.email, productId });
-  }, [entry, navigate, productId]);
+  }, [entry, navigate, productId, mode, provider]);
 
   const fee = +(amount * 0.015).toFixed(2);
   const final = amount + fee;
@@ -99,6 +103,8 @@ const BuyerDashboard = () => {
       <BuyerHeader variant="dashboard" />
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-5 lg:px-8 py-8 space-y-8">
+        <FlowStructurePanel role="buyer" active="overview" />
+
         {/* Complete order banner */}
         <Card className="overflow-hidden border-0 shadow-card">
           <div className="bg-gradient-to-r from-primary/90 to-primary/60 text-primary-foreground p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -127,6 +133,9 @@ const BuyerDashboard = () => {
           <h1 className="font-display text-4xl text-foreground">Welcome to Cheinly, {mockBuyer.name},</h1>
           <p className="text-muted-foreground text-sm mt-1">Your secure marketplace account is ready.</p>
           <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => navigate("/buyer/send-package")} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <PackagePlus className="mr-1.5 h-3.5 w-3.5" /> Send a package
+            </Button>
             <Button size="sm" variant="outline" onClick={() => navigate("/buyer/invite-seller")}>
               <Send className="mr-1.5 h-3.5 w-3.5" /> Invite a seller
             </Button>

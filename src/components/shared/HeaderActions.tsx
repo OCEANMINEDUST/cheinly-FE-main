@@ -14,8 +14,8 @@ import { toast } from "sonner";
 import { AIChatbotButton } from "@/components/shared/AIChatbotButton";
 
 const profileLinks: Record<Role, { profile: string; orders: string; help: string; home: string; name: string; initials: string }> = {
-  seller: { profile: "/seller/dashboard", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO" },
-  supplier: { profile: "/supplier/dashboard", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS" },
+  seller: { profile: "/seller/settings", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO" },
+  supplier: { profile: "/supplier/settings", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS" },
   buyer: { profile: "/buyer/settings", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G" },
   rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA" },
 };
@@ -128,7 +128,7 @@ export function HeaderActions({ role, compact = false }: { role: Role; compact?:
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel><div className="text-sm font-medium">{profile.name}</div><div className="text-xs text-muted-foreground capitalize">{role} account</div></DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {role === "buyer" && <DropdownMenuItem onClick={() => nav(profile.profile)}><User className="mr-2 h-4 w-4" /> Account settings</DropdownMenuItem>}
+          {(role === "buyer" || role === "seller" || role === "supplier") && <DropdownMenuItem onClick={() => nav(profile.profile)}><Settings className="mr-2 h-4 w-4" /> Settings</DropdownMenuItem>}
           <DropdownMenuItem onClick={() => nav(profile.help)}><HelpCircle className="mr-2 h-4 w-4" /> Help Centre</DropdownMenuItem>
           {role === "seller" && accountRole === "seller" && <DropdownMenuItem onClick={() => { setAccountRole("supplier"); nav("/supplier/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Supplier</DropdownMenuItem>}
           {role === "supplier" && accountRole === "supplier" && <DropdownMenuItem onClick={() => { setAccountRole("seller"); nav("/seller/dashboard"); }}><Settings className="mr-2 h-4 w-4" /> Switch to Seller</DropdownMenuItem>}

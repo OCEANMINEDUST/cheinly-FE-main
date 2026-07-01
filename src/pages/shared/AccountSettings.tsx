@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   BadgeCheck,
@@ -24,18 +24,24 @@ import {
   User,
   UserCog,
   Users,
+  PauseCircle,
+  XCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type AccountSettingsProps = {
@@ -68,19 +74,6 @@ const roleCopy = {
     dashboard: "/supplier/dashboard",
   },
 };
-
-const settingSections = [
-  { id: "profile", label: "Profile Information", icon: User },
-  { id: "kyc", label: "KYC & Verification", icon: BadgeCheck },
-  { id: "security", label: "Security", icon: LockKeyhole },
-  { id: "payments", label: "Payment & Banking", icon: Landmark },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "team", label: "Team & Access", icon: Users, comingSoon: true },
-  { id: "preferences", label: "Preferences", icon: UserCog },
-  { id: "support", label: "Help & Support", icon: HelpCircle },
-  { id: "legal", label: "Legal", icon: FileText },
-  { id: "account", label: "Account Management", icon: AlertTriangle },
-];
 
 const notificationControls = [
   { label: "Order updates", icon: Mail },
@@ -118,6 +111,34 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 export default function AccountSettings({ role }: AccountSettingsProps) {
   const copy = roleCopy[role];
+  const [action, setAction] = useState<null | "export" | "deactivate" | "close" | "delete">(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [reason, setReason] = useState("");
+  const [ack, setAck] = useState(false);
+
+  const closeDialog = () => { setAction(null); setConfirmText(""); setReason(""); setAck(false); };
+
+  const runAction = () => {
+    if (action === "export") {
+      toast.success("Data export requested. You'll receive a download link within 24 hours.");
+    } else if (action === "deactivate") {
+      toast.success("Account deactivated. Sign in anytime within 30 days to reactivate.");
+    } else if (action === "close") {
+      toast.success("Account closure scheduled. Outstanding balances will be settled first.");
+    } else if (action === "delete") {
+      toast.success("Deletion scheduled. You have 30 days to cancel from your email.");
+    }
+    closeDialog();
+  };
+
+  const actionCopy = {
+    export: { title: "Export account data", desc: "We'll package your profile, orders, transactions, disputes, and messages into a downloadable ZIP.", cta: "Request export", tone: "default" as const, requireConfirm: false },
+    deactivate: { title: "Deactivate account", desc: "Your storefront and listings will be hidden. In-flight orders continue. You can reactivate anytime by signing in.", cta: "Deactivate", tone: "default" as const, requireConfirm: false },
+    close: { title: "Close account", desc: "Closing settles outstanding balances, releases escrow, and archives your workspace. This cannot be undone after 14 days.", cta: "Close account", tone: "destructive" as const, requireConfirm: true },
+    delete: { title: "Permanently delete account", desc: "This removes all data, orders, transactions, disputes, KYC records, and payout accounts. Deletion completes after 30 days.", cta: "Delete account", tone: "destructive" as const, requireConfirm: true },
+  } as const;
+  const current = action ? actionCopy[action] : null;
+  const confirmReady = !current?.requireConfirm || (confirmText.trim().toUpperCase() === (action === "delete" ? "DELETE" : "CLOSE") && ack);
 
   return (
     <div className="space-y-6">
@@ -147,30 +168,7 @@ export default function AccountSettings({ role }: AccountSettingsProps) {
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Recommended structure</CardTitle>
-
-              <CardDescription>Jump to a settings area.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-1">
-              {settingSections.map((section) => (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                >
-                  <span className="flex items-center gap-2"><section.icon className="h-4 w-4" />{section.label}</span>
-                  {section.comingSoon && <Badge variant="outline" className="text-[10px]">Soon</Badge>}
-                </a>
-              ))}
-            </CardContent>
-          </Card>
-        </aside>
-
-        <div className="space-y-6">
+      <div className="space-y-6">
           <Card>
             <CardHeader>
               <SectionTitle id="profile" title="Profile Information" description="Personal, business, contact, photo, and public profile details." />
@@ -349,17 +347,81 @@ export default function AccountSettings({ role }: AccountSettingsProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-3 md:grid-cols-2">
-                <Button variant="outline" className="justify-start gap-2"><Download className="h-4 w-4" />Export data</Button>
-                <Button variant="outline" className="justify-start gap-2">Deactivate account</Button>
-                <Button variant="outline" className="justify-start gap-2">Close account</Button>
-                <Button variant="destructive" className="justify-start gap-2"><Trash2 className="h-4 w-4" />Delete account</Button>
+                <button onClick={() => setAction("export")} className="group flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition hover:border-primary hover:bg-primary/5">
+                  <div className="flex items-center gap-2"><Download className="h-4 w-4 text-primary" /><span className="font-medium">Export data</span></div>
+                  <p className="text-xs text-muted-foreground">Download a ZIP of your profile, orders, transactions, disputes, and messages.</p>
+                </button>
+                <button onClick={() => setAction("deactivate")} className="group flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition hover:border-amber-500 hover:bg-amber-50/40">
+                  <div className="flex items-center gap-2"><PauseCircle className="h-4 w-4 text-amber-600" /><span className="font-medium">Deactivate account</span></div>
+                  <p className="text-xs text-muted-foreground">Hide your storefront temporarily. Reactivate anytime by signing back in.</p>
+                </button>
+                <button onClick={() => setAction("close")} className="group flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition hover:border-orange-500 hover:bg-orange-50/40">
+                  <div className="flex items-center gap-2"><XCircle className="h-4 w-4 text-orange-600" /><span className="font-medium">Close account</span></div>
+                  <p className="text-xs text-muted-foreground">Settle balances, release escrow, and archive the workspace. 14-day cancel window.</p>
+                </button>
+                <button onClick={() => setAction("delete")} className="group flex flex-col items-start gap-2 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-left transition hover:border-destructive hover:bg-destructive/10">
+                  <div className="flex items-center gap-2"><Trash2 className="h-4 w-4 text-destructive" /><span className="font-medium text-destructive">Delete account</span></div>
+                  <p className="text-xs text-muted-foreground">Permanent removal after a 30-day recovery window. This cannot be undone.</p>
+                </button>
               </div>
               <Separator />
-              <p className="text-xs text-muted-foreground">Destructive account actions require identity confirmation and support review before completion.</p>
+              <div className="flex items-start gap-2 rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <p>Destructive account actions require identity confirmation. Any pending disputes or open escrow will be reviewed by support before completion.</p>
+              </div>
             </CardContent>
           </Card>
-        </div>
       </div>
+
+      <Dialog open={!!action} onOpenChange={(o) => { if (!o) closeDialog(); }}>
+        <DialogContent className="sm:max-w-lg">
+          {current && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {action === "export" && <Download className="h-5 w-5 text-primary" />}
+                  {action === "deactivate" && <PauseCircle className="h-5 w-5 text-amber-600" />}
+                  {action === "close" && <XCircle className="h-5 w-5 text-orange-600" />}
+                  {action === "delete" && <Trash2 className="h-5 w-5 text-destructive" />}
+                  {current.title}
+                </DialogTitle>
+                <DialogDescription>{current.desc}</DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 py-2">
+                {action === "export" && (
+                  <ul className="space-y-2 text-sm">
+                    {["Profile & KYC records", "Orders & transactions history", "Disputes & evidence", "Messages & notifications"].map((i) => (
+                      <li key={i} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" />{i}</li>
+                    ))}
+                  </ul>
+                )}
+                {(action === "deactivate" || action === "close" || action === "delete") && (
+                  <Field label="Reason (optional, helps us improve)">
+                    <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Tell us why…" className="min-h-20" />
+                  </Field>
+                )}
+                {current.requireConfirm && (
+                  <>
+                    <Field label={`Type ${action === "delete" ? "DELETE" : "CLOSE"} to confirm`}>
+                      <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder={action === "delete" ? "DELETE" : "CLOSE"} />
+                    </Field>
+                    <label className="flex items-start gap-2 text-sm">
+                      <Checkbox checked={ack} onCheckedChange={(v) => setAck(!!v)} className="mt-0.5" />
+                      <span className="text-muted-foreground">I understand this action affects my {copy.label.toLowerCase()} workspace, listings, and payouts, and I have withdrawn any available balance.</span>
+                    </label>
+                  </>
+                )}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={closeDialog}>Cancel</Button>
+                <Button variant={current.tone === "destructive" ? "destructive" : "default"} disabled={!confirmReady} onClick={runAction}>{current.cta}</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

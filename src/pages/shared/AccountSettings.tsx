@@ -82,10 +82,6 @@ const settingSections = [
   { id: "payments", label: "Payment & Banking", icon: Landmark },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "team", label: "Team & Access", icon: Users, comingSoon: true },
-  { id: "preferences", label: "Preferences", icon: UserCog },
-  { id: "support", label: "Help & Support", icon: HelpCircle },
-  { id: "legal", label: "Legal", icon: FileText },
-  { id: "account", label: "Account Management", icon: AlertTriangle },
 ];
 
 const notificationControls = [
@@ -124,6 +120,34 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 export default function AccountSettings({ role }: AccountSettingsProps) {
   const copy = roleCopy[role];
+  const [action, setAction] = useState<null | "export" | "deactivate" | "close" | "delete">(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [reason, setReason] = useState("");
+  const [ack, setAck] = useState(false);
+
+  const closeDialog = () => { setAction(null); setConfirmText(""); setReason(""); setAck(false); };
+
+  const runAction = () => {
+    if (action === "export") {
+      toast.success("Data export requested. You'll receive a download link within 24 hours.");
+    } else if (action === "deactivate") {
+      toast.success("Account deactivated. Sign in anytime within 30 days to reactivate.");
+    } else if (action === "close") {
+      toast.success("Account closure scheduled. Outstanding balances will be settled first.");
+    } else if (action === "delete") {
+      toast.success("Deletion scheduled. You have 30 days to cancel from your email.");
+    }
+    closeDialog();
+  };
+
+  const actionCopy = {
+    export: { title: "Export account data", desc: "We'll package your profile, orders, transactions, disputes, and messages into a downloadable ZIP.", cta: "Request export", tone: "default" as const, requireConfirm: false },
+    deactivate: { title: "Deactivate account", desc: "Your storefront and listings will be hidden. In-flight orders continue. You can reactivate anytime by signing in.", cta: "Deactivate", tone: "default" as const, requireConfirm: false },
+    close: { title: "Close account", desc: "Closing settles outstanding balances, releases escrow, and archives your workspace. This cannot be undone after 14 days.", cta: "Close account", tone: "destructive" as const, requireConfirm: true },
+    delete: { title: "Permanently delete account", desc: "This removes all data, orders, transactions, disputes, KYC records, and payout accounts. Deletion completes after 30 days.", cta: "Delete account", tone: "destructive" as const, requireConfirm: true },
+  } as const;
+  const current = action ? actionCopy[action] : null;
+  const confirmReady = !current?.requireConfirm || (confirmText.trim().toUpperCase() === (action === "delete" ? "DELETE" : "CLOSE") && ack);
 
   return (
     <div className="space-y-6">

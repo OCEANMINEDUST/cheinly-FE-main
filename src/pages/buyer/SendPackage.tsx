@@ -34,8 +34,13 @@ export default function BuyerSendPackage() {
   const back = () => (step === 1 ? navigate(-1) : setStep((s) => ((s - 1) as 1 | 2 | 3)));
 
   const book = () => {
-    toast.success("Pickup booked — a rider will reach out shortly.");
-    setTimeout(() => navigate("/buyer/dashboard"), 600);
+    toast.success("Pickup booked — finding a rider near you.");
+    const q = new URLSearchParams({
+      fee: String(total),
+      pickup: form.pickup,
+      dropoff: form.dropoff,
+    }).toString();
+    setTimeout(() => navigate(`/buyer/pickup-tracking?${q}`), 500);
   };
 
   return (

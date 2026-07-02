@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Bell,
   CreditCard,
@@ -17,6 +18,9 @@ import {
   Trash2,
   Upload,
   User,
+  PauseCircle,
+  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
@@ -30,6 +34,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { forgetBuyer } from "@/lib/buyerSession";
+import { useNavigate } from "react-router-dom";
 
 const notificationOptions = [
   "Order updates",
@@ -80,6 +90,38 @@ function SettingsSection({
 }
 
 export default function BuyerAccountSettings() {
+  const navigate = useNavigate();
+  const [action, setAction] = useState<null | "export" | "deactivate" | "close" | "delete">(null);
+  const [reason, setReason] = useState("");
+  const [confirmText, setConfirmText] = useState("");
+  const [ack, setAck] = useState(false);
+
+  const closeDialog = () => { setAction(null); setReason(""); setConfirmText(""); setAck(false); };
+
+  const actionCopy = {
+    export: { title: "Export account data", desc: "We'll bundle your profile, orders, transactions, disputes and messages into a downloadable ZIP within 24 hours.", cta: "Request export", tone: "default" as const, requireConfirm: false, keyword: "" },
+    deactivate: { title: "Deactivate account", desc: "Your dashboard will be paused and notifications muted. In-flight orders continue safely. Sign in anytime within 30 days to reactivate.", cta: "Deactivate", tone: "default" as const, requireConfirm: false, keyword: "" },
+    close: { title: "Close account", desc: "Closing settles outstanding balances, releases any escrow you're holding, and archives your history. Reopening after 14 days requires support.", cta: "Close account", tone: "destructive" as const, requireConfirm: true, keyword: "CLOSE" },
+    delete: { title: "Permanently delete account", desc: "This removes all buyer data — profile, orders, transactions, disputes, payment methods and device memory. Deletion finalises after 30 days.", cta: "Delete account", tone: "destructive" as const, requireConfirm: true, keyword: "DELETE" },
+  } as const;
+  const current = action ? actionCopy[action] : null;
+  const confirmReady = !current?.requireConfirm || (confirmText.trim().toUpperCase() === current.keyword && ack);
+
+  const runAction = () => {
+    if (action === "export") {
+      toast.success("Data export requested. You'll receive a secure download link by email within 24 hours.");
+    } else if (action === "deactivate") {
+      toast.success("Account deactivated. Sign in anytime within 30 days to reactivate.");
+    } else if (action === "close") {
+      toast.success("Closure scheduled. Outstanding balances will be settled first — you'll receive a confirmation email.");
+    } else if (action === "delete") {
+      toast.success("Deletion scheduled. You have 30 days to cancel from your email before it becomes permanent.");
+      forgetBuyer();
+      setTimeout(() => navigate("/"), 800);
+    }
+    closeDialog();
+  };
+
   return (
     <div className="min-h-screen bg-background bg-hero flex flex-col">
       <BuyerHeader variant="dashboard" />
@@ -188,10 +230,35 @@ export default function BuyerAccountSettings() {
             </SettingsSection>
 
             <SettingsSection id="account" title="Account Management" description="Deactivate, delete, or download your account data." icon={Database}>
-              <div className="grid gap-3 md:grid-cols-3">
-                <Button variant="outline" className="justify-start gap-2">Deactivate account</Button>
-                <Button variant="destructive" className="justify-start gap-2"><Trash2 className="h-4 w-4" />Delete account</Button>
-                <Button variant="outline" className="justify-start gap-2"><Download className="h-4 w-4" />Download data</Button>
+              <div className="grid gap-3 md:grid-cols-2">
+                <button onClick={() => setAction("export")} className="group flex items-start gap-3 rounded-xl border p-4 text-left hover:border-primary/40 hover:bg-secondary/40 transition">
+                  <Download className="h-5 w-5 shrink-0 text-primary" />
+                  <div>
+                    <p className="font-medium">Download my data</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Get a portable copy of everything on file.</p>
+                  </div>
+                </button>
+                <button onClick={() => setAction("deactivate")} className="group flex items-start gap-3 rounded-xl border p-4 text-left hover:border-primary/40 hover:bg-secondary/40 transition">
+                  <PauseCircle className="h-5 w-5 shrink-0 text-primary" />
+                  <div>
+                    <p className="font-medium">Deactivate account</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Pause your account temporarily — reversible.</p>
+                  </div>
+                </button>
+                <button onClick={() => setAction("close")} className="group flex items-start gap-3 rounded-xl border p-4 text-left hover:border-destructive/40 hover:bg-destructive/5 transition">
+                  <XCircle className="h-5 w-5 shrink-0 text-destructive" />
+                  <div>
+                    <p className="font-medium">Close account</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Settle balances and archive your workspace.</p>
+                  </div>
+                </button>
+                <button onClick={() => setAction("delete")} className="group flex items-start gap-3 rounded-xl border p-4 text-left hover:border-destructive/40 hover:bg-destructive/5 transition">
+                  <Trash2 className="h-5 w-5 shrink-0 text-destructive" />
+                  <div>
+                    <p className="font-medium">Delete permanently</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">Remove every record after a 30-day recovery window.</p>
+                  </div>
+                </button>
               </div>
               <Separator className="my-4" />
               <p className="text-xs text-muted-foreground">KYC & Verification is hidden for buyers until wallet withdrawals, BNPL, credit facilities, or high-value transactions require it.</p>
@@ -199,6 +266,45 @@ export default function BuyerAccountSettings() {
           </div>
         </div>
       </main>
+
+      <Dialog open={!!action} onOpenChange={(o) => !o && closeDialog()}>
+        <DialogContent className="max-w-md">
+          {current && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {current.tone === "destructive" && <AlertTriangle className="h-4 w-4 text-destructive" />}
+                  {current.title}
+                </DialogTitle>
+                <DialogDescription>{current.desc}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label>Reason (optional)</Label>
+                  <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Tell us what's happening — we read every note." rows={3} />
+                </div>
+                {current.requireConfirm && (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Type <span className="font-mono font-semibold">{current.keyword}</span> to confirm</Label>
+                      <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder={current.keyword} />
+                    </div>
+                    <label className="flex cursor-pointer items-start gap-2 rounded-lg border bg-secondary/40 p-3 text-xs text-muted-foreground">
+                      <Checkbox checked={ack} onCheckedChange={(v) => setAck(v === true)} className="mt-0.5" />
+                      <span>I understand this action is irreversible after the recovery window and that any outstanding escrow will be released or refunded first.</span>
+                    </label>
+                  </>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={closeDialog}>Cancel</Button>
+                <Button variant={current.tone === "destructive" ? "destructive" : "default"} disabled={!confirmReady} onClick={runAction}>{current.cta}</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <BuyerFooter variant="dashboard" />
     </div>
   );

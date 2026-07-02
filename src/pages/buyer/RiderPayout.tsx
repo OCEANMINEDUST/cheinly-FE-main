@@ -72,7 +72,7 @@ const BuyerRiderPayout = () => {
 
         <Card className="shadow-card">
           <CardContent className="space-y-5 p-5">
-            <div className="flex items-center gap-2 text-foreground font-semibold"><Wallet className="h-4 w-4 text-primary" /> Earnings summary</div>
+            <div className="flex items-center gap-2 text-foreground font-semibold"><Wallet className="h-4 w-4 text-primary" /> Refunds summary</div>
             <div className="grid gap-3 md:grid-cols-3">
               <Stat label="Delivery fee" value={formatNaira(riderPayoutCase.payoutAmount)} icon={Coins} />
               <Stat label="Customer tip" value={formatNaira(riderPayoutCase.tips)} icon={Sparkles} />

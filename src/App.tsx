@@ -37,6 +37,7 @@ import BuyerTransactions from "./pages/buyer/Transactions";
 import BuyerHelp from "./pages/buyer/Help";
 import BuyerAIChatbot from "./pages/buyer/AIChatbot";
 import BuyerSendPackage from "./pages/buyer/SendPackage";
+import BuyerPickupTracking from "./pages/buyer/PickupTracking";
 import BuyerSellerCatalog from "./pages/buyer/SellerCatalog";
 import BuyerPackingSlip from "./pages/buyer/PackingSlip";
 import BuyerBrowse from "./pages/buyer/Browse";
@@ -147,6 +148,7 @@ const App = () => (
           <Route path="/buyer/help" element={<BuyerHelp />} />
           <Route path="/buyer/ai-chatbot" element={<BuyerAIChatbot />} />
           <Route path="/buyer/send-package" element={<BuyerSendPackage />} />
+          <Route path="/buyer/pickup-tracking" element={<BuyerPickupTracking />} />
           <Route path="/buyer/settings" element={<BuyerAccountSettings />} />
           <Route path="/buyer/seller/:username" element={<BuyerSellerCatalog />} />
           <Route path="/buyer/packing-slip" element={<BuyerPackingSlip />} />

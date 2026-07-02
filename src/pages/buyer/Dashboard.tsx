@@ -161,7 +161,7 @@ const BuyerDashboard = () => {
             </CardContent>
           </Card>
 
-          <StatCard icon={Wallet} label="Earnings" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
+          <StatCard icon={Wallet} label="Refunds" value={formatNaira(0)} action={{ label: "Withdraw", onClick: () => setWithdrawOpen(true) }} />
           <StatCard icon={Package} label="Completed Transactions" value={String(buyerOrders.filter((order) => order.status === "completed").length)} sublabel="New Account" />
           <StatCard icon={ShoppingBag} label="Active Orders" value={String(buyerOrders.filter((order) => order.status !== "completed" && order.status !== "cancelled").length)} sublabel="In Progress" sublabelTone="gold" />
         </div>
@@ -371,7 +371,7 @@ const BuyerDashboard = () => {
         <DialogContent className="max-w-md p-0 overflow-hidden">
           <DialogHeader className="space-y-2">
             <DialogTitle className="flex items-center gap-2 font-display text-xl px-6 pt-6">
-              <Landmark className="h-5 w-5 text-primary" /> Withdraw from Earnings
+              <Landmark className="h-5 w-5 text-primary" /> Withdraw from Refunds
             </DialogTitle>
             <DialogDescription className="mx-6 rounded-lg bg-primary/10 border border-primary/20 p-3 text-xs text-foreground/80 mt-2">
               Withdrawals are sent to your saved bank account after a quick compliance review.
@@ -411,7 +411,7 @@ const BuyerDashboard = () => {
 
             <div className="rounded-lg bg-secondary/50 border border-border p-4 space-y-2 text-sm">
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Available Earnings</span>
+                <span>Available Refunds</span>
                 <span>{formatNaira(0)}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground">

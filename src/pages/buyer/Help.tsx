@@ -233,6 +233,10 @@ const BuyerHelp = () => {
             </div>
           </div>
 
+          {current.intro && (
+            <p className="mt-4 text-sm leading-relaxed text-foreground/80">{current.intro}</p>
+          )}
+
           {current.steps && (
             <ol className="mt-5 space-y-3">
               {current.steps.map((s, i) => (
@@ -256,6 +260,17 @@ const BuyerHelp = () => {
                 </AccordionItem>
               ))}
             </Accordion>
+          )}
+
+          {current.callouts && current.callouts.length > 0 && (
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {current.callouts.map((c) => (
+                <div key={c.title} className="rounded-xl border border-border bg-background p-4">
+                  <div className="text-sm font-semibold text-foreground">{c.title}</div>
+                  <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
+                </div>
+              ))}
+            </div>
           )}
 
           {current.tip && (

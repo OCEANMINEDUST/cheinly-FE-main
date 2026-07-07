@@ -38,30 +38,31 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "sellerUsername": {
-              "description": "Seller/supplier username (e.g. 'adunni' or 'globalsneakers').",
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "description": "Seller/supplier username (e.g. 'adunni' or 'globalsneakers')."
             },
             "inStockOnly": {
-              "description": "If true, only return products currently in stock.",
-              "type": "boolean"
+              "type": "boolean",
+              "description": "If true, only return products currently in stock."
             },
             "query": {
-              "description": "Case-insensitive substring to match against name and description.",
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "description": "Case-insensitive substring to match against name and description."
             },
             "limit": {
-              "description": "Maximum number of products to return (default 20).",
               "type": "integer",
               "minimum": 1,
-              "maximum": 50
+              "maximum": 50,
+              "description": "Maximum number of products to return (default 20)."
             }
-          }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       },
@@ -75,7 +76,6 @@
           "openWorldHint": false
         },
         "inputSchema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "productId": {
@@ -86,7 +86,9 @@
           },
           "required": [
             "productId"
-          ]
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
         },
         "outputSchema": null
       }

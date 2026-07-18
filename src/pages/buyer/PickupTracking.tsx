@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, MapPin, Phone, MessageCircle, ShieldCheck, Copy, CheckCircle2, Bike, PackageCheck } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
@@ -8,20 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatNaira } from "@/lib/buyerMock";
 import { toast } from "sonner";
+import {
+  PickupStage,
+  confirmHandover as confirmHandoverStore,
+  getPickup,
+  startPickup,
+  subscribePickup,
+} from "@/lib/pickupTracker";
 
-type Stage = "assigning" | "enroute-pickup" | "at-pickup" | "in-transit" | "delivered";
-
-const stages: { id: Stage; label: string; desc: string }[] = [
+const stages: { id: PickupStage; label: string; desc: string }[] = [
   { id: "assigning", label: "Finding a rider", desc: "Matching the closest verified rider to your pickup." },
   { id: "enroute-pickup", label: "Rider en route to you", desc: "The rider is heading to the pickup address." },
   { id: "at-pickup", label: "Rider arrived — share your pickup code", desc: "Give the 6-digit code to the rider to lock chain-of-custody." },
   { id: "in-transit", label: "Package in transit", desc: "The rider is on the way to the drop-off address." },
   { id: "delivered", label: "Delivered", desc: "Recipient confirmed receipt. Escrow released to the rider." },
 ];
-
-function genCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
 
 export default function BuyerPickupTracking() {
   const navigate = useNavigate();
@@ -30,35 +31,33 @@ export default function BuyerPickupTracking() {
   const pickup = params.get("pickup") || "3 Bode Thomas, Surulere, Lagos";
   const dropoff = params.get("dropoff") || "12 Admiralty Way, Lekki Phase 1";
 
-  const [stage, setStage] = useState<Stage>("assigning");
-  const [eta, setEta] = useState(9);
-  const code = useMemo(genCode, []);
-  const orderId = useMemo(() => `PKG-${Math.floor(10000 + Math.random() * 90000)}`, []);
+  // Bootstrap: reuse any active pickup so navigating away and back preserves progress.
+  const [state, setState] = useState(() => getPickup() ?? startPickup({ fee, pickup, dropoff }));
 
   useEffect(() => {
-    const seq: Stage[] = ["assigning", "enroute-pickup", "at-pickup"];
-    const delays = [1400, 3800];
-    const timers: number[] = [];
-    delays.forEach((d, i) => {
-      timers.push(window.setTimeout(() => setStage(seq[i + 1]), d));
+    const unsub = subscribePickup((next) => {
+      if (next) setState(next);
     });
-    return () => timers.forEach(clearTimeout);
+    return unsub;
   }, []);
 
   useEffect(() => {
-    if (stage === "in-transit") {
-      const t = window.setInterval(() => setEta((v) => (v > 1 ? v - 1 : v)), 1200);
-      const done = window.setTimeout(() => setStage("delivered"), 8000);
-      return () => { clearInterval(t); clearTimeout(done); };
+    if (state.stage === "delivered") {
+      toast.success("Package delivered — escrow released to the rider.");
     }
-  }, [stage]);
+  }, [state.stage]);
 
+  const stage = state.stage;
+  const eta = state.etaMinutes;
+  const code = state.code;
+  const orderId = state.orderId;
   const stageIdx = stages.findIndex((s) => s.id === stage);
   const current = stages[stageIdx];
 
   const confirmHandover = () => {
+    const next = confirmHandoverStore();
+    if (next) setState(next);
     toast.success("Handover confirmed. Rider is en route to drop-off.");
-    setStage("in-transit");
   };
 
   const copyCode = () => {

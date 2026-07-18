@@ -66,24 +66,24 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     clearPickup();
   });
 
-  it("auto-advances through all pickup stages without a manual refresh", async () => {
+  it("auto-advances through all pickup stages without a manual refresh", () => {
     renderTracking();
 
-    // Stage 1: assigning
-    expect(screen.getByText("Finding a rider")).toBeInTheDocument();
+    // Stage 1: assigning — label appears in status card + timeline
+    expect(screen.getAllByText("Finding a rider").length).toBeGreaterThan(0);
     // Rider card is hidden until a match is made
     expect(screen.queryByText(/Tunde Adebayo/)).not.toBeInTheDocument();
 
-    // Stage 2: rider en route (auto after assigningMs)
+    // Stage 2: rider en route
     tick(STAGE_DURATIONS.assigningMs + 100);
-    expect(await screen.findByText("Rider en route to you")).toBeInTheDocument();
+    expect(screen.getAllByText("Rider en route to you").length).toBeGreaterThan(0);
     expect(screen.getByText(/Tunde Adebayo/)).toBeInTheDocument();
 
     // Stage 3: rider arrived — pickup code panel appears automatically
     tick(STAGE_DURATIONS.enroutePickupMs + 100);
     expect(
-      await screen.findByText("Rider arrived — share your pickup code"),
-    ).toBeInTheDocument();
+      screen.getAllByText("Rider arrived — share your pickup code").length,
+    ).toBeGreaterThan(0);
     const code = getPickup()!.code;
     expect(code).toMatch(/^\d{6}$/);
     expect(screen.getByText(code)).toBeInTheDocument();
@@ -95,44 +95,40 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     act(() => {
       fireEvent.click(handoverBtn);
     });
-    expect(await screen.findByText("Package in transit")).toBeInTheDocument();
-    // ETA counter is visible
+    expect(screen.getAllByText("Package in transit").length).toBeGreaterThan(0);
     expect(screen.getByText(/^\d+m$/)).toBeInTheDocument();
 
     // Stage 5: delivered after in-transit window elapses
     tick(STAGE_DURATIONS.inTransitMs + 200);
-    expect(await screen.findByText("Package delivered")).toBeInTheDocument();
+    expect(screen.getByText("Package delivered")).toBeInTheDocument();
     expect(getPickup()!.stage).toBe("delivered");
   });
 
-  it("resumes the same pickup after the component unmounts and remounts (no refresh loss)", async () => {
+  it("resumes the same pickup after the component unmounts and remounts (no refresh loss)", () => {
     renderTracking().unmount();
     const state = getPickup();
     expect(state).not.toBeNull();
 
     // Simulate wall-clock passing while the screen is not mounted
     tick(STAGE_DURATIONS.assigningMs + STAGE_DURATIONS.enroutePickupMs + 500);
-    // The tracker still derives correctly when re-read
     tickPickup();
     expect(getPickup()!.stage).toBe("at-pickup");
 
     // Re-mount — the screen picks up exactly where it left off
     renderTracking();
     expect(
-      await screen.findByText("Rider arrived — share your pickup code"),
-    ).toBeInTheDocument();
-    // Same order id, not a fresh pickup
+      screen.getAllByText("Rider arrived — share your pickup code").length,
+    ).toBeGreaterThan(0);
     expect(screen.getByText(state!.orderId)).toBeInTheDocument();
   });
 
-  it("emits stage changes via the polling subscription while mounted", async () => {
-    renderTracking();
-    // Grab timeline card and verify the active pulse dot advances
-    tick(STAGE_DURATIONS.assigningMs + 100);
-    expect(await screen.findByText("Rider en route to you")).toBeInTheDocument();
+  it("moves the map bike marker as stages advance", () => {
+    const { container } = renderTracking();
+    const initial = container.querySelector("[class*='left-[20%]']");
+    expect(initial).not.toBeNull();
 
-    // Confirm the map bike marker moved by asserting the stage-driven className swap
-    const bikeContainers = document.querySelectorAll("[class*='left-']");
-    expect(bikeContainers.length).toBeGreaterThan(0);
+    tick(STAGE_DURATIONS.assigningMs + 100);
+    const moved = container.querySelector("[class*='left-[15%]']");
+    expect(moved).not.toBeNull();
   });
 });

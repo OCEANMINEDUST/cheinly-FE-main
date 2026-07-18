@@ -13,6 +13,7 @@ import {
   MessageSquare,
   ThumbsUp,
   ThumbsDown,
+  Bike,
 } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";

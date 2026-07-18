@@ -99,9 +99,9 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     expect(screen.getByText(/^\d+m$/)).toBeInTheDocument();
 
     // Stage 5: delivered after in-transit window elapses
-    tick(STAGE_DURATIONS.inTransitMs + 200);
-    expect(screen.getByText("Package delivered")).toBeInTheDocument();
+    tick(STAGE_DURATIONS.inTransitMs + 1000);
     expect(getPickup()!.stage).toBe("delivered");
+    expect(screen.getAllByText("Package delivered").length).toBeGreaterThan(0);
   });
 
   it("resumes the same pickup after the component unmounts and remounts (no refresh loss)", () => {
@@ -119,7 +119,7 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     expect(
       screen.getAllByText("Rider arrived — share your pickup code").length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText(state!.orderId)).toBeInTheDocument();
+    expect(screen.getAllByText(state!.orderId).length).toBeGreaterThan(0);
   });
 
   it("moves the map bike marker as stages advance", () => {

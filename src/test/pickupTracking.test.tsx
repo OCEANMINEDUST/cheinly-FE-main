@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import BuyerPickupTracking from "@/pages/buyer/PickupTracking";
 import {
@@ -68,7 +67,6 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
   });
 
   it("auto-advances through all pickup stages without a manual refresh", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderTracking();
 
     // Stage 1: assigning
@@ -94,7 +92,9 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     const handoverBtn = screen.getByRole("button", {
       name: /Rider entered the code — hand over the package/i,
     });
-    await user.click(handoverBtn);
+    act(() => {
+      fireEvent.click(handoverBtn);
+    });
     expect(await screen.findByText("Package in transit")).toBeInTheDocument();
     // ETA counter is visible
     expect(screen.getByText(/^\d+m$/)).toBeInTheDocument();

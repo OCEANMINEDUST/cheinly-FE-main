@@ -17,7 +17,6 @@ const profileLinks: Record<Role, { profile: string; orders: string; help: string
   seller: { profile: "/seller/settings", orders: "/seller/orders", help: "/help", home: "/seller", name: "Adunni Okoye", initials: "AO" },
   supplier: { profile: "/supplier/settings", orders: "/supplier/orders", help: "/help", home: "/supplier", name: "Moniewise Supplies", initials: "MS" },
   buyer: { profile: "/buyer/settings", orders: "/buyer/orders", help: "/buyer/help", home: "/buy", name: "Goodness", initials: "G" },
-  rider: { profile: "/rider/profile", orders: "/rider/history", help: "/help", home: "/rider", name: "Tunde A.", initials: "TA" },
 };
 
 const helpSuggestions = [

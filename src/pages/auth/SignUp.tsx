@@ -415,69 +415,13 @@ const SignUp = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Vehicle type</Label>
-                <Select value={vehicleType} onValueChange={setVehicleType}>
-                  <SelectTrigger className="h-12 bg-input border-border">
-                    <Car className="h-4 w-4 text-muted-foreground" />
-                    <SelectValue placeholder="Select vehicle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="motorcycle">Motorcycle</SelectItem>
-                    <SelectItem value="bicycle">Bicycle</SelectItem>
-                    <SelectItem value="car">Car</SelectItem>
-                    <SelectItem value="van">Van</SelectItem>
-                    <SelectItem value="truck">Truck</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="plate">Plate number</Label>
-                <div className="relative">
-                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="plate" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value.toUpperCase())} placeholder="LAG-123-XY" className="pl-10 h-12 bg-input border-border" maxLength={20} />
-                </div>
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="license">Driver's license number</Label>
+              <Label htmlFor="country-buyer">Country</Label>
               <div className="relative">
-                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="license" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="ABC12345AA" className="pl-10 h-12 bg-input border-border" maxLength={40} />
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input id="country-buyer" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Nigeria" className="pl-10 h-12 bg-input border-border" maxLength={80} />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="nin">NIN</Label>
-              <div className="relative">
-                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="nin" value={nin} onChange={(e) => setNin(e.target.value.replace(/\D/g, ""))} placeholder="11-digit NIN" className="pl-10 h-12 bg-input border-border" maxLength={20} inputMode="numeric" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="licensePhoto">Photo of licence / permit</Label>
-              <label htmlFor="licensePhoto" className="flex items-center gap-3 rounded-lg border border-dashed border-border bg-secondary/40 p-4 cursor-pointer hover:border-gold/50 transition-colors">
-                <div className="h-10 w-10 rounded-md bg-gold-gradient flex items-center justify-center">
-                  {licensePhoto ? (
-                    <FileImage className="h-5 w-5 text-gold-foreground" />
-                  ) : (
-                    <Upload className="h-5 w-5 text-gold-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground truncate">
-                    {licensePhotoName || "Tap to upload (JPG / PNG, ≤ 5MB)"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Clear, well-lit photo</p>
-                </div>
-                <input id="licensePhoto" type="file" accept="image/*" className="hidden" onChange={handleLicenseUpload} />
-              </label>
-              {licensePhoto && (
-                <img src={licensePhoto} alt="Licence preview" className="mt-2 h-24 w-full object-cover rounded-md border border-border" />
-              )}
+              <p className="text-xs text-muted-foreground">You can add specific delivery addresses at checkout.</p>
             </div>
 
             <label className="flex items-start gap-3 rounded-lg border border-border bg-secondary/40 p-3">
@@ -503,7 +447,7 @@ const SignUp = () => {
           </form>
         )}
 
-        {/* STEP 4 — Identity (seller) / Banking + Logistics (rider) */}
+        {/* STEP 4 — Identity (seller only) */}
         {step === 4 && isSeller && (
           <form onSubmit={submitIdentity} className="space-y-5">
             <div className="space-y-2">
@@ -549,51 +493,8 @@ const SignUp = () => {
           </form>
         )}
 
-        {step === 4 && !isSeller && (
-          <form onSubmit={submitIdentity} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="bankName">Bank name</Label>
-              <div className="relative">
-                <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="GTBank" className="pl-10 h-12 bg-input border-border" maxLength={80} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="acctNo">Account number</Label>
-                <Input id="acctNo" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))} placeholder="0123456789" className="h-12 bg-input border-border" maxLength={10} inputMode="numeric" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="acctName">Account name</Label>
-                <Input id="acctName" value={accountName} onChange={(e) => setAccountName(e.target.value)} placeholder="As on bank record" className="h-12 bg-input border-border" maxLength={120} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="affiliation">Logistics affiliation</Label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="affiliation" value={affiliation} onChange={(e) => setAffiliation(e.target.value)} placeholder="Company code or name" className="pl-10 h-12 bg-input border-border" maxLength={80} />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                If you ride independently, enter <span className="text-gold">INDEPENDENT</span>.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <Button type="button" variant="outline" size="lg" onClick={back} className="border-border">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button type="submit" disabled={loading} variant="hero" size="lg" className="flex-1">
-                {loading ? "Saving…" : (<>Finish setup <CheckCircle2 className="h-4 w-4" /></>)}
-              </Button>
-            </div>
-          </form>
-        )}
-
-        {/* STEP 5 — Done */}
-        {step === 5 && (
+        {/* Done step (5 for seller, 4 for buyer) */}
+        {isDoneStep && (
           <div className="space-y-6 text-center">
             <div className="rounded-xl border border-border bg-secondary/40 p-5 text-left">
               <p className="text-xs uppercase tracking-[0.2em] text-gold">Account ready</p>
@@ -602,13 +503,13 @@ const SignUp = () => {
               {isSeller && businessName && (
                 <p className="text-sm text-muted-foreground mt-1">{businessName}</p>
               )}
-              {!isSeller && vehicleType && (
-                <p className="text-sm text-muted-foreground mt-1 capitalize">{vehicleType} • {plateNumber}</p>
+              {!isSeller && country && (
+                <p className="text-sm text-muted-foreground mt-1">Delivering in {country}</p>
               )}
             </div>
 
-            <Button variant="hero" size="lg" className="w-full" onClick={() => nav("/auth/login")}>
-              Enter the portal <ArrowRight className="h-4 w-4" />
+            <Button variant="hero" size="lg" className="w-full" onClick={() => nav(isSeller ? "/auth/login" : "/buyer/dashboard")}>
+              {isSeller ? "Enter the portal" : "Start browsing"} <ArrowRight className="h-4 w-4" />
             </Button>
 
             <p className="text-xs text-muted-foreground">

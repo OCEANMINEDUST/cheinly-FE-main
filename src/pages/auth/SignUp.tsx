@@ -14,16 +14,10 @@ import {
   User,
   Globe,
   Store,
-  Bike,
+  ShoppingBag,
   Phone,
   MapPin,
   IdCard,
-  Car,
-  Hash,
-  FileImage,
-  Landmark,
-  Building,
-  Upload,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -68,30 +62,13 @@ const sellerProfileSchema = z.object({
   agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
 });
 
-const riderProfileSchema = z.object({
-  phone: z.string().trim().min(7, "Enter a valid phone number").max(20),
-  vehicleType: z.string().trim().min(1, "Select vehicle type"),
-  plateNumber: z.string().trim().min(2, "Plate number is required").max(20),
-  licenseNumber: z.string().trim().min(3, "License number is required").max(40),
-  nin: z.string().trim().min(6, "NIN is required").max(20),
-  licensePhoto: z.string().min(1, "Upload a photo of your licence/permit"),
-  agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
-});
-
 const sellerIdentitySchema = z
   .object({
     idType: z.enum(["bvn", "nin"], { errorMap: () => ({ message: "Select an ID type" }) }),
     idNumber: z.string().trim().min(10, "Enter a valid 10-11 digit number").max(11),
   });
 
-const riderBankSchema = z.object({
-  bankName: z.string().trim().min(2, "Bank name is required").max(80),
-  accountNumber: z.string().trim().regex(/^\d{10}$/, "Account number must be 10 digits"),
-  accountName: z.string().trim().min(2, "Account name is required").max(120),
-  affiliation: z.string().trim().min(2, "Logistics company code or name is required").max(80),
-});
-
-type Role = "seller" | "rider" | null;
+type Role = "seller" | "buyer" | null;
 
 const SignUp = () => {
   const nav = useNavigate();
@@ -122,26 +99,12 @@ const SignUp = () => {
   const [phone, setPhone] = useState("");
   const [agree, setAgree] = useState(false);
 
-  // Rider profile
-  const [vehicleType, setVehicleType] = useState("");
-  const [plateNumber, setPlateNumber] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [nin, setNin] = useState("");
-  const [licensePhoto, setLicensePhoto] = useState<string>("");
-  const [licensePhotoName, setLicensePhotoName] = useState<string>("");
-
   // Seller identity
   const [idType, setIdType] = useState<"bvn" | "nin" | "">("");
   const [idNumber, setIdNumber] = useState("");
 
-  // Rider banking + logistics
-  const [bankName, setBankName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [accountName, setAccountName] = useState("");
-  const [affiliation, setAffiliation] = useState("");
-
   const isSeller = selectedRole === "seller";
-  const totalSteps = 5; // role, account, profile, identity/bank, done
+  const totalSteps = isSeller ? 5 : 4; // seller: role, account, profile, identity, done | buyer: role, account, profile, done
 
   const next = () => setStep((s) => Math.min(s + 1, totalSteps));
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -165,15 +128,13 @@ const SignUp = () => {
       const r = sellerProfileSchema.safeParse({ businessName, address, phone, country, agree });
       if (!r.success) return toast.error(r.error.errors[0].message);
     } else {
-      const r = riderProfileSchema.safeParse({
-        phone,
-        vehicleType,
-        plateNumber,
-        licenseNumber,
-        nin,
-        licensePhoto,
-        agree,
-      });
+      const r = z
+        .object({
+          phone: z.string().trim().min(7, "Enter a valid phone number").max(20),
+          country: z.string().trim().min(2, "Country is required").max(80),
+          agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
+        })
+        .safeParse({ phone, country, agree });
       if (!r.success) return toast.error(r.error.errors[0].message);
     }
     setLoading(true);
@@ -205,18 +166,18 @@ const SignUp = () => {
 
   const continueAfterVerify = () => {
     setVerifySuccessOpen(false);
-    next(); // → identity / banking
+    if (isSeller) {
+      next(); // → identity verification
+    } else {
+      // Buyer: skip identity/banking, land straight on the welcome step
+      setStep(4);
+    }
   };
 
   const submitIdentity = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSeller) {
-      const r = sellerIdentitySchema.safeParse({ idType, idNumber });
-      if (!r.success) return toast.error(r.error.errors[0].message);
-    } else {
-      const r = riderBankSchema.safeParse({ bankName, accountNumber, accountName, affiliation });
-      if (!r.success) return toast.error(r.error.errors[0].message);
-    }
+    const r = sellerIdentitySchema.safeParse({ idType, idNumber });
+    if (!r.success) return toast.error(r.error.errors[0].message);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -224,25 +185,11 @@ const SignUp = () => {
     }, 700);
   };
 
-  const handleLicenseUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return toast.error("File must be under 5MB");
-    const reader = new FileReader();
-    reader.onload = () => {
-      setLicensePhoto(reader.result as string);
-      setLicensePhotoName(file.name);
-    };
-    reader.readAsDataURL(file);
-  };
+  const labels = isSeller
+    ? ["Choose role", "Account", "Business profile", "Identity verification", "All set"]
+    : ["Choose role", "Account", "Delivery details", "All set"];
 
-  const labels = [
-    "Choose role",
-    "Account",
-    isSeller ? "Business profile" : "Rider profile",
-    isSeller ? "Identity verification" : "Banking & logistics",
-    "All set",
-  ];
+  const isDoneStep = step === totalSteps;
 
   return (
     <AuthLayout step={{ current: step, total: totalSteps }}>
@@ -251,35 +198,37 @@ const SignUp = () => {
           step === 1
             ? "Choose your role"
             : step === 2
-            ? `Create your ${isSeller ? "seller" : "rider"} account`
+            ? `Create your ${isSeller ? "seller" : "buyer"} account`
             : step === 3
             ? isSeller
               ? "Tell us about your business"
-              : "Tell us about your ride"
-            : step === 4
+              : "Where should we deliver?"
+            : step === 4 && isSeller
             ? isSeller
               ? "Verify your identity"
-              : "Banking & logistics"
+              : ""
             : "Welcome to Cheinly"
         }
         subtitle={
           step === 1
             ? "Tell us how you'll use Cheinly. You can switch later."
             : step === 2
-            ? "Join the network built for the modern enterprise."
+            ? isSeller
+              ? "Join the network built for the modern enterprise."
+              : "Shop verified sellers with escrow protection on every order."
             : step === 3
             ? isSeller
               ? "We'll tailor your storefront to your business."
-              : "We need a few details to dispatch deliveries to you."
-            : step === 4
+              : "We'll use these details to route deliveries from our logistics partners."
+            : step === 4 && isSeller
             ? isSeller
               ? "Verify your BVN or NIN to activate payouts."
-              : "Where should we send your earnings?"
+              : ""
             : "Your account is ready. Sign in to enter your portal."
         }
-        icon={step === 5 ? CheckCircle2 : undefined}
+        icon={isDoneStep ? CheckCircle2 : undefined}
       >
-        {step < 5 && <StepProgress current={step} total={4} label={labels[step - 1]} />}
+        {!isDoneStep && <StepProgress current={step} total={totalSteps - 1} label={labels[step - 1]} />}
 
         {/* STEP 1 — Role */}
         {step === 1 && (
@@ -294,11 +243,11 @@ const SignUp = () => {
                   perks: ["Storefront builder", "Order management", "Payouts"],
                 },
                 {
-                  id: "rider" as const,
-                  icon: Bike,
-                  title: "Rider",
-                  desc: "Earn by delivering orders on your schedule.",
-                  perks: ["Flexible shifts", "Live navigation", "Instant earnings"],
+                  id: "buyer" as const,
+                  icon: ShoppingBag,
+                  title: "Buyer",
+                  desc: "Shop verified sellers with escrow-protected checkout.",
+                  perks: ["Escrow protection", "Live delivery tracking", "Easy refunds"],
                 },
               ]).map(({ id, icon: Icon, title, desc, perks }) => {
                 const active = selectedRole === id;
@@ -466,69 +415,13 @@ const SignUp = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Vehicle type</Label>
-                <Select value={vehicleType} onValueChange={setVehicleType}>
-                  <SelectTrigger className="h-12 bg-input border-border">
-                    <Car className="h-4 w-4 text-muted-foreground" />
-                    <SelectValue placeholder="Select vehicle" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="motorcycle">Motorcycle</SelectItem>
-                    <SelectItem value="bicycle">Bicycle</SelectItem>
-                    <SelectItem value="car">Car</SelectItem>
-                    <SelectItem value="van">Van</SelectItem>
-                    <SelectItem value="truck">Truck</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="plate">Plate number</Label>
-                <div className="relative">
-                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="plate" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value.toUpperCase())} placeholder="LAG-123-XY" className="pl-10 h-12 bg-input border-border" maxLength={20} />
-                </div>
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="license">Driver's license number</Label>
+              <Label htmlFor="country-buyer">Country</Label>
               <div className="relative">
-                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="license" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="ABC12345AA" className="pl-10 h-12 bg-input border-border" maxLength={40} />
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input id="country-buyer" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Nigeria" className="pl-10 h-12 bg-input border-border" maxLength={80} />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="nin">NIN</Label>
-              <div className="relative">
-                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="nin" value={nin} onChange={(e) => setNin(e.target.value.replace(/\D/g, ""))} placeholder="11-digit NIN" className="pl-10 h-12 bg-input border-border" maxLength={20} inputMode="numeric" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="licensePhoto">Photo of licence / permit</Label>
-              <label htmlFor="licensePhoto" className="flex items-center gap-3 rounded-lg border border-dashed border-border bg-secondary/40 p-4 cursor-pointer hover:border-gold/50 transition-colors">
-                <div className="h-10 w-10 rounded-md bg-gold-gradient flex items-center justify-center">
-                  {licensePhoto ? (
-                    <FileImage className="h-5 w-5 text-gold-foreground" />
-                  ) : (
-                    <Upload className="h-5 w-5 text-gold-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-foreground truncate">
-                    {licensePhotoName || "Tap to upload (JPG / PNG, ≤ 5MB)"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Clear, well-lit photo</p>
-                </div>
-                <input id="licensePhoto" type="file" accept="image/*" className="hidden" onChange={handleLicenseUpload} />
-              </label>
-              {licensePhoto && (
-                <img src={licensePhoto} alt="Licence preview" className="mt-2 h-24 w-full object-cover rounded-md border border-border" />
-              )}
+              <p className="text-xs text-muted-foreground">You can add specific delivery addresses at checkout.</p>
             </div>
 
             <label className="flex items-start gap-3 rounded-lg border border-border bg-secondary/40 p-3">
@@ -554,7 +447,7 @@ const SignUp = () => {
           </form>
         )}
 
-        {/* STEP 4 — Identity (seller) / Banking + Logistics (rider) */}
+        {/* STEP 4 — Identity (seller only) */}
         {step === 4 && isSeller && (
           <form onSubmit={submitIdentity} className="space-y-5">
             <div className="space-y-2">
@@ -600,51 +493,8 @@ const SignUp = () => {
           </form>
         )}
 
-        {step === 4 && !isSeller && (
-          <form onSubmit={submitIdentity} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="bankName">Bank name</Label>
-              <div className="relative">
-                <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="GTBank" className="pl-10 h-12 bg-input border-border" maxLength={80} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="acctNo">Account number</Label>
-                <Input id="acctNo" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))} placeholder="0123456789" className="h-12 bg-input border-border" maxLength={10} inputMode="numeric" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="acctName">Account name</Label>
-                <Input id="acctName" value={accountName} onChange={(e) => setAccountName(e.target.value)} placeholder="As on bank record" className="h-12 bg-input border-border" maxLength={120} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="affiliation">Logistics affiliation</Label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="affiliation" value={affiliation} onChange={(e) => setAffiliation(e.target.value)} placeholder="Company code or name" className="pl-10 h-12 bg-input border-border" maxLength={80} />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                If you ride independently, enter <span className="text-gold">INDEPENDENT</span>.
-              </p>
-            </div>
-
-            <div className="flex gap-3">
-              <Button type="button" variant="outline" size="lg" onClick={back} className="border-border">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button type="submit" disabled={loading} variant="hero" size="lg" className="flex-1">
-                {loading ? "Saving…" : (<>Finish setup <CheckCircle2 className="h-4 w-4" /></>)}
-              </Button>
-            </div>
-          </form>
-        )}
-
-        {/* STEP 5 — Done */}
-        {step === 5 && (
+        {/* Done step (5 for seller, 4 for buyer) */}
+        {isDoneStep && (
           <div className="space-y-6 text-center">
             <div className="rounded-xl border border-border bg-secondary/40 p-5 text-left">
               <p className="text-xs uppercase tracking-[0.2em] text-gold">Account ready</p>
@@ -653,13 +503,13 @@ const SignUp = () => {
               {isSeller && businessName && (
                 <p className="text-sm text-muted-foreground mt-1">{businessName}</p>
               )}
-              {!isSeller && vehicleType && (
-                <p className="text-sm text-muted-foreground mt-1 capitalize">{vehicleType} • {plateNumber}</p>
+              {!isSeller && country && (
+                <p className="text-sm text-muted-foreground mt-1">Delivering in {country}</p>
               )}
             </div>
 
-            <Button variant="hero" size="lg" className="w-full" onClick={() => nav("/auth/login")}>
-              Enter the portal <ArrowRight className="h-4 w-4" />
+            <Button variant="hero" size="lg" className="w-full" onClick={() => nav(isSeller ? "/auth/login" : "/buyer/dashboard")}>
+              {isSeller ? "Enter the portal" : "Start browsing"} <ArrowRight className="h-4 w-4" />
             </Button>
 
             <p className="text-xs text-muted-foreground">

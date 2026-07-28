@@ -217,7 +217,7 @@ const Index = () => {
                 <span className="font-display tracking-wider text-gold text-lg">CHEINLY</span>
               </Link>
               <p className="text-sm text-muted-foreground max-w-sm">
-                Cheinly is a secure commerce platform connecting verified sellers, buyers, and independent delivery riders through a protected transaction, escrow, and fulfillment system.
+                Cheinly is a secure commerce platform connecting verified sellers and buyers through a protected transaction, escrow, and fulfillment system — with delivery handled by our trusted logistics partners.
               </p>
               <div className="mt-6 text-xs text-muted-foreground">
                 © {new Date().getFullYear()} Cheinly. All rights reserved.

@@ -42,27 +42,6 @@ import BuyerSellerCatalog from "./pages/buyer/SellerCatalog";
 import BuyerPackingSlip from "./pages/buyer/PackingSlip";
 import BuyerBrowse from "./pages/buyer/Browse";
 import BuyerLogin from "./pages/buyer/Login";
-import RiderEntry from "./pages/rider/Entry";
-import RiderOnboarding from "./pages/rider/Onboarding";
-import RiderDocumentReview from "./pages/rider/DocumentReview";
-import RiderApproval from "./pages/rider/Approval";
-import RiderLogin from "./pages/rider/Login";
-import RiderDashboard from "./pages/rider/Dashboard";
-import RiderHistory from "./pages/rider/History";
-import RiderProfile from "./pages/rider/Profile";
-import RiderOrderDetails from "./pages/rider/OrderDetails";
-import RiderEnRoute from "./pages/rider/EnRoute";
-import RiderDropoff from "./pages/rider/Dropoff";
-import RiderDeliveryComplete from "./pages/rider/DeliveryComplete";
-import RiderReportIssue from "./pages/rider/ReportIssue";
-import RiderReturnSuccess from "./pages/rider/ReturnSuccess";
-import RiderReturnSetup from "./pages/rider/ReturnSetup";
-import RiderReturnActive from "./pages/rider/ReturnActive";
-import RiderReleasePayment from "./pages/rider/ReleasePayment";
-import RiderProfilePersonal from "./pages/rider/ProfilePersonal";
-import RiderProfileBank from "./pages/rider/ProfileBank";
-import RiderProfileSecurity from "./pages/rider/ProfileSecurity";
-import { RiderRoute } from "./components/rider/RiderRoute";
 import SellerDashboard from "./pages/seller/Dashboard";
 import SellerDispatch from "./pages/seller/Dispatch";
 import SellerTracking from "./pages/seller/Tracking";
@@ -154,27 +133,6 @@ const App = () => (
           <Route path="/buyer/packing-slip" element={<BuyerPackingSlip />} />
           <Route path="/buyer/browse" element={<BuyerBrowse />} />
           <Route path="/buyer/login" element={<BuyerLogin />} />
-          {/* Rider flow */}
-          <Route path="/rider" element={<RiderEntry />} />
-          <Route path="/rider/login" element={<RiderLogin />} />
-          <Route path="/rider/onboarding" element={<RiderOnboarding />} />
-          <Route path="/rider/document-review" element={<RiderDocumentReview />} />
-          <Route path="/rider/approval" element={<RiderApproval />} />
-          <Route path="/rider/dashboard" element={<RiderRoute><RiderDashboard /></RiderRoute>} />
-          <Route path="/rider/history" element={<RiderRoute><RiderHistory /></RiderRoute>} />
-          <Route path="/rider/profile" element={<RiderRoute><RiderProfile /></RiderRoute>} />
-          <Route path="/rider/order/:orderId" element={<RiderRoute><RiderOrderDetails /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/enroute" element={<RiderRoute><RiderEnRoute /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/dropoff" element={<RiderRoute><RiderDropoff /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/complete" element={<RiderRoute><RiderDeliveryComplete /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/report-issue" element={<RiderRoute><RiderReportIssue /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/return-success" element={<RiderRoute><RiderReturnSuccess /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/return" element={<RiderRoute><RiderReturnSetup /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/return-active" element={<RiderRoute><RiderReturnActive /></RiderRoute>} />
-          <Route path="/rider/order/:orderId/release-payment" element={<RiderRoute><RiderReleasePayment /></RiderRoute>} />
-          <Route path="/rider/profile/personal" element={<RiderRoute><RiderProfilePersonal /></RiderRoute>} />
-          <Route path="/rider/profile/bank" element={<RiderRoute><RiderProfileBank /></RiderRoute>} />
-          <Route path="/rider/profile/security" element={<RiderRoute><RiderProfileSecurity /></RiderRoute>} />
           {/* Seller flow */}
           <Route path="/seller" element={<RoleAccessRoute required="seller"><SellerDashboard /></RoleAccessRoute>} />
           <Route path="/seller/dashboard" element={<RoleAccessRoute required="seller"><SellerDashboard /></RoleAccessRoute>} />

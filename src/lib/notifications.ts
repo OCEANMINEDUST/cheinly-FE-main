@@ -1,6 +1,6 @@
 import { Bell, Wallet, ShoppingBag, History, AlertTriangle, type LucideIcon } from "lucide-react";
 
-export type Role = "seller" | "buyer" | "rider" | "supplier";
+export type Role = "seller" | "buyer" | "supplier";
 
 export type AppNotification = {
   id: number;
@@ -18,13 +18,6 @@ export const notificationsFor = (role: Role): AppNotification[] => {
       { id: 1, kind: "order", title: "Order out for delivery", body: "Premium Sneakers — ETA 14:30", time: "5m", cta: "Track order", to: "/buyer/order" },
       { id: 2, kind: "payment", title: "Payment held in escrow", body: "₦45,000 secured until delivery", time: "1h", cta: "View receipt", to: "/buyer/receipt" },
       { id: 3, kind: "alert", title: "Confirm delivery", body: "Inspect items before releasing funds", time: "2h", cta: "Open", to: "/buyer/confirm-delivery" },
-    ];
-  }
-  if (role === "rider") {
-    return [
-      { id: 1, kind: "order", title: "New trip available", body: "Ikoyi → Lekki • ₦2,800", time: "Now", cta: "View", to: "/rider/dashboard" },
-      { id: 2, kind: "payout", title: "Weekly payout sent", body: "₦42,000 to GTBank ****8821", time: "1d", cta: "History", to: "/rider/history" },
-      { id: 3, kind: "alert", title: "Document expires soon", body: "Renew vehicle registration", time: "3d", cta: "Profile", to: "/rider/profile" },
     ];
   }
   if (role === "supplier") {

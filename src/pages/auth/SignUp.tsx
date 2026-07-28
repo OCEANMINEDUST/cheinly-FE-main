@@ -14,16 +14,10 @@ import {
   User,
   Globe,
   Store,
-  Bike,
+  ShoppingBag,
   Phone,
   MapPin,
   IdCard,
-  Car,
-  Hash,
-  FileImage,
-  Landmark,
-  Building,
-  Upload,
 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -68,30 +62,13 @@ const sellerProfileSchema = z.object({
   agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
 });
 
-const riderProfileSchema = z.object({
-  phone: z.string().trim().min(7, "Enter a valid phone number").max(20),
-  vehicleType: z.string().trim().min(1, "Select vehicle type"),
-  plateNumber: z.string().trim().min(2, "Plate number is required").max(20),
-  licenseNumber: z.string().trim().min(3, "License number is required").max(40),
-  nin: z.string().trim().min(6, "NIN is required").max(20),
-  licensePhoto: z.string().min(1, "Upload a photo of your licence/permit"),
-  agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
-});
-
 const sellerIdentitySchema = z
   .object({
     idType: z.enum(["bvn", "nin"], { errorMap: () => ({ message: "Select an ID type" }) }),
     idNumber: z.string().trim().min(10, "Enter a valid 10-11 digit number").max(11),
   });
 
-const riderBankSchema = z.object({
-  bankName: z.string().trim().min(2, "Bank name is required").max(80),
-  accountNumber: z.string().trim().regex(/^\d{10}$/, "Account number must be 10 digits"),
-  accountName: z.string().trim().min(2, "Account name is required").max(120),
-  affiliation: z.string().trim().min(2, "Logistics company code or name is required").max(80),
-});
-
-type Role = "seller" | "rider" | null;
+type Role = "seller" | "buyer" | null;
 
 const SignUp = () => {
   const nav = useNavigate();
@@ -122,26 +99,12 @@ const SignUp = () => {
   const [phone, setPhone] = useState("");
   const [agree, setAgree] = useState(false);
 
-  // Rider profile
-  const [vehicleType, setVehicleType] = useState("");
-  const [plateNumber, setPlateNumber] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [nin, setNin] = useState("");
-  const [licensePhoto, setLicensePhoto] = useState<string>("");
-  const [licensePhotoName, setLicensePhotoName] = useState<string>("");
-
   // Seller identity
   const [idType, setIdType] = useState<"bvn" | "nin" | "">("");
   const [idNumber, setIdNumber] = useState("");
 
-  // Rider banking + logistics
-  const [bankName, setBankName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [accountName, setAccountName] = useState("");
-  const [affiliation, setAffiliation] = useState("");
-
   const isSeller = selectedRole === "seller";
-  const totalSteps = 5; // role, account, profile, identity/bank, done
+  const totalSteps = isSeller ? 5 : 4; // seller: role, account, profile, identity, done | buyer: role, account, profile, done
 
   const next = () => setStep((s) => Math.min(s + 1, totalSteps));
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -165,15 +128,13 @@ const SignUp = () => {
       const r = sellerProfileSchema.safeParse({ businessName, address, phone, country, agree });
       if (!r.success) return toast.error(r.error.errors[0].message);
     } else {
-      const r = riderProfileSchema.safeParse({
-        phone,
-        vehicleType,
-        plateNumber,
-        licenseNumber,
-        nin,
-        licensePhoto,
-        agree,
-      });
+      const r = z
+        .object({
+          phone: z.string().trim().min(7, "Enter a valid phone number").max(20),
+          country: z.string().trim().min(2, "Country is required").max(80),
+          agree: z.literal(true, { errorMap: () => ({ message: "You must accept the terms" }) }),
+        })
+        .safeParse({ phone, country, agree });
       if (!r.success) return toast.error(r.error.errors[0].message);
     }
     setLoading(true);
@@ -205,18 +166,18 @@ const SignUp = () => {
 
   const continueAfterVerify = () => {
     setVerifySuccessOpen(false);
-    next(); // → identity / banking
+    if (isSeller) {
+      next(); // → identity verification
+    } else {
+      // Buyer: skip identity/banking, land straight on the welcome step
+      setStep(4);
+    }
   };
 
   const submitIdentity = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSeller) {
-      const r = sellerIdentitySchema.safeParse({ idType, idNumber });
-      if (!r.success) return toast.error(r.error.errors[0].message);
-    } else {
-      const r = riderBankSchema.safeParse({ bankName, accountNumber, accountName, affiliation });
-      if (!r.success) return toast.error(r.error.errors[0].message);
-    }
+    const r = sellerIdentitySchema.safeParse({ idType, idNumber });
+    if (!r.success) return toast.error(r.error.errors[0].message);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -224,25 +185,11 @@ const SignUp = () => {
     }, 700);
   };
 
-  const handleLicenseUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return toast.error("File must be under 5MB");
-    const reader = new FileReader();
-    reader.onload = () => {
-      setLicensePhoto(reader.result as string);
-      setLicensePhotoName(file.name);
-    };
-    reader.readAsDataURL(file);
-  };
+  const labels = isSeller
+    ? ["Choose role", "Account", "Business profile", "Identity verification", "All set"]
+    : ["Choose role", "Account", "Delivery details", "All set"];
 
-  const labels = [
-    "Choose role",
-    "Account",
-    isSeller ? "Business profile" : "Rider profile",
-    isSeller ? "Identity verification" : "Banking & logistics",
-    "All set",
-  ];
+  const isDoneStep = step === totalSteps;
 
   return (
     <AuthLayout step={{ current: step, total: totalSteps }}>
@@ -251,35 +198,37 @@ const SignUp = () => {
           step === 1
             ? "Choose your role"
             : step === 2
-            ? `Create your ${isSeller ? "seller" : "rider"} account`
+            ? `Create your ${isSeller ? "seller" : "buyer"} account`
             : step === 3
             ? isSeller
               ? "Tell us about your business"
-              : "Tell us about your ride"
-            : step === 4
+              : "Where should we deliver?"
+            : step === 4 && isSeller
             ? isSeller
               ? "Verify your identity"
-              : "Banking & logistics"
+              : ""
             : "Welcome to Cheinly"
         }
         subtitle={
           step === 1
             ? "Tell us how you'll use Cheinly. You can switch later."
             : step === 2
-            ? "Join the network built for the modern enterprise."
+            ? isSeller
+              ? "Join the network built for the modern enterprise."
+              : "Shop verified sellers with escrow protection on every order."
             : step === 3
             ? isSeller
               ? "We'll tailor your storefront to your business."
-              : "We need a few details to dispatch deliveries to you."
-            : step === 4
+              : "We'll use these details to route deliveries from our logistics partners."
+            : step === 4 && isSeller
             ? isSeller
               ? "Verify your BVN or NIN to activate payouts."
-              : "Where should we send your earnings?"
+              : ""
             : "Your account is ready. Sign in to enter your portal."
         }
-        icon={step === 5 ? CheckCircle2 : undefined}
+        icon={isDoneStep ? CheckCircle2 : undefined}
       >
-        {step < 5 && <StepProgress current={step} total={4} label={labels[step - 1]} />}
+        {!isDoneStep && <StepProgress current={step} total={totalSteps - 1} label={labels[step - 1]} />}
 
         {/* STEP 1 — Role */}
         {step === 1 && (
@@ -294,11 +243,11 @@ const SignUp = () => {
                   perks: ["Storefront builder", "Order management", "Payouts"],
                 },
                 {
-                  id: "rider" as const,
-                  icon: Bike,
-                  title: "Rider",
-                  desc: "Earn by delivering orders on your schedule.",
-                  perks: ["Flexible shifts", "Live navigation", "Instant earnings"],
+                  id: "buyer" as const,
+                  icon: ShoppingBag,
+                  title: "Buyer",
+                  desc: "Shop verified sellers with escrow-protected checkout.",
+                  perks: ["Escrow protection", "Live delivery tracking", "Easy refunds"],
                 },
               ]).map(({ id, icon: Icon, title, desc, perks }) => {
                 const active = selectedRole === id;

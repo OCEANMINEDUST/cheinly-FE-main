@@ -52,6 +52,7 @@ import SellerDisputes from "./pages/seller/Disputes";
 import SellerNegotiate from "./pages/seller/Negotiate";
 import SellerEscalate from "./pages/seller/Escalate";
 import SellerAccountSettings from "./pages/seller/AccountSettings";
+import SellerFulfillmentSettings from "./pages/seller/FulfillmentSettings";
 import SellerAIChatbot from "./pages/seller/AIChatbot";
 import HelpCentre from "./pages/help/HelpCentre";
 import HelpArticle from "./pages/help/HelpArticle";
@@ -145,6 +146,7 @@ const App = () => (
           <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
           <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
           <Route path="/seller/settings" element={<RoleAccessRoute required="seller"><SellerAccountSettings /></RoleAccessRoute>} />
+          <Route path="/seller/fulfillment" element={<RoleAccessRoute required="seller"><SellerFulfillmentSettings /></RoleAccessRoute>} />
           <Route path="/seller/ai-chatbot" element={<RoleAccessRoute required="seller"><SellerAIChatbot /></RoleAccessRoute>} />
           {/* Help Centre (shared) */}
           <Route path="/help" element={<HelpCentre />} />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Phone, MessageCircle, ShieldCheck, Copy, CheckCircle2, Bike, PackageCheck } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, MessageCircle, ShieldCheck, Copy, CheckCircle2, Bike, PackageCheck, Truck, Webhook, RefreshCw } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import {
   startPickup,
   subscribePickup,
 } from "@/lib/pickupTracker";
+import { ProviderId, getProvider } from "@/lib/logistics/providers";
 
 const stages: { id: PickupStage; label: string; desc: string }[] = [
   { id: "assigning", label: "Finding a rider", desc: "Matching the closest verified rider to your pickup." },
@@ -30,9 +31,25 @@ export default function BuyerPickupTracking() {
   const fee = Number(params.get("fee") || 2800);
   const pickup = params.get("pickup") || "3 Bode Thomas, Surulere, Lagos";
   const dropoff = params.get("dropoff") || "12 Admiralty Way, Lekki Phase 1";
+  const providerId = (params.get("provider") || "kwik") as ProviderId;
+  const requestId = params.get("requestId") || undefined;
+  const syncMode = (params.get("sync") === "polling" ? "polling" : "callback") as "polling" | "callback";
 
   // Bootstrap: reuse any active pickup so navigating away and back preserves progress.
-  const [state, setState] = useState(() => getPickup() ?? startPickup({ fee, pickup, dropoff }));
+  const [state, setState] = useState(
+    () =>
+      getPickup() ??
+      startPickup({
+        fee,
+        pickup,
+        dropoff,
+        providerId,
+        providerName: getProvider(providerId).name,
+        requestId,
+        syncMode,
+        code: params.get("code") || undefined,
+      }),
+  );
 
   useEffect(() => {
     const unsub = subscribePickup((next) => {
@@ -75,6 +92,21 @@ export default function BuyerPickupTracking() {
           </Button>
           <Badge variant="secondary" className="font-mono">{orderId}</Badge>
         </div>
+
+        <Card className="shadow-card">
+          <CardContent className="flex flex-wrap items-center gap-3 p-4 text-sm">
+            <Truck className="h-4 w-4 text-primary" />
+            <span className="font-medium">{state.providerName ?? getProvider(providerId).name}</span>
+            {state.requestId && <Badge variant="outline" className="font-mono text-xs">{state.requestId}</Badge>}
+            <Badge variant="secondary" className="ml-auto flex items-center gap-1.5 text-xs">
+              {(state.syncMode ?? syncMode) === "callback" ? (
+                <><Webhook className="h-3 w-3" /> Live provider callbacks</>
+              ) : (
+                <><RefreshCw className="h-3 w-3 animate-spin" /> Polling provider every few seconds</>
+              )}
+            </Badge>
+          </CardContent>
+        </Card>
 
         {/* Faux map */}
         <Card className="shadow-card overflow-hidden">

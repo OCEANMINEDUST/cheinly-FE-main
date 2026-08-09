@@ -128,12 +128,12 @@ Features:
 
 ## Backend Integration
 
-* REST API / GraphQL / tRPC
+* REST API (Axios client)
+* MongoDB
+* Cloudinary (Media Hosting)
+* Node.js / Express (cheinly-BE)
 * WebSockets
-* Redis
-* BullMQ
-* Node.js
-* Express / NestJS
+* Redis / BullMQ
 
 
 

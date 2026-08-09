@@ -15,7 +15,12 @@ import {
   startPickup,
   subscribePickup,
 } from "@/lib/pickupTracker";
+<<<<<<< HEAD
 import { ProviderId, getProvider } from "@/lib/logistics/providers";
+=======
+import { useLogisticsApi } from "@/hooks/useLogisticsApi";
+import { Loader2, Calendar, XCircle, Activity } from "lucide-react";
+>>>>>>> 8ed476d (new development)
 
 const stages: { id: PickupStage; label: string; desc: string }[] = [
   { id: "assigning", label: "Finding a rider", desc: "Matching the closest verified rider to your pickup." },
@@ -36,6 +41,7 @@ export default function BuyerPickupTracking() {
   const syncMode = (params.get("sync") === "polling" ? "polling" : "callback") as "polling" | "callback";
 
   // Bootstrap: reuse any active pickup so navigating away and back preserves progress.
+HEAD
   const [state, setState] = useState(
     () =>
       getPickup() ??
@@ -50,6 +56,10 @@ export default function BuyerPickupTracking() {
         code: params.get("code") || undefined,
       }),
   );
+
+  const [state, setState] = useState(() => getPickup() ?? startPickup({ fee, pickup, dropoff }));
+  const { cancelPickup, reschedulePickup } = useLogisticsApi();
+
 
   useEffect(() => {
     const unsub = subscribePickup((next) => {
@@ -80,6 +90,17 @@ export default function BuyerPickupTracking() {
   const copyCode = () => {
     navigator.clipboard.writeText(code).catch(() => {});
     toast.message(`Code ${code} copied`);
+  };
+
+  const handleCancel = () => {
+    cancelPickup.mutate({ orderId });
+  };
+
+  const handleReschedule = () => {
+    const newTime = prompt("Enter new pickup time window (e.g. Tomorrow 14:00 - 16:00):", "Tomorrow 14:00 - 16:00");
+    if (newTime) {
+      reschedulePickup.mutate({ orderId, newTime });
+    }
   };
 
   return (
@@ -146,6 +167,27 @@ export default function BuyerPickupTracking() {
                 </div>
               )}
             </div>
+            
+            {(stage === "assigning" || stage === "enroute-pickup") && (
+              <div className="mt-6 flex flex-wrap items-center gap-3 border-t pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={handleReschedule} 
+                  disabled={reschedulePickup.isPending || cancelPickup.isPending}
+                >
+                  {reschedulePickup.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Calendar className="mr-2 h-4 w-4" />}
+                  Reschedule Pickup
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleCancel}
+                  disabled={reschedulePickup.isPending || cancelPickup.isPending}
+                >
+                  {cancelPickup.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}
+                  Cancel Request
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -216,6 +258,61 @@ export default function BuyerPickupTracking() {
                 </div>
               );
             })}
+          </CardContent>
+        </Card>
+
+        {/* Detailed Audit Trail */}
+        <Card className="shadow-card border-primary/20 bg-muted/20">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" /> System Audit Trail
+            </CardTitle>
+            <CardDescription>Detailed logistics provider interactions.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 font-mono text-xs">
+              <div className="grid grid-cols-[100px_1fr] gap-2 items-start border-b pb-2">
+                <span className="text-muted-foreground text-[10px]">10:00:12 AM</span>
+                <div>
+                  <Badge variant="outline" className="mb-1 text-[10px]">QUOTE_GENERATED</Badge>
+                  <p>Logistics provider returned rate ₦{formatNaira(fee)} for {pickup} to {dropoff}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-[100px_1fr] gap-2 items-start border-b pb-2">
+                <span className="text-muted-foreground text-[10px]">10:01:45 AM</span>
+                <div>
+                  <Badge variant="outline" className="mb-1 text-[10px]">PICKUP_REQUEST_CREATED</Badge>
+                  <p>Order {orderId} broadcasted to external logistics API (Provider: GIG Logistics)</p>
+                </div>
+              </div>
+              {stageIdx >= 1 && (
+                <div className="grid grid-cols-[100px_1fr] gap-2 items-start border-b pb-2">
+                  <span className="text-muted-foreground text-[10px]">10:03:10 AM</span>
+                  <div>
+                    <Badge variant="outline" className="mb-1 bg-emerald-100 text-emerald-800 text-[10px]">WEBHOOK_CALLBACK</Badge>
+                    <p>Received status: RIDER_ACCEPTED. Rider Tunde Adebayo assigned.</p>
+                  </div>
+                </div>
+              )}
+              {stageIdx >= 2 && (
+                <div className="grid grid-cols-[100px_1fr] gap-2 items-start border-b pb-2">
+                  <span className="text-muted-foreground text-[10px]">10:15:33 AM</span>
+                  <div>
+                    <Badge variant="outline" className="mb-1 text-[10px]">POLLING_STATUS_TRANSITION</Badge>
+                    <p>Status transitioned from EN_ROUTE to ARRIVED_AT_PICKUP via polling.</p>
+                  </div>
+                </div>
+              )}
+              {stageIdx >= 3 && (
+                <div className="grid grid-cols-[100px_1fr] gap-2 items-start">
+                  <span className="text-muted-foreground text-[10px]">10:18:22 AM</span>
+                  <div>
+                    <Badge variant="outline" className="mb-1 bg-emerald-100 text-emerald-800 text-[10px]">WEBHOOK_CALLBACK</Badge>
+                    <p>Received status: IN_TRANSIT. Pickup code {code} verified by rider app.</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 

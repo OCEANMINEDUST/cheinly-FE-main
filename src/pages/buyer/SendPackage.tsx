@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Package, MapPin, User, Phone, Ruler, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Package, MapPin, User, Phone, Ruler, ShieldCheck, Truck, Loader2 } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
 import { BuyerFooter } from "@/components/buyer/BuyerFooter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatNaira } from "@/lib/buyerMock";
 import { toast } from "sonner";
+import { ProviderId, quoteProviders, requestPickup, getProvider } from "@/lib/logistics/providers";
 
 const sizeFees: Record<string, number> = { small: 1500, medium: 2800, large: 4500 };
 
@@ -18,6 +19,8 @@ export default function BuyerSendPackage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [size, setSize] = useState<keyof typeof sizeFees>("small");
+  const [providerId, setProviderId] = useState<ProviderId>("kwik");
+  const [booking, setBooking] = useState(false);
   const [form, setForm] = useState({
     senderName: "", senderPhone: "", pickup: "",
     receiverName: "", receiverPhone: "", dropoff: "",
@@ -26,21 +29,46 @@ export default function BuyerSendPackage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.type === "number" ? Number(e.target.value) : e.target.value }));
 
-  const fee = sizeFees[size];
+  const quotes = quoteProviders(sizeFees[size]);
+  const quote = quotes.find((q) => q.providerId === providerId) ?? quotes[0];
+  const fee = quote.fee;
   const insurance = +(form.value * 0.01).toFixed(2);
   const total = fee + insurance;
 
   const next = () => setStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s));
   const back = () => (step === 1 ? navigate(-1) : setStep((s) => ((s - 1) as 1 | 2 | 3)));
 
-  const book = () => {
-    toast.success("Pickup booked — finding a rider near you.");
-    const q = new URLSearchParams({
-      fee: String(total),
-      pickup: form.pickup,
-      dropoff: form.dropoff,
-    }).toString();
-    setTimeout(() => navigate(`/buyer/pickup-tracking?${q}`), 500);
+  const book = async () => {
+    setBooking(true);
+    try {
+      const res = await requestPickup(providerId, {
+        reference: `PKG-${Date.now()}`,
+        pickupAddress: form.pickup,
+        dropoffAddress: form.dropoff,
+        senderName: form.senderName,
+        senderPhone: form.senderPhone,
+        receiverName: form.receiverName,
+        receiverPhone: form.receiverPhone,
+        packageSize: size,
+        declaredValue: form.value,
+        fee: total,
+      });
+      toast.success(`${getProvider(providerId).name} accepted the request — assigning a rider.`);
+      const q = new URLSearchParams({
+        fee: String(total),
+        pickup: form.pickup,
+        dropoff: form.dropoff,
+        provider: res.providerId,
+        requestId: res.requestId,
+        code: res.pickupCode,
+        sync: res.syncMode,
+      }).toString();
+      navigate(`/buyer/pickup-tracking?${q}`);
+    } catch {
+      toast.error("The logistics provider could not accept this pickup. Try another provider.");
+    } finally {
+      setBooking(false);
+    }
   };
 
   return (
@@ -131,6 +159,28 @@ export default function BuyerSendPackage() {
 
             {step === 3 && (
               <div className="space-y-4">
+                <div className="space-y-3">
+                  <p className="flex items-center gap-1.5 text-sm font-medium">
+                    <Truck className="h-4 w-4 text-primary" /> Choose a logistics partner
+                  </p>
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {quotes.map((q) => (
+                      <button
+                        type="button"
+                        key={q.providerId}
+                        onClick={() => setProviderId(q.providerId)}
+                        className={`rounded-lg border p-4 text-left transition-colors ${providerId === q.providerId ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                      >
+                        <p className="font-medium">{q.providerName}</p>
+                        <p className="text-xs text-muted-foreground">Pickup in ~{q.pickupEtaMinutes} min</p>
+                        <p className="mt-1 text-sm font-semibold text-gold">{formatNaira(q.fee)}</p>
+                        <p className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                          {q.syncModes.includes("callback") ? "Live callbacks" : "Polled updates"}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="rounded-lg border border-border bg-secondary/40 p-4 text-sm">
                   <p className="font-medium text-foreground">Route</p>
                   <p className="mt-1 text-muted-foreground">{form.pickup || "—"} → {form.dropoff || "—"}</p>
@@ -140,7 +190,7 @@ export default function BuyerSendPackage() {
                   <p className="mt-1 text-muted-foreground">{size.toUpperCase()} · {form.description || "No description"}</p>
                 </div>
                 <div className="rounded-lg border border-border p-4 space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-muted-foreground">Delivery fee</span><span>{formatNaira(fee)}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Delivery fee ({quote.providerName})</span><span>{formatNaira(fee)}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Insurance (1%)</span><span>{formatNaira(insurance)}</span></div>
                   <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>Total</span><span className="text-gold">{formatNaira(total)}</span></div>
                 </div>
@@ -155,7 +205,10 @@ export default function BuyerSendPackage() {
               {step < 3 ? (
                 <Button onClick={next} className="bg-primary hover:bg-primary/90">Continue</Button>
               ) : (
-                <Button onClick={book} className="bg-primary hover:bg-primary/90">Book Pickup · {formatNaira(total)}</Button>
+                <Button onClick={book} disabled={booking} className="bg-primary hover:bg-primary/90">
+                  {booking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {booking ? "Requesting pickup…" : `Book Pickup · ${formatNaira(total)}`}
+                </Button>
               )}
             </div>
           </CardContent>

@@ -19,6 +19,11 @@ export interface PickupState {
   handoverAt: number | null; // set when buyer confirms handover
   stage: PickupStage;
   etaMinutes: number;
+  /** External logistics provider handling this pickup. */
+  providerId?: string;
+  providerName?: string;
+  requestId?: string;
+  syncMode?: "callback" | "polling";
 }
 
 // Real-time durations (ms) between auto-advanced stages.
@@ -68,10 +73,15 @@ export function startPickup(input: {
   pickup: string;
   dropoff: string;
   now?: number;
+  providerId?: string;
+  providerName?: string;
+  requestId?: string;
+  syncMode?: "callback" | "polling";
+  code?: string;
 }): PickupState {
   const state: PickupState = {
     orderId: randomOrderId(),
-    code: randomCode(),
+    code: input.code ?? randomCode(),
     fee: input.fee,
     pickup: input.pickup,
     dropoff: input.dropoff,
@@ -79,6 +89,10 @@ export function startPickup(input: {
     handoverAt: null,
     stage: "assigning",
     etaMinutes: 9,
+    providerId: input.providerId,
+    providerName: input.providerName,
+    requestId: input.requestId,
+    syncMode: input.syncMode,
   };
   write(state);
   return state;

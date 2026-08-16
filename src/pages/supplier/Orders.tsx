@@ -41,7 +41,7 @@ export default function SupplierOrders() {
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button asChild size="sm" variant="outline"><Link to={`/supplier/invite/${r.id}`}>Invite</Link></Button>
-                    <Button asChild size="sm"><Link to="/supplier/fulfillment">Fulfill</Link></Button>
+                    <Button asChild size="sm"><Link to="/supplier/orders">Fulfill</Link></Button>
                   </div>
                 </TableCell>
               </TableRow>

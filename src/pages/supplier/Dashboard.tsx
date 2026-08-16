@@ -84,7 +84,7 @@ export default function SupplierDashboard() {
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Quick Actions</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/supplier/fulfillment"><Plus className="h-4 w-4" /> Create Order</Link></Button>
+          <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/supplier/orders"><Plus className="h-4 w-4" /> Create Order</Link></Button>
           <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/supplier/return-tracking"><Truck className="h-4 w-4" /> Track Return</Link></Button>
           <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/supplier/dispute-review"><AlertTriangle className="h-4 w-4" /> Raise Dispute</Link></Button>
           <Button asChild variant="outline" className="h-auto justify-start gap-2 py-3"><Link to="/supplier/settings-kyc"><BadgeCheck className="h-4 w-4" /> Complete KYC</Link></Button>
@@ -104,7 +104,7 @@ export default function SupplierDashboard() {
               <div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div>
               <div className="mt-3 flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">{o.id}</span><span className="font-semibold">₦{o.amount.toLocaleString("en-NG")}</span></div>
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <Button asChild><Link to="/supplier/fulfillment">Start fulfillment</Link></Button>
+                <Button asChild><Link to="/supplier/orders">Start fulfillment</Link></Button>
                 <Button asChild variant="outline"><Link to={`/supplier/invite/${o.id}`}>Invite</Link></Button>
               </div>
             </Card>

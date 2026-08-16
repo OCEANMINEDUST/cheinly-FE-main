@@ -8,7 +8,6 @@ import SupplierDashboard from "@/pages/supplier/Dashboard";
 import SupplierOnboarding from "@/pages/supplier/Onboarding";
 import SupplierOrders from "@/pages/supplier/Orders";
 import SupplierTransactions from "@/pages/supplier/Transactions";
-import SupplierFulfillment from "@/pages/supplier/Fulfillment";
 import SupplierInvite from "@/pages/supplier/Invite";
 import SupplierDisputeReview from "@/pages/supplier/DisputeReview";
 import SupplierDisputes from "@/pages/supplier/Disputes";
@@ -27,7 +26,6 @@ const routes: Array<{ path: string; Component: React.ComponentType }> = [
   { path: "/supplier/onboarding", Component: SupplierOnboarding },
   { path: "/supplier/orders", Component: SupplierOrders },
   { path: "/supplier/transactions", Component: SupplierTransactions },
-  { path: "/supplier/fulfillment", Component: SupplierFulfillment },
   { path: "/supplier/invite/:orderId", Component: SupplierInvite },
   { path: "/supplier/dispute-review", Component: SupplierDisputeReview },
   { path: "/supplier/disputes", Component: SupplierDisputes },

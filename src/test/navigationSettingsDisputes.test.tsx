@@ -7,7 +7,7 @@ import { DisputesList } from "@/pages/shared/DisputesList";
 
 describe("role navigation, buyer settings, and disputes", () => {
   it("limits seller and supplier primary nav to overview, transactions, orders, and disputes", () => {
-    expect(flowNav("seller").map((link) => link.label)).toEqual(["Overview", "Transactions", "Orders", "Disputes", "Fulfillment"]);
+    expect(flowNav("seller").map((link) => link.label)).toEqual(["Overview", "Transactions", "Orders", "Disputes"]);
     expect(flowNav("supplier").map((link) => link.label)).toEqual(["Overview", "Transactions", "Orders", "Disputes"]);
   });
 

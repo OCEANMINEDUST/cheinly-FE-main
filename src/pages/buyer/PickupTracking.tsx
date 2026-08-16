@@ -38,7 +38,6 @@ export default function BuyerPickupTracking() {
   const syncMode = (params.get("sync") === "polling" ? "polling" : "callback") as "polling" | "callback";
 
   // Bootstrap: reuse any active pickup so navigating away and back preserves progress.
-HEAD
   const [state, setState] = useState(
     () =>
       getPickup() ??
@@ -54,7 +53,6 @@ HEAD
       }),
   );
 
-  const [state, setState] = useState(() => getPickup() ?? startPickup({ fee, pickup, dropoff }));
   const { cancelPickup, reschedulePickup } = useLogisticsApi();
 
 

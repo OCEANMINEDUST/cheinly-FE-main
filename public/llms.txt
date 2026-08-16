@@ -1,0 +1,16 @@
+# Cheinly
+
+> Escrow-protected marketplace for buyers and sellers in Nigeria, with verified delivery through logistics partners.
+
+## Pages
+
+- [Home](/): What Cheinly is and how escrow-protected transactions work.
+- [Browse](/buyer/browse): Public product and seller browsing.
+- [Buy](/buy): Start a protected purchase.
+- [Help Centre](/help): Guides on orders, refunds, disputes and package pickup.
+- [Contact Support](/help/contact): Reach the Cheinly support team.
+
+## Optional
+
+- [Sign in](/auth/login): Existing account sign-in.
+- [Create account](/auth/signup): Buyer or seller signup.

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://cheinly.lovable.app/</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/buy</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/buyer/browse</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/help</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/help/contact</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/auth/login</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://cheinly.lovable.app/auth/signup</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+</urlset>

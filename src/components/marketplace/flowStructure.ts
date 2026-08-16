@@ -1,4 +1,4 @@
-import { Home, CreditCard, Package, Scale, Truck, type LucideIcon } from "lucide-react";
+import { Home, CreditCard, Package, Scale, type LucideIcon } from "lucide-react";
 
 export type MarketplaceRole = "buyer" | "seller" | "supplier";
 export type FlowKey = "overview" | "transactions" | "orders" | "disputes";

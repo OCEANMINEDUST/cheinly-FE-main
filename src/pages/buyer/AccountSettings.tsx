@@ -139,25 +139,7 @@ export default function BuyerAccountSettings() {
           </div>
         </section>
 
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <Card>
-              <CardHeader><CardTitle className="text-base">Settings areas</CardTitle></CardHeader>
-              <CardContent className="grid gap-1 text-sm">
-                {[
-                  ["profile", "Profile Information"],
-                  ["security", "Security"],
-                  ["payments", "Payment Methods"],
-                  ["notifications", "Notifications"],
-                  ["preferences", "Preferences"],
-                  ["support", "Help & Support"],
-                  ["legal", "Legal"],
-                  ["account", "Account Management"],
-                ].map(([id, label]) => <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-muted-foreground hover:bg-secondary hover:text-foreground">{label}</a>)}
-              </CardContent>
-            </Card>
-          </aside>
-
+        <div className="grid gap-6">
           <div className="space-y-6">
             <SettingsSection id="profile" title="Profile Information" description="Your personal buyer details and profile photo." icon={User}>
               <div className="grid gap-4 md:grid-cols-2">

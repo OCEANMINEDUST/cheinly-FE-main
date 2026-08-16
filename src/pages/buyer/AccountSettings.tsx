@@ -129,7 +129,7 @@ export default function BuyerAccountSettings() {
         <section className="rounded-2xl border bg-card p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Buyer Settings</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Account</p>
               <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight">Buyer Settings</h1>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                 Manage your buyer profile, security, payment methods, notifications, preferences, help resources, legal policies, and account controls.

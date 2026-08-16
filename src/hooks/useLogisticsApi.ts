@@ -10,7 +10,7 @@ export function useLogisticsApi() {
   const cancelPickup = useMutation({
     mutationFn: async ({ orderId }: { orderId: string }) => {
       // Simulate network request with 20% chance of failure to demonstrate retries
-      return new Promise((resolve, reject) => {
+      return new Promise<{ success: boolean; orderId: string; message: string }>((resolve, reject) => {
         setTimeout(() => {
           if (Math.random() < 0.2) {
             reject(new Error("Network timeout: Logistics provider did not respond."));
@@ -38,7 +38,7 @@ export function useLogisticsApi() {
   // Mock Reschedule Pickup
   const reschedulePickup = useMutation({
     mutationFn: async ({ orderId, newTime }: { orderId: string; newTime: string }) => {
-      return new Promise((resolve, reject) => {
+      return new Promise<{ success: boolean; orderId: string; message: string }>((resolve, reject) => {
         setTimeout(() => {
           if (Math.random() < 0.2) {
             reject(new Error("Logistics provider API is currently unreachable."));

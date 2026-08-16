@@ -43,7 +43,7 @@ export function useLogisticsApi() {
           if (Math.random() < 0.2) {
             reject(new Error("Logistics provider API is currently unreachable."));
           } else {
-            resolve({ success: true, orderId, newTime, message: "Pickup rescheduled." });
+            resolve({ success: true, orderId, message: `Pickup rescheduled to ${newTime}.` });
           }
         }, 1500);
       });

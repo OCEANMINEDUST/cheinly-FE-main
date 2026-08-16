@@ -43,7 +43,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { LogisticsSettings } from "@/components/seller/LogisticsSettings";
 
 type AccountSettingsProps = {
   role: "seller" | "supplier";
@@ -290,18 +289,6 @@ export default function AccountSettings({ role }: AccountSettingsProps) {
                   <Switch defaultChecked={index < 4} />
                 </div>
               ))}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div id="logistics" className="scroll-mt-24">
-                <h2 className="font-display text-2xl font-semibold tracking-tight">Logistics & Fulfillment</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Manage your fulfillment rules, shipping providers, and webhook audit logs.</p>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <LogisticsSettings />
             </CardContent>
           </Card>
 

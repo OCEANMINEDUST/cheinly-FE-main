@@ -81,7 +81,7 @@ describe("BuyerPickupTracking — end-to-end lifecycle", () => {
     // Stage 2: rider en route
     tick(STAGE_DURATIONS.assigningMs + 100);
     expect(screen.getAllByText("Rider en route to you").length).toBeGreaterThan(0);
-    expect(screen.getByText(/Tunde Adebayo/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Tunde Adebayo/).length).toBeGreaterThan(0);
 
     // Stage 3: rider arrived — pickup code panel appears automatically
     tick(STAGE_DURATIONS.enroutePickupMs + 100);

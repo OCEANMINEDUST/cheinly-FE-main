@@ -22,7 +22,7 @@ export const notificationsFor = (role: Role): AppNotification[] => {
   }
   if (role === "supplier") {
     return [
-      { id: 1, kind: "order", title: "New supply order SUP-1001", body: "Imported Sneakers x500 • pending fulfillment", time: "4m", cta: "Start fulfillment", to: "/supplier/fulfillment" },
+      { id: 1, kind: "order", title: "New supply order SUP-1001", body: "Imported Sneakers x500 • pending fulfillment", time: "4m", cta: "Start fulfillment", to: "/supplier/orders" },
       { id: 2, kind: "payment", title: "Escrow funded", body: "₦5,200,000 protected for SUP-1001", time: "1h", cta: "View transactions", to: "/supplier/transactions" },
       { id: 3, kind: "alert", title: "Return inspection due", body: "RET-401 awaiting QA decision", time: "3h", cta: "Inspect", to: "/supplier/return-inspection" },
     ];

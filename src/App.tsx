@@ -52,7 +52,6 @@ import SellerDisputes from "./pages/seller/Disputes";
 import SellerNegotiate from "./pages/seller/Negotiate";
 import SellerEscalate from "./pages/seller/Escalate";
 import SellerAccountSettings from "./pages/seller/AccountSettings";
-import SellerFulfillmentSettings from "./pages/seller/FulfillmentSettings";
 import SellerAIChatbot from "./pages/seller/AIChatbot";
 import HelpCentre from "./pages/help/HelpCentre";
 import HelpArticle from "./pages/help/HelpArticle";
@@ -67,7 +66,6 @@ import SupplierDashboard from "./pages/supplier/Dashboard";
 import SupplierOnboarding from "./pages/supplier/Onboarding";
 import SupplierOrders from "./pages/supplier/Orders";
 import SupplierTransactions from "./pages/supplier/Transactions";
-import SupplierFulfillment from "./pages/supplier/Fulfillment";
 import SupplierInvite from "./pages/supplier/Invite";
 import SupplierDisputeReview from "./pages/supplier/DisputeReview";
 import SupplierDisputes from "./pages/supplier/Disputes";
@@ -148,7 +146,6 @@ const App = () => (
           <Route path="/seller/negotiate" element={<RoleAccessRoute required="seller"><SellerNegotiate /></RoleAccessRoute>} />
           <Route path="/seller/escalate" element={<RoleAccessRoute required="seller"><SellerEscalate /></RoleAccessRoute>} />
           <Route path="/seller/settings" element={<RoleAccessRoute required="seller"><SellerAccountSettings /></RoleAccessRoute>} />
-          <Route path="/seller/fulfillment" element={<RoleAccessRoute required="seller"><SellerFulfillmentSettings /></RoleAccessRoute>} />
           <Route path="/seller/ai-chatbot" element={<RoleAccessRoute required="seller"><SellerAIChatbot /></RoleAccessRoute>} />
           {/* Help Centre (shared) */}
           <Route path="/help" element={<HelpCentre />} />
@@ -167,7 +164,6 @@ const App = () => (
           <Route path="/supplier/onboarding" element={<RoleAccessRoute required="supplier"><SupplierOnboarding /></RoleAccessRoute>} />
           <Route path="/supplier/orders" element={<RoleAccessRoute required="supplier"><SupplierOrders /></RoleAccessRoute>} />
           <Route path="/supplier/transactions" element={<RoleAccessRoute required="supplier"><SupplierTransactions /></RoleAccessRoute>} />
-          <Route path="/supplier/fulfillment" element={<RoleAccessRoute required="supplier"><SupplierFulfillment /></RoleAccessRoute>} />
           <Route path="/supplier/invite/:orderId" element={<RoleAccessRoute required="supplier"><SupplierInvite /></RoleAccessRoute>} />
           <Route path="/supplier/dispute-review" element={<RoleAccessRoute required="supplier"><SupplierDisputeReview /></RoleAccessRoute>} />
           <Route path="/supplier/disputes" element={<RoleAccessRoute required="supplier"><SupplierDisputes /></RoleAccessRoute>} />

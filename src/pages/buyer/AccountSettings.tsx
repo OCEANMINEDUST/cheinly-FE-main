@@ -129,7 +129,7 @@ export default function BuyerAccountSettings() {
         <section className="rounded-2xl border bg-card p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Buyer Settings</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Account</p>
               <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight">Buyer Settings</h1>
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                 Manage your buyer profile, security, payment methods, notifications, preferences, help resources, legal policies, and account controls.
@@ -139,25 +139,7 @@ export default function BuyerAccountSettings() {
           </div>
         </section>
 
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <Card>
-              <CardHeader><CardTitle className="text-base">Settings areas</CardTitle></CardHeader>
-              <CardContent className="grid gap-1 text-sm">
-                {[
-                  ["profile", "Profile Information"],
-                  ["security", "Security"],
-                  ["payments", "Payment Methods"],
-                  ["notifications", "Notifications"],
-                  ["preferences", "Preferences"],
-                  ["support", "Help & Support"],
-                  ["legal", "Legal"],
-                  ["account", "Account Management"],
-                ].map(([id, label]) => <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-muted-foreground hover:bg-secondary hover:text-foreground">{label}</a>)}
-              </CardContent>
-            </Card>
-          </aside>
-
+        <div className="grid gap-6">
           <div className="space-y-6">
             <SettingsSection id="profile" title="Profile Information" description="Your personal buyer details and profile photo." icon={User}>
               <div className="grid gap-4 md:grid-cols-2">

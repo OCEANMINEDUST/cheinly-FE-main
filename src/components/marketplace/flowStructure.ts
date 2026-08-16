@@ -25,10 +25,6 @@ export const flowNav = (role: MarketplaceRole) => {
     { to: `${base}/disputes`, label: "Disputes", icon: Scale },
   ];
 
-  if (role === "seller") {
-    links.push({ to: `${base}/fulfillment`, label: "Fulfillment", icon: Truck });
-  }
-
   return links;
 };
 

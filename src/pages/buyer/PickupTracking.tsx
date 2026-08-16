@@ -15,12 +15,9 @@ import {
   startPickup,
   subscribePickup,
 } from "@/lib/pickupTracker";
-<<<<<<< HEAD
 import { ProviderId, getProvider } from "@/lib/logistics/providers";
-=======
 import { useLogisticsApi } from "@/hooks/useLogisticsApi";
 import { Loader2, Calendar, XCircle, Activity } from "lucide-react";
->>>>>>> 8ed476d (new development)
 
 const stages: { id: PickupStage; label: string; desc: string }[] = [
   { id: "assigning", label: "Finding a rider", desc: "Matching the closest verified rider to your pickup." },
@@ -41,7 +38,6 @@ export default function BuyerPickupTracking() {
   const syncMode = (params.get("sync") === "polling" ? "polling" : "callback") as "polling" | "callback";
 
   // Bootstrap: reuse any active pickup so navigating away and back preserves progress.
-HEAD
   const [state, setState] = useState(
     () =>
       getPickup() ??
@@ -57,7 +53,6 @@ HEAD
       }),
   );
 
-  const [state, setState] = useState(() => getPickup() ?? startPickup({ fee, pickup, dropoff }));
   const { cancelPickup, reschedulePickup } = useLogisticsApi();
 
 

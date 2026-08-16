@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import BuyerPickupTracking from "@/pages/buyer/PickupTracking";
 import {
   STAGE_DURATIONS,
@@ -12,13 +13,16 @@ import {
 } from "@/lib/pickupTracker";
 
 function renderTracking() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
+    <QueryClientProvider client={queryClient}>
     <MemoryRouter initialEntries={["/buyer/pickup-tracking?fee=2800&pickup=A&dropoff=B"]}>
       <Routes>
         <Route path="/buyer/pickup-tracking" element={<BuyerPickupTracking />} />
         <Route path="/buyer/dashboard" element={<div>Dashboard</div>} />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
 

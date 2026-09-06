@@ -42,7 +42,7 @@ const disputes: DisputeRecord[] = [
     openedAt: "Yesterday 15:44",
     status: "Awaiting response",
     issue: "Packaging concern before dispatch completion.",
-    nextStep: "Await seller evidence and fulfillment response.",
+    nextStep: "Await seller evidence and delivery response.",
     detailPath: "/buyer/dispute?orderId=ORD-24077&productId=PRD_77104&mode=guest&provider=cheinly",
   },
   {

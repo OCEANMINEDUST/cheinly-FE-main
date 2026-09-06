@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 const roleUseCases: Record<ChatbotRole, string[]> = {
   buyer: ["Track an order or confirm delivery", "Understand escrow payment and receipts", "Start a refund, return, or dispute", "Get help uploading evidence"],
   seller: ["Create, dispatch, and manage orders", "Check KYC, account settings, and login security", "Review payouts, bank details, and withdrawal settings", "Respond to disputes with evidence"],
-  supplier: ["Manage bulk fulfillment and supply orders", "Handle return tracking and inspection decisions", "Check tier progress, payout status, and KYC", "Find market lookup guidance and escalation help"],
+  supplier: ["Manage bulk deliveries and supply orders", "Handle return tracking and inspection decisions", "Check tier progress, payout status, and KYC", "Find market lookup guidance and escalation help"],
 };
 
 export default function AIChatbotPage({ role }: { role: ChatbotRole }) {

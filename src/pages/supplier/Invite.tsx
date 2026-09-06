@@ -19,7 +19,7 @@ export default function SupplierInvite() {
       <section className="rounded-2xl bg-[linear-gradient(135deg,hsl(210_85%_42%),hsl(220_70%_28%))] p-8 text-white shadow-card">
         <Badge variant="secondary" className="mb-3">Pending Supplier Invite</Badge>
         <h1 className="font-display text-4xl">Deliver a high-priority pending order</h1>
-        <p className="mt-2 max-w-2xl text-white/85">Accept this invitation to deliver {data.units} units for buyer {data.buyer}. Funds are already protected in escrow and released after successful fulfillment evidence.</p>
+        <p className="mt-2 max-w-2xl text-white/85">Accept this invitation to deliver {data.units} units for buyer {data.buyer}. Funds are already protected in escrow and released after successful delivery evidence.</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Card className="border-white/20 bg-white/10 p-4 text-white"><p className="text-xs text-white/75">Order Units</p><p className="mt-1 text-2xl font-semibold">{data.units}</p></Card>
           <Card className="border-white/20 bg-white/10 p-4 text-white"><p className="text-xs text-white/75">Total Amount</p><p className="mt-1 text-2xl font-semibold">₦{data.amount.toLocaleString("en-NG")}</p></Card>

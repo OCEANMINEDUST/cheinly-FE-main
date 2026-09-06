@@ -14,7 +14,199 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      order_events: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          order_id: string
+          source: string
+          status: Database["public"]["Enums"]["order_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          order_id: string
+          source?: string
+          status: Database["public"]["Enums"]["order_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          order_id?: string
+          source?: string
+          status?: Database["public"]["Enums"]["order_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount: number
+          buyer_id: string
+          buyer_phone: string | null
+          created_at: string
+          currency: string
+          delivered_at: string | null
+          delivery_fee: number
+          dropoff_address: string | null
+          eta_minutes: number | null
+          id: string
+          item_description: string | null
+          item_title: string
+          pickup_address: string | null
+          pickup_code: string | null
+          provider_id: string | null
+          provider_name: string | null
+          provider_request_id: string | null
+          quantity: number
+          reference: string
+          seller_id: string | null
+          seller_phone: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          tracking_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          buyer_id: string
+          buyer_phone?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          dropoff_address?: string | null
+          eta_minutes?: number | null
+          id?: string
+          item_description?: string | null
+          item_title: string
+          pickup_address?: string | null
+          pickup_code?: string | null
+          provider_id?: string | null
+          provider_name?: string | null
+          provider_request_id?: string | null
+          quantity?: number
+          reference?: string
+          seller_id?: string | null
+          seller_phone?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          tracking_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          buyer_phone?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          dropoff_address?: string | null
+          eta_minutes?: number | null
+          id?: string
+          item_description?: string | null
+          item_title?: string
+          pickup_address?: string | null
+          pickup_code?: string | null
+          provider_id?: string | null
+          provider_name?: string | null
+          provider_request_id?: string | null
+          quantity?: number
+          reference?: string
+          seller_id?: string | null
+          seller_phone?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          tracking_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      refund_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          details: string | null
+          id: string
+          order_id: string
+          photos: string[]
+          reason: string
+          requester_id: string
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          details?: string | null
+          id?: string
+          order_id: string
+          photos?: string[]
+          reason: string
+          requester_id: string
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          details?: string | null
+          id?: string
+          order_id?: string
+          photos?: string[]
+          reason?: string
+          requester_id?: string
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refund_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +215,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      order_status:
+        | "placed"
+        | "seller_approved"
+        | "pickup_assigned"
+        | "rider_dispatched"
+        | "in_transit"
+        | "delivered"
+        | "refund_requested"
+        | "refunded"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +351,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: [
+        "placed",
+        "seller_approved",
+        "pickup_assigned",
+        "rider_dispatched",
+        "in_transit",
+        "delivered",
+        "refund_requested",
+        "refunded",
+        "cancelled",
+      ],
+    },
   },
 } as const

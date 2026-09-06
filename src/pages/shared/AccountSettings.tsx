@@ -84,7 +84,7 @@ const notificationControls = [
 ];
 
 const supportTopics = [
-  "How to Fulfill an Order",
+  "How to Process an Order",
   "How to File a Dispute",
   "Return & Refund Process",
   "Uploading Evidence",

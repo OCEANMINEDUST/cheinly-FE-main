@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 export default function SupplierPerformance() {
   const stats = [
-    ["Fulfillment Rate", "98%", "+2.3%"],
+    ["Order Completion Rate", "98%", "+2.3%"],
     ["On-Time Delivery", "94%", "+1.1%"],
     ["Dispute Rate", "1.4%", "-0.4%"],
     ["Average Rating", "4.8", "+0.2"],

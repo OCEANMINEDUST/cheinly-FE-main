@@ -83,7 +83,6 @@ import BioStore from "./pages/store/BioStore";
 import ProductPublic from "./pages/store/ProductPublic";
 import ChatPage from "./pages/chat/ChatPage";
 import Policies from "./pages/Policies";
-import { SEOManager } from "./components/SEOManager";
 
 const queryClient = new QueryClient();
 
@@ -93,7 +92,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SEOManager />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth/login" element={<Login />} />

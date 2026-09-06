@@ -8,7 +8,7 @@ import { Star, Trophy, BadgeCheck, Package, TrendingUp, ShieldAlert, Truck, File
 import { SellerStorefrontPanel } from "@/components/shared/SellerStorefrontPanel";
 
 const orders = [
-  { id: "SUP-1001", buyer: "Goodness", item: "Imported Sneakers x500", status: "pending fulfillment", amount: 5200000 },
+  { id: "SUP-1001", buyer: "Goodness", item: "Imported Sneakers x500", status: "pending dispatch", amount: 5200000 },
   { id: "SUP-1002", buyer: "Aisha", item: "Leather Jackets x120", status: "awaiting pickup", amount: 1800000 },
 ];
 
@@ -104,7 +104,7 @@ export default function SupplierDashboard() {
               <div className="flex items-center justify-between"><div><p className="font-semibold">{o.item}</p><p className="text-sm text-muted-foreground">Buyer: {o.buyer}</p></div><Badge>{o.status}</Badge></div>
               <div className="mt-3 flex items-center justify-between"><span className="font-mono text-xs text-muted-foreground">{o.id}</span><span className="font-semibold">₦{o.amount.toLocaleString("en-NG")}</span></div>
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <Button asChild><Link to="/supplier/orders">Start fulfillment</Link></Button>
+                <Button asChild><Link to="/supplier/orders">Process order</Link></Button>
                 <Button asChild variant="outline"><Link to={`/supplier/invite/${o.id}`}>Invite</Link></Button>
               </div>
             </Card>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const rows = [
-  { id: "SUP-1001", item: "Imported Sneakers x500", buyer: "Goodness", status: "pending fulfillment", amount: 5200000 },
+  { id: "SUP-1001", item: "Imported Sneakers x500", buyer: "Goodness", status: "pending dispatch", amount: 5200000 },
   { id: "SUP-1002", item: "Leather Jackets x120", buyer: "Aisha", status: "awaiting pickup", amount: 1800000 },
   { id: "RET-401", item: "Size mismatch review", buyer: "Chinedu", status: "return", amount: 240000 },
 ];
@@ -41,7 +41,7 @@ export default function SupplierOrders() {
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button asChild size="sm" variant="outline"><Link to={`/supplier/invite/${r.id}`}>Invite</Link></Button>
-                    <Button asChild size="sm"><Link to="/supplier/orders">Fulfill</Link></Button>
+                    <Button asChild size="sm"><Link to="/supplier/orders">Process</Link></Button>
                   </div>
                 </TableCell>
               </TableRow>

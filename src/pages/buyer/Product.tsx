@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { BadgeCheck, Lock, ShieldCheck, ShoppingCart, Truck, RotateCcw, Gem, Ruler } from "lucide-react";
 import { BuyerHeader } from "@/components/buyer/BuyerHeader";
@@ -17,6 +17,12 @@ const BuyerProduct = () => {
   const productId = params.get("productId") ?? mockProduct.id;
   const [activeImg, setActiveImg] = useState(0);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = `${mockProduct.name} • Cheinly`;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", mockProduct.description.slice(0, 155));
+  }, []);
 
   const galleryImage = useMemo(() => mockProduct.thumbs[activeImg] ?? mockProduct.image, [activeImg]);
 

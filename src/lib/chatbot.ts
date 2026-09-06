@@ -17,8 +17,8 @@ const ANALYTICS_KEY = "cheinly-chatbot-analytics";
 
 const rolePrompts: Record<ChatbotRole, string> = {
   buyer: "Hi Cheinly AI, I am a buyer and need help with my order, payment, delivery, refund, or dispute.",
-  seller: "Hi Cheinly AI, I am a seller and need help with orders, KYC, payouts, disputes, or fulfillment.",
-  supplier: "Hi Cheinly AI, I am a supplier and need help with bulk orders, fulfillment, returns, KYC, or payouts.",
+  seller: "Hi Cheinly AI, I am a seller and need help with orders, KYC, payouts, disputes.",
+  supplier: "Hi Cheinly AI, I am a supplier and need help with bulk orders, deliveries, returns, KYC, or payouts.",
 };
 
 export const chatbotRoleLabels: Record<ChatbotRole, string> = {
@@ -33,7 +33,7 @@ export const getChatbotContext = (role: ChatbotRole, path: string) => {
   const normalized = path || `/${role}`;
   if (normalized.includes("dispute")) return "dispute-support";
   if (normalized.includes("transaction") || normalized.includes("payment") || normalized.includes("receipt")) return "payments-and-payouts";
-  if (normalized.includes("order") || normalized.includes("fulfillment") || normalized.includes("dispatch")) return "orders-and-fulfillment";
+  if (normalized.includes("order") || normalized.includes("delivery") || normalized.includes("dispatch")) return "orders-and-delivery";
   if (normalized.includes("return") || normalized.includes("refund")) return "returns-and-refunds";
   if (normalized.includes("settings") || normalized.includes("kyc") || normalized.includes("account")) return "account-settings-and-kyc";
   if (normalized.includes("help")) return "help-centre";

@@ -1,7 +1,7 @@
 // External logistics (rider) provider adapters.
 // Cheinly does not employ riders — pickups are requested from third-party
 // logistics APIs. Each provider below is an adapter with the same interface so
-// seller fulfillment rules can route an order to any of them.
+// seller routing rules can route an order to any of them.
 
 export type ProviderId = "kwik" | "gokada" | "sendbox" | "custom";
 export type SyncMode = "callback" | "polling";

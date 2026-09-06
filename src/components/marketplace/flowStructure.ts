@@ -59,13 +59,13 @@ export const marketplaceFlows: FlowDefinition[] = [
     key: "orders",
     icon: Package,
     label: "Orders",
-    description: "Everything related to order fulfillment, returns, logistics, delivery, and fulfillment analytics.",
+    description: "Everything related to orders, returns, logistics, delivery, and delivery analytics.",
     sections: [
       { title: "Active Orders", items: ["Pending Orders", "Processing Orders", "Shipped Orders"] },
       { title: "Completed Orders", items: ["Delivered Orders", "Closed Orders"] },
       { title: "Return Management", items: ["Return Tracking", "Return Inspection", "Return Approval"] },
-      { title: "Fulfillment", items: ["Shipping Status", "Delivery Confirmation", "Logistics Information"] },
-      { title: "Order Analytics", items: ["Fulfillment Rate", "Delivery Success Rate"] },
+      { title: "Delivery", items: ["Shipping Status", "Delivery Confirmation", "Logistics Information"] },
+      { title: "Order Analytics", items: ["Order Completion Rate", "Delivery Success Rate"] },
     ],
   },
   {
